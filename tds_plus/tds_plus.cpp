@@ -1172,10 +1172,10 @@ int tds_run_engine(bool offline) {
                 }
             }
             {
-                const auto t = std::chrono::steady_clock::now();
-                if (block_key != press_block.key) { press_block = {block_key, t, false}; }
+                const auto block_now = std::chrono::steady_clock::now();
+                if (block_key != press_block.key) { press_block = {block_key, block_now, false}; }
                 if (!block_key.empty() && !press_block.logged &&
-                    t - press_block.since >= std::chrono::seconds(block_after_s)) {
+                    block_now - press_block.since >= std::chrono::seconds(block_after_s)) {
                     press_block.logged = true;
                     if (block_key == "paused")
                         logf("not pressing: auto-ability is OFF, press Start or F6 (the log shows [on] when it is enabled)");
