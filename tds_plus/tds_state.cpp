@@ -217,9 +217,13 @@ int main(int argc, char** argv) {
     if (!pid) { printf("RobloxPlayerBeta.exe not running\n"); return 1; }
     g_proc = OpenProcess(PROCESS_VM_READ | PROCESS_QUERY_INFORMATION, FALSE, pid);
     if (!g_proc) { printf("OpenProcess failed: %lu\n", GetLastError()); return 1; }
-    HMODULE mods[8];
+    HMODULE mods[8]{};
     DWORD bytes = 0;
-    EnumProcessModules(g_proc, mods, sizeof(mods), &bytes);
+    if (!EnumProcessModules(g_proc, mods, sizeof(mods), &bytes) || bytes < sizeof(HMODULE)) {
+        printf("EnumProcessModules failed: %lu\n", GetLastError());
+        CloseHandle(g_proc);
+        return 1;
+    }
     uintptr_t base = (uintptr_t)mods[0];
 
     // my user id via LocalPlayer

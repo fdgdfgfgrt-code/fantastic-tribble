@@ -8,11 +8,12 @@ ApplicationWindow {
     objectName: "mainWindow"
     visible: true
     width: 560
-    height: 480
+    height: customFrameEnabled ? 516 : 480
     minimumWidth: 380
-    minimumHeight: 340
+    minimumHeight: customFrameEnabled ? 376 : 340
     title: "tds+"
     color: "#09090b"
+    flags: customFrame ? (Qt.Window | Qt.FramelessWindowHint) : Qt.Window
     font.family: "Geist Mono"
     font.pixelSize: 14
     font.weight: Font.Medium
@@ -25,6 +26,9 @@ ApplicationWindow {
     readonly property bool compact: width < 740
     readonly property bool stackedRows: width < 540
     readonly property int contentInset: compact ? 16 : 28
+    readonly property bool customFrame: customFrameEnabled
+    readonly property int titleBarHeight: customFrame ? titleBar.height : 0
+    readonly property int captionControlsWidth: titleBar.controlsWidth
     readonly property bool motionEnabled: systemMotionEnabled && visible && visibility !== Window.Minimized
     palette.window: "#18181c"
     palette.windowText: ink
@@ -115,6 +119,7 @@ ApplicationWindow {
         id: surface
         anchors.fill: parent
         anchors.margins: window.contentInset
+        anchors.topMargin: window.customFrame ? window.titleBarHeight + (window.compact ? 4 : 10) : window.contentInset
         spacing: window.compact ? 12 : 20
         property real entranceOffset: 8
         opacity: 0
@@ -580,5 +585,27 @@ ApplicationWindow {
                 }
             }
         }
+    }
+
+    TitleBar {
+        id: titleBar
+        appWindow: window
+        visible: window.customFrame
+        anchors { top: parent.top; left: parent.left; right: parent.right }
+        ink: window.ink
+        muted: window.muted
+        dim: window.dim
+        animated: window.motionEnabled
+        z: 20
+    }
+
+    // The system border is switched off for the frameless window, so draw a 1px one.
+    Rectangle {
+        anchors.fill: parent
+        visible: window.customFrame && window.visibility !== Window.Maximized
+        color: "transparent"
+        border.width: 1
+        border.color: window.borderColor
+        z: 30
     }
 }
