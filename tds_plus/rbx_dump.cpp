@@ -12,10 +12,12 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
+#include <filesystem>
 #include <fstream>
 #include <optional>
 #include <string>
 #include <vector>
+#include "pattern_scan.hpp"
 
 struct Args {
     std::string target;
@@ -98,6 +100,7 @@ static void process_region(HANDLE proc, const MEMORY_BASIC_INFORMATION& mbi,
         if (!bin) return;
     }
 
+    PatternScanner scanner(pat);
     std::string cur_str;
     uintptr_t cur_str_addr = 0;
     size_t total_read = 0;
@@ -111,9 +114,11 @@ static void process_region(HANDLE proc, const MEMORY_BASIC_INFORMATION& mbi,
             if (bin) { std::vector<char> zeros(want, 0); bin.write(zeros.data(), want); }  // hole = zeros, offsets stay aligned
             if (args.strings && cur_str.size() >= 6) strings << std::hex << cur_str_addr << " " << cur_str << "\n";
             cur_str.clear();
+            scanner.reset();
             continue;
         }
         total_read += got;
+        if (got != want) scanner.reset();  // short read: the next chunk is not contiguous
         if (bin) bin.write((const char*)buf.data(), got);
 
         for (size_t i = 0; i < got; i++) {
@@ -127,14 +132,10 @@ static void process_region(HANDLE proc, const MEMORY_BASIC_INFORMATION& mbi,
                 }
             }
         }
-        if (!pat.empty()) {
-            for (size_t i = 0; i + pat.size() <= got; i++) {
-                bool m = true;
-                for (size_t j = 0; j < pat.size(); j++)
-                    if (pat[j] && buf[i + j] != *pat[j]) { m = false; break; }
-                if (m) { hits << std::hex << (addr + i) << "\n"; region_hit = true; }
-            }
-        }
+        scanner.feed(addr, buf.data(), got, [&](uintptr_t hit) {
+            hits << std::hex << hit << "\n";
+            region_hit = true;
+        });
     }
     // scan mode: keep the region's bytes when it produced hits, so the context is analyzable offline
     if (scan_mode && region_hit) {
@@ -204,8 +205,13 @@ int main(int argc, char** argv) {
     }
     printf("attached to pid %lu\n", pid);
 
-    std::string cmd = "mkdir \"" + a.outdir + "\" 2>nul & mkdir \"" + a.outdir + "\\regions\" 2>nul";
-    system(cmd.c_str());
+    std::error_code dir_error;
+    std::filesystem::create_directories(std::filesystem::path(a.outdir) / "regions", dir_error);
+    if (dir_error) {
+        printf("cannot create %s: %s\n", a.outdir.c_str(), dir_error.message().c_str());
+        CloseHandle(proc);
+        return 1;
+    }
 
     dump_modules(proc, a.outdir);
 
@@ -215,6 +221,11 @@ int main(int argc, char** argv) {
     auto pat = build_pattern(a);
     if (!pat.empty()) hits.open(a.outdir + "\\hits.txt");
 
+    if (!map) {
+        printf("cannot write %s\\map.txt\n", a.outdir.c_str());
+        CloseHandle(proc);
+        return 1;
+    }
     map << "# base size type prot bytes_read\n";
     uintptr_t addr = 0;
     size_t regions = 0, dumped = 0;
