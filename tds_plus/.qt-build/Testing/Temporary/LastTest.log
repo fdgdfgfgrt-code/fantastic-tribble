@@ -1,0 +1,83 @@
+Start testing: Oct 04 07:23 Êûחûכמנהא (חטלא)
+----------------------------------------------------------
+1/2 Testing: chain_state
+1/2 Test: chain_state
+Command: "C:/Users/Noesis/Desktop/www/tds_plus/.qt-build/tds_plus_chain_state_test.exe"
+Directory: C:/Users/Noesis/Desktop/www/tds_plus/.qt-build
+"chain_state" start time: Oct 04 07:23 Êûחûכמנהא (חטלא)
+Output:
+----------------------------------------------------------
+PASS real ready counts parse
+PASS failed reads never become zero charges
+PASS first sample cannot trigger a chain press
+PASS two matching samples establish ready charges
+PASS press immediately blocks the whole shared group
+PASS acknowledgement later than 800 ms does not retry
+PASS delayed charge decrease confirms one cast
+PASS next cast waits a full buff after confirmation
+PASS second Commander also holds its complete buff
+PASS third Commander can confirm the last ready charge
+PASS unchanged counter cannot cause an immediate second press
+PASS missing acknowledgement enters a conservative hold
+PASS missing acknowledgement still protects a full buff
+PASS very late acknowledgement extends rather than cancels the hold
+PASS first manual decrement cannot race an automatic cast
+PASS manual cast is adopted while automation is paused
+PASS resuming does not cut a manual buff short
+PASS changing settings cannot shorten the already active buff
+PASS empty reads do not confirm a phantom cast
+PASS one transient zero is not a confirmed cast
+PASS unknown charges cannot be ready
+PASS pending input remains blocked after a delayed engine loop
+PASS a long memory read cannot immediately retry a cast
+RESULT 0 failures
+<end of output>
+Test time =   0.03 sec
+----------------------------------------------------------
+Test Passed.
+"chain_state" end time: Oct 04 07:23 Êûחûכמנהא (חטלא)
+"chain_state" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/2 Testing: game_state
+2/2 Test: game_state
+Command: "C:/Users/Noesis/Desktop/www/tds_plus/.qt-build/tds_plus_game_state_test.exe"
+Directory: C:/Users/Noesis/Desktop/www/tds_plus/.qt-build
+"game_state" start time: Oct 04 07:23 Êûחûכמנהא (חטלא)
+Output:
+----------------------------------------------------------
+PASS retained YOU LOST under hidden gameOver does not end sandbox
+PASS retained YOU WON under hidden gameOver does not end sandbox
+PASS visible victory ends match
+PASS visible defeat ends match
+PASS hidden GUI ancestor hides the result banner
+PASS hidden GUI ancestor hides the result banner
+PASS hidden GUI ancestor hides the result banner
+PASS hidden GUI ancestor hides the result banner
+PASS hidden GUI ancestor hides the result banner
+PASS disabled ScreenGui hides the result banner
+PASS PlayerGui does not use GuiObject Visible
+PASS ScreenGui uses Enabled rather than GuiObject Visible
+PASS unrelated YOU text does not end match
+PASS detached rewards tree does not end match
+PASS cyclic stale ancestry is rejected
+PASS another PlayerGui cannot supply a result
+PASS missing result banner does not end match
+PASS unreadable result banner does not end match
+PASS visible ability bar permits processing
+PASS hidden ability bar blocks processing
+PASS rebuilt GUI reads current charges instead of a cached label
+PASS stale zero cannot confirm a phantom cast
+PASS detached charge label is rejected
+PASS unreadable charge text stays unknown rather than zero
+PASS removed charge label is rejected
+RESULT 0 failures
+<end of output>
+Test time =   0.03 sec
+----------------------------------------------------------
+Test Passed.
+"game_state" end time: Oct 04 07:23 Êûחûכמנהא (חטלא)
+"game_state" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Oct 04 07:23 Êûחûכמנהא (חטלא)

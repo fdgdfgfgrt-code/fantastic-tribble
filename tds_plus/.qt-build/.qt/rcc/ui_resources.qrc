@@ -1,0 +1,12 @@
+<RCC>
+  <qresource prefix="/">
+    <file alias="qml/Main.qml">C:/Users/Noesis/Desktop/www/tds_plus/qml/Main.qml</file>
+    <file alias="qml/AmbientBackground.qml">C:/Users/Noesis/Desktop/www/tds_plus/qml/AmbientBackground.qml</file>
+    <file alias="qt/tds_plus.ico">C:/Users/Noesis/Desktop/www/tds_plus/qt/tds_plus.ico</file>
+    <file alias="assets/fonts/GeistMono-Medium.ttf">C:/Users/Noesis/Desktop/www/tds_plus/assets/fonts/GeistMono-Medium.ttf</file>
+    <file alias="assets/fonts/GeistMono-SemiBold.ttf">C:/Users/Noesis/Desktop/www/tds_plus/assets/fonts/GeistMono-SemiBold.ttf</file>
+    <file alias="assets/fonts/OFL.txt">C:/Users/Noesis/Desktop/www/tds_plus/assets/fonts/OFL.txt</file>
+    <file alias="assets/fonts/SOURCE.txt">C:/Users/Noesis/Desktop/www/tds_plus/assets/fonts/SOURCE.txt</file>
+  </qresource>
+</RCC>
+

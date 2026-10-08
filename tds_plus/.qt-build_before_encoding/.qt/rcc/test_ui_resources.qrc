@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="/">
+    <file alias="qml/Main.qml">C:/Users/Noesis/Desktop/www/tds_plus/qml/Main.qml</file>
+    <file alias="qt/tds_plus.ico">C:/Users/Noesis/Desktop/www/tds_plus/qt/tds_plus.ico</file>
+  </qresource>
+</RCC>
+

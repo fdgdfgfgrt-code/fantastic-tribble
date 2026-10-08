@@ -1,0 +1,11 @@
+-rootPath
+C:/Users/Noesis/Desktop/www/tds_plus
+-cmake-output
+-output-file
+C:/Users/Noesis/Desktop/www/tds_plus/.qt-build/.qt/qml_imports/tds_plus_qt_build.cmake
+-importPath
+C:/Users/Noesis/Desktop/www/tds_plus/.qt-build
+-importPath
+C:/Users/Noesis/Desktop/www/.deps/Qt/6.10.3/msvc2022_64/qml
+-qrcFiles
+C:/Users/Noesis/Desktop/www/tds_plus/.qt-build/.qt/rcc/ui_resources.qrc

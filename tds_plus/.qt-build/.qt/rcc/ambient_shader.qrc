@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/shaders">
+    <file alias="ambient.frag.qsb">C:/Users/Noesis/Desktop/www/tds_plus/.qt-build/.qsb/ambient.frag.qsb</file>
+  </qresource>
+</RCC>
+

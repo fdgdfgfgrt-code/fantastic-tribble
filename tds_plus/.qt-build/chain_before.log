@@ -1,0 +1,49 @@
+ability rules: 0 by id, 6 by name
+wiki db: 24 abilities
+tds+ attached: pid=14312 base=0x7ff71ebc0000 window=0x1f30122
+scanning state stream regions...
+
+2 stream regions (499.9 MB)
+
+F6 = toggle auto-ability | F7 = debug slots | END = exit
+
+ability slots: 1 | end-screen: hidden "YOU LOST"
+
+  slot[F] id=4594880289 "Commander/Call to Arms" (chain)
+
+phase: in match
+[on]
+fired ability [F] Commander/Call to Arms
+chain press lost Commander/Call to Arms, retrying
+
+fired ability [F] Commander/Call to Arms
+chain confirmed Commander/Call to Arms, buff until +10s
+
+fired ability [F] Commander/Call to Arms
+chain confirmed Commander/Call to Arms, buff until +10s
+
+fired ability [F] Commander/Call to Arms
+chain press lost Commander/Call to Arms, retrying
+
+fired ability [F] Commander/Call to Arms
+chain confirmed[off]
+
+[on]
+
+o Arms, buff until +10s
+
+[off]
+
+[on]
+[off]
+
+linked: id=17512145719 -> "Call Of Arms"
+
+ability slots: 2 | end-screen: hidden "YOU LOST"
+
+  slot[F] id=4594880289 "Commander/Call to Arms" (chain)
+
+  slot[B] id=17512145719 "Call Of Arms" (chain)
+
+linked: id=4594880289 -> "Bounty"
+

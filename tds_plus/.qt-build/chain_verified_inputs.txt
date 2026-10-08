@@ -1,0 +1,25 @@
+COUNT t=1.11e-05 3 left= ptr=2124958912640 attached=1
+KEY t=15.6091 down injected
+KEY t=15.6709 up injected
+COUNT t=16.1289 2 left= ptr=2124958912640 attached=1
+KEY t=26.2647 down injected
+COUNT t=26.4945 1 left= ptr=2124958912640 attached=1
+KEY t=36.6267 down injected
+KEY t=36.6882 up injected
+COUNT t=37.5174 0 left=8 ptr=2124958912640 attached=1
+COUNT t=37.538 0 left=7 ptr=2124958912640 attached=1
+COUNT t=38.5175 0 left=6 ptr=2124958912640 attached=1
+COUNT t=38.5788 0 left=7 ptr=2124958912640 attached=1
+COUNT t=39.0361 0 left=6 ptr=2124958912640 attached=1
+COUNT t=40.0329 0 left=5 ptr=2124958912640 attached=1
+COUNT t=40.4459 0 left=6 ptr=2124958912640 attached=1
+COUNT t=41.0863 0 left=5 ptr=2124958912640 attached=1
+COUNT t=42.2732 0 left=4 ptr=2124958912640 attached=1
+COUNT t=42.4605 0 left=3 ptr=2124958912640 attached=1
+COUNT t=43.1653 0 left=2 ptr=2124958912640 attached=1
+COUNT t=43.9351 0 left=1 ptr=2124958912640 attached=1
+COUNT t=45.0353 0 left=0 ptr=2124958912640 attached=1
+COUNT t=45.076 1 left= ptr=2124958912640 attached=1
+COUNT t=56.016 2 left= ptr=2124958912640 attached=1
+COUNT t=68.4192 3 left= ptr=2124958912640 attached=1
+RESULT pressed=0 injected_down=3 physical_down=0

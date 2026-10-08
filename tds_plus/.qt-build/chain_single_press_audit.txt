@@ -1,0 +1,6 @@
+COUNT t=1.11e-05 3 left= ptr=2124958912640 attached=1
+ONE PRESS t=11.1431
+KEY t=11.1432 down injected
+KEY t=11.1897 up injected
+COUNT t=11.8785 2 left= ptr=2124958912640 attached=1
+RESULT pressed=1 injected_down=1 physical_down=0

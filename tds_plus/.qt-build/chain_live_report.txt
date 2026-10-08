@@ -1,0 +1,13 @@
+PASS sandbox Commander detected
+Waiting for any existing buff to finish, engine paused
+Running exactly three Commander chain presses
+CAST 15.67
+CAST 26.306
+CAST 36.687
+Paused; waiting for the last buff to finish
+INTERVAL 10.636
+INTERVAL 10.381
+PASS three casts, each after a complete 10-second buff
+PASS three casts acknowledged by game, confirmed=3
+PASS no immediate retries
+RESULT 0

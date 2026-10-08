@@ -1,0 +1,10 @@
+C:/Users/Noesis/Desktop/www/tds_plus/.qt-build/CMakeFiles/tds_plus_qt.dir
+C:/Users/Noesis/Desktop/www/tds_plus/.qt-build/CMakeFiles/tds_plus_ui_test.dir
+C:/Users/Noesis/Desktop/www/tds_plus/.qt-build/CMakeFiles/tds_plus_qt_qmlimportscan.dir
+C:/Users/Noesis/Desktop/www/tds_plus/.qt-build/CMakeFiles/tds_plus_ui_test_qmlimportscan.dir
+C:/Users/Noesis/Desktop/www/tds_plus/.qt-build/CMakeFiles/edit_cache.dir
+C:/Users/Noesis/Desktop/www/tds_plus/.qt-build/CMakeFiles/rebuild_cache.dir
+C:/Users/Noesis/Desktop/www/tds_plus/.qt-build/CMakeFiles/tds_plus_qt_autogen_timestamp_deps.dir
+C:/Users/Noesis/Desktop/www/tds_plus/.qt-build/CMakeFiles/tds_plus_qt_autogen.dir
+C:/Users/Noesis/Desktop/www/tds_plus/.qt-build/CMakeFiles/tds_plus_ui_test_autogen_timestamp_deps.dir
+C:/Users/Noesis/Desktop/www/tds_plus/.qt-build/CMakeFiles/tds_plus_ui_test_autogen.dir
