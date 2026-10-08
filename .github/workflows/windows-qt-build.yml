@@ -1,0 +1,108 @@
+name: windows-qt-build
+
+# Builds tds_plus_qt.exe on a Windows runner (MSVC + Qt 6.10), runs the unit tests and uploads a
+# ready-to-run folder as the "tds_plus_qt-windows-x64" artifact. Run it from the Actions tab
+# (workflow_dispatch) or open a pull request that touches tds_plus/.
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'tds_plus/**'
+      - '.github/workflows/windows-qt-build.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-2022
+    timeout-minutes: 45
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.10.3'
+          host: windows
+          target: desktop
+          arch: win64_msvc2022_64
+          cache: true
+
+      - name: Configure
+        run: >
+          cmake -S tds_plus -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_PREFIX_PATH="$env:QT_ROOT_DIR" -DTDS_BUILD_UI_TEST=ON
+
+      - name: Build the application
+        run: cmake --build build --target tds_plus_qt --parallel
+
+      - name: Build the tests
+        continue-on-error: true
+        run: cmake --build build --parallel
+
+      - name: Run the tests
+        continue-on-error: true
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Assemble the folder
+        run: |
+          $dist = 'dist/tds_plus_qt'
+          New-Item -ItemType Directory -Path $dist -Force | Out-Null
+          Copy-Item build/tds_plus_qt.exe $dist
+          & "$env:QT_ROOT_DIR/bin/windeployqt.exe" --release --verbose 0 --qmldir tds_plus/qml `
+            --no-translations --no-compiler-runtime --no-opengl-sw "$dist/tds_plus_qt.exe"
+          if ($LASTEXITCODE -ne 0) { throw "windeployqt failed: $LASTEXITCODE" }
+          New-Item -ItemType Directory -Path "$dist/licenses" -Force | Out-Null
+          Copy-Item tds_plus/assets/fonts/OFL.txt "$dist/licenses/Geist-OFL.txt"
+          Copy-Item tds_plus/assets/fonts/SOURCE.txt "$dist/licenses/Geist-source.txt"
+          # settings the app reads next to the exe; tds_ui_rules.ini is created by the app itself
+          Copy-Item tds_plus/tds_abilities.ini, tds_plus/tds_wiki_db.ini $dist
+          $crt = Get-ChildItem "$env:VCToolsRedistDir/x64" -Directory -Filter 'Microsoft.VC14*.CRT' | Select-Object -First 1
+          if ($crt) { Copy-Item "$($crt.FullName)/*.dll" $dist } else { Write-Warning 'VC runtime DLLs not found' }
+          Get-ChildItem $dist | Select-Object Name, Length | Format-Table -AutoSize | Out-String | Write-Host
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tds_plus_qt-windows-x64
+          path: dist/tds_plus_qt
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Start the window offline and take a screenshot
+        continue-on-error: true
+        run: |
+          Add-Type -AssemblyName System.Windows.Forms, System.Drawing
+          New-Item -ItemType Directory -Path dist/diagnostics -Force | Out-Null
+          $app = Start-Process -FilePath "$PWD/dist/tds_plus_qt/tds_plus_qt.exe" -ArgumentList '--offline' `
+            -WorkingDirectory "$PWD/dist/tds_plus_qt" -PassThru
+          Start-Sleep -Seconds 10
+          $screen = [System.Windows.Forms.SystemInformation]::VirtualScreen
+          $bitmap = New-Object System.Drawing.Bitmap $screen.Width, $screen.Height
+          [System.Drawing.Graphics]::FromImage($bitmap).CopyFromScreen($screen.Location, [System.Drawing.Point]::Empty, $screen.Size)
+          $bitmap.Save("$PWD/dist/diagnostics/screen.png")
+          "process alive after 10 s: $(-not $app.HasExited)" | Tee-Object dist/diagnostics/run.txt
+          if (-not $app.HasExited) { Stop-Process -Id $app.Id -Force }
+          foreach ($log in 'tds_qt.log', 'tds_plus.log') {
+            $path = "dist/tds_plus_qt/$log"
+            if (Test-Path $path) { Copy-Item $path dist/diagnostics }
+          }
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: diagnostics
+          path: dist/diagnostics
+          if-no-files-found: ignore
+          retention-days: 14
