@@ -344,15 +344,21 @@ static std::optional<int> btn_ready_count(const AbilityBtn& button) {
     return parse_ready_count(read_string(label + off::GUI_TEXT));
 }
 
-// why (optional) receives a short reason when the slot cannot be pressed
-static bool btn_ready(const AbilityBtn& b, char* key_out, std::string* why = nullptr) {
+// why (optional) receives a short reason when the slot cannot be pressed;
+// on_cooldown (optional) is set when that reason is the normal cooldown timer
+static bool btn_ready(const AbilityBtn& b, char* key_out, std::string* why = nullptr,
+                      bool* on_cooldown = nullptr) {
+    if (on_cooldown) *on_cooldown = false;
     const auto refuse = [&](std::string reason) {
         if (why) *why = std::move(reason);
         return false;
     };
     if (gui_visible(b.locked)) return refuse("is locked");
     std::string tl = read_string(b.time_left + off::GUI_TEXT);
-    if (!tl.empty()) return refuse("shows a cooldown timer \"" + tl + "\"");   // counting down
+    if (!tl.empty()) {                                              // counting down
+        if (on_cooldown) *on_cooldown = true;
+        return refuse("shows a cooldown timer \"" + tl + "\"");
+    }
     if (gui_visible(b.price)) {
         std::string p = read_string(b.price + off::GUI_TEXT);
         if (!p.empty()) return refuse("costs money right now (" + p + ")");
@@ -1135,7 +1141,9 @@ int tds_run_engine(bool offline) {
                             continue;
                         }
                         std::string why;
-                        if (!btn_ready(b, &key, &why)) { block("slot", 45, why); continue; }
+                        bool cooling = false;
+                        // a timer is the normal wait: report it only past the longest wiki cooldown (120 s)
+                        if (!btn_ready(b, &key, &why, &cooling)) { block("slot", cooling ? 150 : 45, why); continue; }
                         if (group_fired[group_key]) continue;
                     } else {
                         if (!can_send) { block(running ? "menu" : "paused", 5); continue; }

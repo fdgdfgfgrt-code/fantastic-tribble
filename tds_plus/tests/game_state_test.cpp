@@ -157,9 +157,12 @@ int main() {
     check(btn_ready(slot_button, &slot_key, &why) && slot_key == 'F' && why.empty(), "ready slot reports its hotkey");
     timer.set_text("12");
     check(refused_with("cooldown timer \"12\""), "cooldown text is named in the refusal");
+    bool cooling = false;
+    check(!btn_ready(slot_button, &slot_key, &why, &cooling) && cooling, "a cooldown timer is flagged as the normal wait");
     timer.set_text("");
     lock.set_visible(true);
     check(refused_with("locked"), "locked slot is named in the refusal");
+    check(!btn_ready(slot_button, &slot_key, &why, &cooling) && !cooling, "a locked slot is not flagged as a normal wait");
     lock.set_visible(false);
     price.set_visible(true);
     price.set_text("$500");
