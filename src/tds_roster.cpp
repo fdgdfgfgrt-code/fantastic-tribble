@@ -13,18 +13,7 @@
 #include <string>
 #include <vector>
 
-namespace off {
-    constexpr uintptr_t VE_POINTER     = 0x858d208;
-    constexpr uintptr_t VE_FAKE_DM     = 0xaf0;
-    constexpr uintptr_t FAKE_REAL_DM   = 0x1f8;
-    constexpr uintptr_t DM_WORKSPACE   = 0x150;
-    constexpr uintptr_t INST_NAME      = 0x70;
-    constexpr uintptr_t INST_CHILDREN  = 0x78;
-    constexpr uintptr_t INST_CLASS_DESC= 0x18;
-    constexpr uintptr_t PLAYERS_LOCAL  = 0x120;
-    constexpr uintptr_t PLAYER_USERID  = 0xc0;    // Player::UserId (int64)
-    constexpr uintptr_t VALUE          = 0xa8;    // ValueBase::Value
-}
+#include "rbx_offsets.hpp"
 
 static HANDLE g_proc = nullptr;
 
@@ -88,7 +77,7 @@ static uintptr_t find_child(uintptr_t inst, const std::string& name) {
 // FNV-1a over the descendant "Class:Name" list — stable per skin/tower combo.
 // "Weapon" and "Upgrades" folders are excluded: their contents swap on upgrade,
 // which would change the fingerprint every level
-static uint64_t fingerprint(uintptr_t inst, int depth) {
+static uint64_t fingerprint(uintptr_t inst) {
     uint64_t h = 1469598103934665603ULL;
     std::vector<std::pair<uintptr_t, int>> stack{{inst, 0}};
     while (!stack.empty()) {
@@ -146,9 +135,13 @@ int main() {
     if (!pid) { printf("RobloxPlayerBeta.exe not running\n"); return 1; }
     g_proc = OpenProcess(PROCESS_VM_READ | PROCESS_QUERY_INFORMATION, FALSE, pid);
     if (!g_proc) { printf("OpenProcess failed: %lu\n", GetLastError()); return 1; }
-    HMODULE mods[8];
+    HMODULE mods[8]{};
     DWORD bytes = 0;
-    EnumProcessModules(g_proc, mods, sizeof(mods), &bytes);
+    if (!EnumProcessModules(g_proc, mods, sizeof(mods), &bytes) || bytes < sizeof(HMODULE)) {
+        printf("EnumProcessModules failed: %lu\n", GetLastError());
+        CloseHandle(g_proc);
+        return 1;
+    }
     uintptr_t base = (uintptr_t)mods[0];
 
     uintptr_t ve = read<uintptr_t>(base + off::VE_POINTER);
@@ -173,27 +166,19 @@ int main() {
         std::string skin = get_name(tw);
         int64_t owner = 0;
         if (uintptr_t o = find_child(tw, "Owner")) owner = (int64_t)read<double>(o + off::VALUE);
-        int level = -1;
-        double dmg = 0, rng = 0, cd = 0;
-        if (uintptr_t d = find_child(tw, "Display")) {
-            if (uintptr_t v = find_child(d, "Upgrade"))  level = read<int32_t>(v + off::VALUE);
-            if (uintptr_t v = find_child(d, "Damage"))   dmg = read<double>(v + off::VALUE);
-            if (uintptr_t v = find_child(d, "Range"))    rng = read<double>(v + off::VALUE);
-            if (uintptr_t v = find_child(d, "Cooldown")) cd = read<double>(v + off::VALUE);
-        }
         bool is_mine = owner == my_id && my_id != 0;
         is_mine ? mine++ : theirs++;
         if (!is_mine) continue;
 
         char fp[24];
-        snprintf(fp, sizeof(fp), "%016llx", (unsigned long long)fingerprint(tw, 0));
+        snprintf(fp, sizeof(fp), "%016llx", (unsigned long long)fingerprint(tw));
         auto lbl = labels.find(fp);
         std::string rigs;   // model children other than the swappable weapon — the labeling hint
         for (uintptr_t c : get_children(tw)) {
             std::string n = get_name(c);
             if (get_class_name(c) == "Model" && n != "Weapon" && n != "Upgrades") rigs += n + " ";
         }
-        // note: Display/ folder values are a stale billboard cache — level/stats are not shown
+        // Display/ folder values are a stale billboard cache, so level/stats are not read
         printf("skin=%-10s type=%-22s fp=%s  rigs: %s\n",
                skin.c_str(), lbl != labels.end() ? lbl->second.c_str() : "?", fp, rigs.c_str());
     }

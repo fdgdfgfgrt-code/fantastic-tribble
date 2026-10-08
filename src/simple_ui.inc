@@ -263,28 +263,29 @@ static void ui_paint(HWND window) {
 static void ui_cycle_mode(int visible_index, bool duration_only) {
     if (visible_index < 0 || visible_index >= static_cast<int>(g_mode_keys.size())) return;
     const std::string key = g_mode_keys[visible_index];
-    bool changed = false;
+    int mode = 0, seconds = 10;
+    bool found = false;
     {
         std::lock_guard<std::mutex> lock(g_ui.mtx);
-        for (UiEntry& entry : g_ui.entries) {
+        for (const UiEntry& entry : g_ui.entries) {
             if (canon_key(entry.name) != key) continue;
-            if (duration_only) {
-                if (entry.mode != 1) break;
-                static constexpr int durations[] = {5, 10, 15, 20, 30, 45, 60};
-                int position = 0;
-                while (position < 7 && durations[position] != entry.seconds) ++position;
-                entry.seconds = durations[(position + 1) % 7];
-            } else {
-                entry.mode = (entry.mode + 1) % 3;
-            }
-            changed = true;
+            mode = entry.mode;
+            seconds = entry.seconds;
+            found = true;
             break;
         }
     }
-    if (changed) {
-        ui_write_rules();
-        InvalidateRect(g_ui_hwnd, nullptr, FALSE);
+    if (!found) return;
+    if (duration_only) {
+        if (mode != 1) return;
+        static constexpr int durations[] = {5, 10, 15, 20, 30, 45, 60};
+        int position = 0;
+        while (position < 7 && durations[position] != seconds) ++position;
+        seconds = durations[(position + 1) % 7];
+    } else {
+        mode = (mode + 1) % 3;
     }
+    if (tds_set_rule(key, mode, seconds)) InvalidateRect(g_ui_hwnd, nullptr, FALSE);
 }
 
 static LRESULT CALLBACK ui_wndproc(HWND window, UINT message, WPARAM w_param, LPARAM l_param) {
@@ -325,8 +326,12 @@ static LRESULT CALLBACK ui_wndproc(HWND window, UINT message, WPARAM w_param, LP
         ui_paint(window);
         return 0;
     case WM_MOUSEWHEEL: {
-        const int steps = GET_WHEEL_DELTA_WPARAM(w_param) / WHEEL_DELTA;
-        g_scroll = std::clamp(g_scroll - steps * 3, 0,
+        static int wheel_carry = 0;  // 3 rows per notch, fractions of a notch are carried over
+        wheel_carry += GET_WHEEL_DELTA_WPARAM(w_param) * 3;
+        const int rows = wheel_carry / WHEEL_DELTA;
+        wheel_carry -= rows * WHEEL_DELTA;
+        if (rows == 0) return 0;
+        g_scroll = std::clamp(g_scroll - rows, 0,
                               std::max(0, g_filtered_count - visible_rows));
         InvalidateRect(window, nullptr, FALSE);
         return 0;
