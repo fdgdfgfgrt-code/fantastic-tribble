@@ -3,6 +3,10 @@
 // already does well: drag, edge resize, snap, double-click maximise, system menu, Win11 snap layouts.
 //
 //   1. after CreateWindowEx:    titlebar::attach(hwnd);          // title = window text
+//                               titlebar::attach(hwnd, theme, {false, false});  // fixed-size window:
+//                               // min + close only, sizing blocked (WS_THICKFRAME is kept on purpose so
+//                               // the DWM frame, shadow and corners look the same as for normal windows)
+//                               titlebar::fit_client(hwnd, w, h);  // optional: exact client size
 //   2. first thing in WndProc:  LRESULT r; if (titlebar::handle(hwnd, m, w, l, &r)) return r;
 //   3. end of WM_PAINT:         titlebar::paint(hwnd, hdc);      // draws rows 0 .. height()-1
 //   4. lay content out from y = titlebar::height(hwnd) (client coordinates)
@@ -58,6 +62,8 @@ struct State {
     Btn pressed = kNone;
     bool active = true;
     bool tracking = false;
+    bool can_max = true;
+    bool can_resize = true;
 };
 
 constexpr wchar_t kProp[] = L"tds.titlebar";
@@ -96,19 +102,24 @@ inline int bar_height(UINT dpi) { return scale(32, dpi); }
 inline int button_width(UINT dpi) { return scale(46, dpi); }
 inline int resize_handle(UINT dpi) { return metric(SM_CXPADDEDBORDER, dpi) + metric(SM_CYSIZEFRAME, dpi); }
 
-inline Btn button_at(int x, int y, int client_w, UINT dpi) {
+// Buttons sit right to left: close, [maximise], minimise.
+inline int slot_of(Btn b, bool can_max) { return b == kClose ? 1 : b == kMax ? 2 : can_max ? 3 : 2; }
+
+inline Btn button_at(int x, int y, int client_w, UINT dpi, bool can_max) {
     if (x < 0 || x >= client_w || y < 0 || y >= bar_height(dpi)) return kNone;
     const int slot = (client_w - 1 - x) / button_width(dpi);
-    return slot == 0 ? kClose : slot == 1 ? kMax : slot == 2 ? kMin : kNone;
+    if (slot == 0) return kClose;
+    if (can_max) return slot == 1 ? kMax : slot == 2 ? kMin : kNone;
+    return slot == 1 ? kMin : kNone;
 }
 
 inline Btn button_from_ht(WPARAM ht) {
     return ht == HTCLOSE ? kClose : ht == HTMAXBUTTON ? kMax : ht == HTMINBUTTON ? kMin : kNone;
 }
 
-inline RECT button_rect(Btn b, int client_w, UINT dpi) {
+inline RECT button_rect(Btn b, int client_w, UINT dpi, bool can_max) {
     const int bw = button_width(dpi);
-    const int slot = b == kClose ? 1 : b == kMax ? 2 : 3;
+    const int slot = slot_of(b, can_max);
     return RECT{client_w - slot * bw, 0, client_w - (slot - 1) * bw, bar_height(dpi)};
 }
 
@@ -252,7 +263,8 @@ inline void draw_bar(HDC dc, HWND hwnd, State& s, int w, int h, UINT dpi) {
     fill(dc, 0, h - 1, w, h, t.border);
 
     for (Btn b : {kMin, kMax, kClose}) {
-        const RECT r = button_rect(b, w, dpi);
+        if (b == kMax && !s.can_max) continue;
+        const RECT r = button_rect(b, w, dpi, s.can_max);
         const bool hot = s.hot == b, down = hot && s.pressed == b;
         const COLORREF under = b == kClose ? (down ? t.close_pressed : hot ? t.close_hover : t.bg)
                                            : (down ? t.pressed : hot ? t.hover : t.bg);
@@ -263,7 +275,7 @@ inline void draw_bar(HDC dc, HWND hwnd, State& s, int w, int h, UINT dpi) {
 
     wchar_t title[256] = L"";
     GetWindowTextW(hwnd, title, 256);
-    RECT tr{scale(12, dpi), edge, w - 3 * button_width(dpi) - scale(8, dpi), h - 1};
+    RECT tr{scale(12, dpi), edge, w - (s.can_max ? 3 : 2) * button_width(dpi) - scale(8, dpi), h - 1};
     HGDIOBJ old_font = SelectObject(dc, ensure_font(s, dpi));
     SetBkMode(dc, TRANSPARENT);
     SetTextColor(dc, s.active ? t.fg : t.fg_dim);
@@ -276,18 +288,35 @@ inline void draw_bar(HDC dc, HWND hwnd, State& s, int w, int h, UINT dpi) {
 // Height of the bar in pixels for the window's current DPI.
 inline int height(HWND hwnd) { return detail::bar_height(detail::dpi_for(hwnd)); }
 
+struct Options {
+    bool maximizable = true;  // maximise / restore button, double-click and snap maximise
+    bool resizable = true;    // edge resize; false also disables maximise
+};
+
 // Call once after the window is created.
-inline void attach(HWND hwnd, const Theme& theme = Theme()) {
+inline void attach(HWND hwnd, const Theme& theme = Theme(), const Options& options = Options()) {
     if (!hwnd || detail::state(hwnd)) return;
     auto* s = new detail::State;
     s->theme = theme;
+    s->can_resize = options.resizable;
+    s->can_max = options.maximizable && options.resizable;
     SetPropW(hwnd, detail::kProp, s);
     LONG_PTR style = GetWindowLongPtrW(hwnd, GWL_STYLE);
-    style |= WS_CAPTION | WS_THICKFRAME | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
+    style |= WS_CAPTION | WS_THICKFRAME | WS_SYSMENU | WS_MINIMIZEBOX;
+    if (s->can_max) style |= WS_MAXIMIZEBOX;
+    else style &= ~static_cast<LONG_PTR>(WS_MAXIMIZEBOX);
     SetWindowLongPtrW(hwnd, GWL_STYLE, style);
     detail::apply_dwm(hwnd, theme);
     SetWindowPos(hwnd, nullptr, 0, 0, 0, 0,
                  SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOOWNERZORDER);
+}
+
+// Resizes the window (top-left stays) so the client area is exactly cw x ch. Call after attach().
+inline void fit_client(HWND hwnd, int cw, int ch) {
+    RECT wr, cr;
+    if (!GetWindowRect(hwnd, &wr) || !GetClientRect(hwnd, &cr)) return;
+    SetWindowPos(hwnd, nullptr, 0, 0, (wr.right - wr.left) - cr.right + cw, (wr.bottom - wr.top) - cr.bottom + ch,
+                 SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
 }
 
 // Draws the bar into the top rows of the client area; call at the end of WM_PAINT with its HDC.
@@ -333,7 +362,7 @@ inline bool handle(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp, LRESULT* out) {
     case WM_NCHITTEST: {
         const LRESULT def = DefWindowProcW(hwnd, msg, wp, lp);
         if (def != HTCLIENT) {
-            *out = def;
+            *out = (!s->can_resize && def >= HTLEFT && def <= HTBOTTOMRIGHT) ? static_cast<LRESULT>(HTBORDER) : def;
             return true;
         }
         POINT pt{static_cast<short>(LOWORD(lp)), static_cast<short>(HIWORD(lp))};
@@ -342,9 +371,9 @@ inline bool handle(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp, LRESULT* out) {
         GetClientRect(hwnd, &cr);
         const UINT dpi = dpi_for(hwnd);
         if (pt.y < 0 || pt.y >= bar_height(dpi)) return false;
-        const Btn b = button_at(pt.x, pt.y, cr.right, dpi);
+        const Btn b = button_at(pt.x, pt.y, cr.right, dpi, s->can_max);
         if (b != kNone) *out = b == kClose ? HTCLOSE : b == kMax ? HTMAXBUTTON : HTMINBUTTON;
-        else if (!IsZoomed(hwnd) && pt.y < resize_handle(dpi)) *out = HTTOP;
+        else if (s->can_resize && !IsZoomed(hwnd) && pt.y < resize_handle(dpi)) *out = HTTOP;
         else *out = HTCAPTION;
         return true;
     }
@@ -380,6 +409,12 @@ inline bool handle(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp, LRESULT* out) {
         *out = 0;
         return true;
     }
+    case WM_SYSCOMMAND:
+        if (!s->can_resize && (wp & 0xFFF0) == SC_SIZE) {  // keyboard resize via the system menu
+            *out = 0;
+            return true;
+        }
+        return false;
     case WM_NCACTIVATE:
         s->active = wp != 0;
         invalidate_bar(hwnd);
