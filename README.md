@@ -11,6 +11,8 @@ from process memory (no injection) and presses ability hotkeys via OS-level inpu
 | `simple_ui.inc` | the native dark UI window (pure Win32/GDI) — included by `tds_plus.cpp` |
 | `backend_api.hpp` | engine <-> UI bridge: `TdsSnapshot`, `tds_set_running`, `tds_set_rule`, `tds_request_exit` |
 | `chain_state.hpp` | commander chain state machine (confirm votes, manual-fire adoption) |
+| `rbx_offsets.hpp` | the single table of Roblox client offsets (`off::`) used by every tool |
+| `pattern_scan.hpp` | chunk-safe byte pattern matcher used by `rbx_dump` (`--scan`) |
 | `ui_titlebar.hpp` | header-only dark title bar used by `simple_ui.inc`: replaces the stock Windows caption with in-app min / max / close (fixed-size mode: min / close), keeps drag, snap, system menu; wiring steps in the file header |
 | `titlebar_demo.cpp` | bare window using `ui_titlebar.hpp`: style preview and reference wiring |
 | `tds_state.cpp` | live watcher: HUD (wave / base HP / timer / players), hover panel, serialized tower cards with DPS, ability cooldowns |
@@ -50,4 +52,4 @@ g++ -O2 -std=c++17 -static src/rbx_dump.cpp  -o rbx_dump.exe  -lpsapi
   Cooldown/UID`) and ability records (`name/uid/cooldownEnd`) + `ServerTime`.
 
 Input is sent with `SendInput` + real scancodes (Roblox ignores vk-only synthetic keys).
-Offsets change on every Roblox version bump — re-dump with `rbx_dump.exe` when they do.
+Offsets change on every Roblox version bump — re-dump with `rbx_dump.exe` and update `src/rbx_offsets.hpp`.

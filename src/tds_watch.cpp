@@ -14,19 +14,7 @@
 #include <string>
 #include <vector>
 
-namespace off {
-    constexpr uintptr_t VE_POINTER     = 0x858d208;
-    constexpr uintptr_t VE_FAKE_DM     = 0xaf0;
-    constexpr uintptr_t FAKE_REAL_DM   = 0x1f8;
-    constexpr uintptr_t INST_NAME      = 0x70;
-    constexpr uintptr_t INST_CHILDREN  = 0x78;
-    constexpr uintptr_t INST_CLASS_DESC= 0x18;
-    constexpr uintptr_t PLAYERS_LOCAL  = 0x120;
-    constexpr uintptr_t GUI_VISIBLE    = 0x59d;
-    constexpr uintptr_t GUI_TEXT       = 0xdf0;
-    constexpr uintptr_t GUI_IMAGE      = 0xc10;
-    constexpr uintptr_t VALUE          = 0xa8;    // ValueBase::Value
-}
+#include "rbx_offsets.hpp"
 
 static HANDLE g_proc;
 static std::ofstream g_log;
@@ -128,7 +116,7 @@ static void snap(uintptr_t inst, const std::string& path, int depth, std::map<st
                 if (!img.empty()) val += " img=" + img;
             }
         } else if (cls == "ScreenGui") {
-            val = "enabled=" + std::to_string(read<uint8_t>(c + 0x4b4));
+            val = "enabled=" + std::to_string(read<uint8_t>(c + off::SCREEN_GUI_ENABLED));
         }
         out[p + "(" + cls + ")"] = val;
         snap(c, p, depth + 1, out);
@@ -170,9 +158,13 @@ int main(int argc, char** argv) {
     if (!pid) { printf("RobloxPlayerBeta.exe not running\n"); return 1; }
     g_proc = OpenProcess(PROCESS_VM_READ | PROCESS_QUERY_INFORMATION, FALSE, pid);
     if (!g_proc) { printf("OpenProcess failed: %lu\n", GetLastError()); return 1; }
-    HMODULE mods[8];
+    HMODULE mods[8]{};
     DWORD bytes = 0;
-    EnumProcessModules(g_proc, mods, sizeof(mods), &bytes);
+    if (!EnumProcessModules(g_proc, mods, sizeof(mods), &bytes) || bytes < sizeof(HMODULE)) {
+        printf("EnumProcessModules failed: %lu\n", GetLastError());
+        CloseHandle(g_proc);
+        return 1;
+    }
     uintptr_t base = (uintptr_t)mods[0];
     g_log.open("watch.log");
     g_t0 = std::chrono::steady_clock::now();
