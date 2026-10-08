@@ -7,7 +7,10 @@ from process memory (no injection) and presses ability hotkeys via OS-level inpu
 
 | tool | what it does |
 |---|---|
-| `tds_plus.cpp` | the main tool: auto-ability (spam / commander chain), native dark UI window (Win32/GDI), state-stream parsing |
+| `tds_plus.cpp` | the main tool: auto-ability (spam / commander chain), engine core (`tds_run_engine`) |
+| `simple_ui.inc` | the native dark UI window (pure Win32/GDI) — included by `tds_plus.cpp` |
+| `backend_api.hpp` | engine <-> UI bridge: `TdsSnapshot`, `tds_set_running`, `tds_set_rule`, `tds_request_exit` |
+| `chain_state.hpp` | commander chain state machine (confirm votes, manual-fire adoption) |
 | `tds_state.cpp` | live watcher: HUD (wave / base HP / timer / players), hover panel, serialized tower cards with DPS, ability cooldowns |
 | `tds_roster.cpp` | tower roster from the instance tree (owner, level-insensitive fingerprint) |
 | `tds_tree.cpp` | DataModel instance-tree dumper |
