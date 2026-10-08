@@ -15,6 +15,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include "rbx_offsets.hpp"
 
 static HANDLE g_proc = nullptr;
 
@@ -35,7 +36,7 @@ static std::string read_at(uintptr_t at, size_t len) {
     return out;
 }
 static std::string get_name(uintptr_t inst) {
-    uintptr_t np = read<uintptr_t>(inst + 0x70);
+    uintptr_t np = read<uintptr_t>(inst + off::INST_NAME);
     if (!valid_ptr(np)) return "";
     uint64_t len = read<uint64_t>(np + 0x18);
     if (!len || len > 128) return "";
@@ -48,7 +49,7 @@ static std::string get_name(uintptr_t inst) {
 }
 static std::vector<uintptr_t> get_children(uintptr_t inst) {
     std::vector<uintptr_t> out;
-    uintptr_t holder = read<uintptr_t>(inst + 0x78);
+    uintptr_t holder = read<uintptr_t>(inst + off::INST_CHILDREN);
     if (!valid_ptr(holder)) return out;
     uintptr_t cur = read<uintptr_t>(holder), end = read<uintptr_t>(holder + 0x8);
     if (!valid_ptr(cur) || !valid_ptr(end) || end < cur || (end - cur) / 0x10 > 20000) return out;
@@ -59,7 +60,7 @@ static std::vector<uintptr_t> get_children(uintptr_t inst) {
     return out;
 }
 static std::string get_class_name(uintptr_t inst) {
-    uintptr_t desc = read<uintptr_t>(inst + 0x18);
+    uintptr_t desc = read<uintptr_t>(inst + off::INST_CLASS_DESC);
     if (!valid_ptr(desc)) return "";
     uintptr_t str = read<uintptr_t>(desc + 0x8);
     if (!valid_ptr(str)) return "";
@@ -217,20 +218,24 @@ int main(int argc, char** argv) {
     if (!pid) { printf("RobloxPlayerBeta.exe not running\n"); return 1; }
     g_proc = OpenProcess(PROCESS_VM_READ | PROCESS_QUERY_INFORMATION, FALSE, pid);
     if (!g_proc) { printf("OpenProcess failed: %lu\n", GetLastError()); return 1; }
-    HMODULE mods[8];
+    HMODULE mods[8]{};
     DWORD bytes = 0;
-    EnumProcessModules(g_proc, mods, sizeof(mods), &bytes);
+    if (!EnumProcessModules(g_proc, mods, sizeof(mods), &bytes) || bytes < sizeof(HMODULE)) {
+        printf("EnumProcessModules failed: %lu\n", GetLastError());
+        CloseHandle(g_proc);
+        return 1;
+    }
     uintptr_t base = (uintptr_t)mods[0];
 
     // my user id via LocalPlayer
-    uintptr_t ve = read<uintptr_t>(base + 0x858d208);
-    uintptr_t fdm = valid_ptr(ve) ? read<uintptr_t>(ve + 0xaf0) : 0;
-    uintptr_t dm = valid_ptr(fdm) ? read<uintptr_t>(fdm + 0x1f8) : 0;
+    uintptr_t ve = read<uintptr_t>(base + off::VE_POINTER);
+    uintptr_t fdm = valid_ptr(ve) ? read<uintptr_t>(ve + off::VE_FAKE_DM) : 0;
+    uintptr_t dm = valid_ptr(fdm) ? read<uintptr_t>(fdm + off::FAKE_REAL_DM) : 0;
     uintptr_t players = 0;
     for (uintptr_t c : get_children(dm))
         if (get_class_name(c) == "Players") { players = c; break; }
-    uintptr_t lp = players ? read<uintptr_t>(players + 0x120) : 0;
-    double my_id = (double)read<int64_t>(lp + 0xc0);
+    uintptr_t lp = players ? read<uintptr_t>(players + off::PLAYERS_LOCAL) : 0;
+    double my_id = (double)read<int64_t>(lp + off::PLAYER_USERID);
     printf("me: %s (%.0f)\n", get_name(lp).c_str(), my_id);
 
     printf("discovering sync regions...\n");
@@ -242,10 +247,10 @@ int main(int argc, char** argv) {
     // GUI text member (inline std::string)
     auto gui_text = [](uintptr_t inst) -> std::string {
         if (!inst) return "";
-        uint32_t len = read<uint32_t>(inst + 0xdf0 + 0x10);
+        uint32_t len = read<uint32_t>(inst + off::GUI_TEXT + 0x10);
         if (!len || len > 256) return "";
-        uintptr_t at = inst + 0xdf0;
-        if (len > 15) { at = read<uintptr_t>(inst + 0xdf0); if (!valid_ptr(at)) return ""; }
+        uintptr_t at = inst + off::GUI_TEXT;
+        if (len > 15) { at = read<uintptr_t>(inst + off::GUI_TEXT); if (!valid_ptr(at)) return ""; }
         std::string s = read_at(at, len);
         auto nul = s.find('\0');
         if (nul != std::string::npos) s.resize(nul);

@@ -29,22 +29,7 @@
 
 static std::atomic<bool> g_exit_requested{false};
 
-namespace off {
-    constexpr uintptr_t VE_POINTER     = 0x858d208;
-    constexpr uintptr_t VE_FAKE_DM     = 0xaf0;
-    constexpr uintptr_t FAKE_REAL_DM   = 0x1f8;
-    constexpr uintptr_t DM_PLACE_ID    = 0x188;
-    constexpr uintptr_t DM_WORKSPACE   = 0x150;
-    constexpr uintptr_t INST_NAME      = 0x70;
-    constexpr uintptr_t INST_CHILDREN  = 0x78;
-    constexpr uintptr_t INST_CLASS_DESC= 0x18;
-    constexpr uintptr_t INST_PARENT    = 0x68;
-    constexpr uintptr_t PLAYERS_LOCAL  = 0x120;
-    constexpr uintptr_t SCREEN_GUI_ENABLED = 0x4b4;
-    constexpr uintptr_t GUI_VISIBLE    = 0x59d;
-    constexpr uintptr_t GUI_TEXT       = 0xdf0;   // inline std::string: len@+0x10, cap@+0x18
-    constexpr uintptr_t GUI_IMAGE      = 0xc10;   // GuiObject::Image on ImageButton (live-verified)
-}
+#include "rbx_offsets.hpp"
 
 struct GroupRule {
     int duration;
@@ -384,8 +369,17 @@ static BOOL CALLBACK enum_wnd_cb(HWND hwnd, LPARAM lp) {
     return TRUE;
 }
 
+static bool refresh_game_window(DWORD pid) {
+    g_game_wnd = nullptr;
+    EnumWindows(enum_wnd_cb, (LPARAM)pid);
+    return g_game_wnd != nullptr;
+}
+
 // returns false when the game window could not be brought forward — caller must not press
 static bool focus_game() {
+    // the window may not exist yet when we attach, or may have been re-created since
+    if (!g_game_wnd || !IsWindow(g_game_wnd)) refresh_game_window(GetProcessId(g_proc));
+    if (!g_game_wnd) return false;
     DWORD game_pid = 0;
     if (g_game_wnd) GetWindowThreadProcessId(g_game_wnd, &game_pid);
     DWORD fg_pid = 0;
@@ -624,6 +618,7 @@ static void logf(const char* fmt, ...) {
     va_start(ap, fmt);
     vsnprintf(buf, sizeof(buf), fmt, ap);
     va_end(ap);
+    for (size_t n = strlen(buf); n > 0 && buf[n - 1] == '\n'; --n) buf[n - 1] = '\0';
     printf("%s\n", buf);
     fflush(stdout);
     std::lock_guard<std::mutex> lock(g_ui.mtx);
@@ -787,6 +782,7 @@ int tds_run_engine(bool offline) {
 #endif
     freopen("tds_plus.log", "w", stdout);
     g_t0 = std::chrono::steady_clock::now();
+    srand(GetTickCount() ^ GetCurrentProcessId());
     AbilityConfig acfg = load_ability_config("tds_abilities.ini");
     if (acfg.rules.empty() && acfg.names.empty()) {
         auto legacy = load_chain_rules("tds_chain.ini");
@@ -824,7 +820,7 @@ int tds_run_engine(bool offline) {
             if (GetAsyncKeyState(VK_END) & 0x8000) { g_exit_requested.store(true); break; }
             pid = find_pid("RobloxPlayerBeta.exe");
             if (pid) {
-                g_proc = OpenProcess(PROCESS_VM_READ | PROCESS_QUERY_INFORMATION, FALSE, pid);
+                g_proc = OpenProcess(PROCESS_VM_READ | PROCESS_QUERY_INFORMATION | SYNCHRONIZE, FALSE, pid);
                 if (g_proc) {
                     HMODULE mods[8]{};
                     DWORD bytes = 0;
@@ -849,7 +845,7 @@ int tds_run_engine(bool offline) {
         }
         acfg = load_ability_config("tds_abilities.ini");
         load_ui_rules(acfg, "tds_ui_rules.ini");
-        EnumWindows(enum_wnd_cb, (LPARAM)pid);
+        refresh_game_window(pid);
         logf("tds+ attached: pid=%lu base=0x%llx window=0x%llx", pid,
              (unsigned long long)base, (unsigned long long)(uintptr_t)g_game_wnd);
 
