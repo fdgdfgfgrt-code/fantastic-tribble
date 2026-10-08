@@ -179,6 +179,30 @@ int main() {
     check(btn_ready(slot_button, &slot_key, &why), "slot is ready again once every blocker is gone");
     timer.set_text("1");
     check(!btn_ready(slot_button, &slot_key), "refusal works without a reason out-parameter");
+
+    // slot_action: a slot of unknown ability is never pressed; id rules and names keep working
+    const GroupRule chain_rule{10}, off_rule{0};
+    check(slot_action(false, nullptr) == SlotAction::Skip, "a slot with no id rule and no name is not pressed");
+    check(slot_action(true, nullptr) == SlotAction::Spam, "an identified slot without a rule keeps the spam default");
+    check(slot_action(true, &off_rule) == SlotAction::Off && slot_action(false, &off_rule) == SlotAction::Off,
+          "off rules stop a slot, by name or by id");
+    check(slot_action(true, &chain_rule) == SlotAction::Chain && slot_action(false, &chain_rule) == SlotAction::Chain,
+          "chain rules apply by name or by id");
+    {
+        const char* ini_path = "game_state_test_abilities.ini";
+        FILE* ini = fopen(ini_path, "w");
+        if (ini) {
+            fputs("Bounty = off\nDJ Booth/Drop the Beat = spam\n138164251626688 = Kingpin/Bounty\n", ini);
+            fclose(ini);
+        }
+        const AbilityConfig cfg = load_ability_config(ini_path);
+        remove(ini_path);
+        const auto named = cfg.names.find("138164251626688");
+        check(named != cfg.names.end() && named->second == "Kingpin/Bounty", "the id table names the Bounty slot");
+        const auto rule = named == cfg.names.end() ? cfg.name_rules.end() : cfg.name_rules.find(canon_key(named->second));
+        check(rule != cfg.name_rules.end() && slot_action(true, &rule->second) == SlotAction::Off,
+              "the name rule 'Bounty = off' applies once the slot is identified");
+    }
     CloseHandle(g_proc);
     g_proc = nullptr;
     printf("RESULT %d failures\n", failures);

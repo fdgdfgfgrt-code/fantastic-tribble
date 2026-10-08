@@ -23,6 +23,7 @@
 #include <mutex>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 #include "backend_api.hpp"
 #include "chain_state.hpp"
@@ -342,6 +343,16 @@ static std::optional<int> btn_ready_count(const AbilityBtn& button) {
     if (!label || get_class_name(label) != "TextLabel"
         || read<uintptr_t>(label + off::INST_PARENT) != button.content) return std::nullopt;
     return parse_ready_count(read_string(label + off::GUI_TEXT));
+}
+
+// What the engine does with a slot. A slot whose ability is unknown (no id rule, and no name from the
+// id table or the stream link) is never pressed: every per-ability choice is keyed by name, so pressing
+// it would ignore them. It used to fall into the spam default, which is how Bounty got pressed before
+// it was linked.
+enum class SlotAction { Skip, Off, Chain, Spam };
+static SlotAction slot_action(bool has_name, const GroupRule* rule) {
+    if (rule) return rule->duration <= 0 ? SlotAction::Off : SlotAction::Chain;
+    return has_name ? SlotAction::Spam : SlotAction::Skip;
 }
 
 // why (optional) receives a short reason when the slot cannot be pressed;
@@ -888,6 +899,7 @@ int tds_run_engine(bool offline) {
         std::vector<AbilityBtn> buttons;
         bool needs_link = false;
         std::unordered_map<std::string, std::string> link;   // button asset id -> ability name (from stream)
+        std::unordered_set<std::string> unidentified_logged;  // slot ids already reported as unidentified
         std::unordered_map<std::string, ChainState> chain_states;
         std::string last_phase;
         struct PressBlock { std::string key; std::chrono::steady_clock::time_point since; bool logged = false; };
@@ -981,7 +993,8 @@ int tds_run_engine(bool offline) {
                         else if (!nm.empty()) {
                             if (auto name_rule = acfg.name_rules.find(canon_key(nm)); name_rule != acfg.name_rules.end()) rule = &name_rule->second;
                         }
-                        const char* mode = !rule ? "(spam)" : rule->duration <= 0 ? "(off)" : "(chain)";
+                        const char* mode = !rule ? (nm.empty() ? "(not identified, not pressed)" : "(spam)")
+                                                 : rule->duration <= 0 ? "(off)" : "(chain)";
                         logf("  slot[%s] id=%s%s %s\n", key.c_str(), id.c_str(), disp.c_str(), mode);
                     }
                     last_n = buttons.size();
@@ -1110,6 +1123,14 @@ int tds_run_engine(bool offline) {
                     } else if (!name.empty()) {
                         if (auto name_rule = acfg.name_rules.find(group_key); name_rule != acfg.name_rules.end())
                             rule = &name_rule->second;
+                    }
+                    if (slot_action(!name.empty(), rule) == SlotAction::Skip) {
+                        if (unidentified_logged.insert(id).second)
+                            logf("slot [%s] id=%s is not identified yet, not pressing it "
+                                 "(to enable it add \"%s = Tower/Ability\" to the id table in tds_abilities.ini)",
+                                 read_string(b.binding + off::GUI_TEXT).c_str(), id.c_str(),
+                                 id.empty() ? "<id>" : id.c_str());
+                        continue;
                     }
                     char key = 0;
                     ChainState* chain = nullptr;
