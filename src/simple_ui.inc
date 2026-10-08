@@ -3,7 +3,6 @@
 #include <atomic>
 #include <cwctype>
 #include <windowsx.h>
-#include "ui_titlebar.hpp"
 
 namespace ui_color {
     constexpr COLORREF bg = RGB(12, 14, 16);
@@ -16,17 +15,6 @@ namespace ui_color {
     constexpr COLORREF amber = RGB(229, 194, 119);
     constexpr COLORREF red = RGB(224, 143, 143);
     constexpr COLORREF input = RGB(29, 33, 36);
-}
-
-static titlebar::Theme ui_titlebar_theme() {
-    titlebar::Theme theme;
-    theme.bg = ui_color::bg;
-    theme.fg = ui_color::text;
-    theme.fg_dim = ui_color::muted;
-    theme.hover = RGB(33, 37, 41);
-    theme.pressed = ui_color::panel;
-    theme.border = ui_color::border;
-    return theme;
 }
 
 static constexpr int ui_width = 820;
@@ -120,7 +108,6 @@ static void ui_paint(HWND window) {
     HBRUSH background = CreateSolidBrush(ui_color::bg);
     FillRect(canvas, &client, background);
     DeleteObject(background);
-    SetViewportOrgEx(canvas, 0, titlebar::height(window), nullptr);  // content below the title bar
 
     HFONT logo_font = ui_font(27, FW_BOLD);
     HFONT title_font = ui_font(20, FW_SEMIBOLD);
@@ -245,8 +232,6 @@ static void ui_paint(HWND window) {
     ui_text(canvas, body_font, ui_color::muted, L"F6: вкл/выкл  ·  End: выход",
             {480, 636, 792, 667}, DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
 
-    SetViewportOrgEx(canvas, 0, 0, nullptr);
-    titlebar::paint(window, canvas);
     BitBlt(target, 0, 0, client.right, client.bottom, canvas, 0, 0, SRCCOPY);
     DeleteObject(logo_font);
     DeleteObject(title_font);
@@ -263,41 +248,38 @@ static void ui_paint(HWND window) {
 static void ui_cycle_mode(int visible_index, bool duration_only) {
     if (visible_index < 0 || visible_index >= static_cast<int>(g_mode_keys.size())) return;
     const std::string key = g_mode_keys[visible_index];
-    int mode = 0, seconds = 10;
-    bool found = false;
+    bool changed = false;
     {
         std::lock_guard<std::mutex> lock(g_ui.mtx);
-        for (const UiEntry& entry : g_ui.entries) {
+        for (UiEntry& entry : g_ui.entries) {
             if (canon_key(entry.name) != key) continue;
-            mode = entry.mode;
-            seconds = entry.seconds;
-            found = true;
+            if (duration_only) {
+                if (entry.mode != 1) break;
+                static constexpr int durations[] = {5, 10, 15, 20, 30, 45, 60};
+                int position = 0;
+                while (position < 7 && durations[position] != entry.seconds) ++position;
+                entry.seconds = durations[(position + 1) % 7];
+            } else {
+                entry.mode = (entry.mode + 1) % 3;
+            }
+            changed = true;
             break;
         }
     }
-    if (!found) return;
-    if (duration_only) {
-        if (mode != 1) return;
-        static constexpr int durations[] = {5, 10, 15, 20, 30, 45, 60};
-        int position = 0;
-        while (position < 7 && durations[position] != seconds) ++position;
-        seconds = durations[(position + 1) % 7];
-    } else {
-        mode = (mode + 1) % 3;
+    if (changed) {
+        ui_write_rules();
+        InvalidateRect(g_ui_hwnd, nullptr, FALSE);
     }
-    if (tds_set_rule(key, mode, seconds)) InvalidateRect(g_ui_hwnd, nullptr, FALSE);
 }
 
 static LRESULT CALLBACK ui_wndproc(HWND window, UINT message, WPARAM w_param, LPARAM l_param) {
-    LRESULT frame_result = 0;
-    if (titlebar::handle(window, message, w_param, l_param, &frame_result)) return frame_result;
     switch (message) {
     case WM_CREATE:
         g_search_font = ui_font(15, FW_NORMAL);
         g_search_brush = CreateSolidBrush(ui_color::input);
         g_search_hwnd = CreateWindowExW(0, L"EDIT", L"",
                                       WS_CHILD | WS_VISIBLE | WS_TABSTOP | ES_AUTOHSCROLL,
-                                      125, 178 + titlebar::height(window), 653, 26, window,
+                                      125, 178, 653, 26, window,
                                       reinterpret_cast<HMENU>(1001), GetModuleHandleW(nullptr), nullptr);
         SendMessageW(g_search_hwnd, WM_SETFONT, reinterpret_cast<WPARAM>(g_search_font), TRUE);
         SendMessageW(g_search_hwnd, 0x1501, FALSE,
@@ -326,19 +308,15 @@ static LRESULT CALLBACK ui_wndproc(HWND window, UINT message, WPARAM w_param, LP
         ui_paint(window);
         return 0;
     case WM_MOUSEWHEEL: {
-        static int wheel_carry = 0;  // 3 rows per notch, fractions of a notch are carried over
-        wheel_carry += GET_WHEEL_DELTA_WPARAM(w_param) * 3;
-        const int rows = wheel_carry / WHEEL_DELTA;
-        wheel_carry -= rows * WHEEL_DELTA;
-        if (rows == 0) return 0;
-        g_scroll = std::clamp(g_scroll - rows, 0,
+        const int steps = GET_WHEEL_DELTA_WPARAM(w_param) / WHEEL_DELTA;
+        g_scroll = std::clamp(g_scroll - steps * 3, 0,
                               std::max(0, g_filtered_count - visible_rows));
         InvalidateRect(window, nullptr, FALSE);
         return 0;
     }
     case WM_MOUSEMOVE: {
         const int x = GET_X_LPARAM(l_param);
-        const int y = GET_Y_LPARAM(l_param) - titlebar::height(window);
+        const int y = GET_Y_LPARAM(l_param);
         const int row = x >= 28 && x < 792 && y >= list_top && y < list_bottom
                         ? (y - list_top) / row_height : -1;
         if (row != g_hover_row) {
@@ -355,7 +333,7 @@ static LRESULT CALLBACK ui_wndproc(HWND window, UINT message, WPARAM w_param, LP
         return 0;
     case WM_LBUTTONUP: {
         const int x = GET_X_LPARAM(l_param);
-        const int y = GET_Y_LPARAM(l_param) - titlebar::height(window);
+        const int y = GET_Y_LPARAM(l_param);
         if (ui_contains(g_toggle_rect, x, y)) {
             std::lock_guard<std::mutex> lock(g_ui.mtx);
             g_ui.running = !g_ui.running;
@@ -368,7 +346,7 @@ static LRESULT CALLBACK ui_wndproc(HWND window, UINT message, WPARAM w_param, LP
     }
     case WM_RBUTTONUP: {
         const int x = GET_X_LPARAM(l_param);
-        const int y = GET_Y_LPARAM(l_param) - titlebar::height(window);
+        const int y = GET_Y_LPARAM(l_param);
         for (int i = 0; i < static_cast<int>(g_mode_rects.size()); ++i)
             if (ui_contains(g_mode_rects[i], x, y)) { ui_cycle_mode(i, true); break; }
         return 0;
@@ -407,14 +385,16 @@ static DWORD WINAPI ui_thread(LPVOID) {
                                 style | WS_CLIPCHILDREN, x, y, outer_width, outer_height,
                                 nullptr, nullptr, window_class.hInstance, nullptr);
     if (!g_ui_hwnd) { g_exit_requested.store(true); return 1; }
-    // fixed layout: no maximise, no resize; the bar adds its height on top of the content area
-    titlebar::attach(g_ui_hwnd, ui_titlebar_theme(), {false, false});
-    titlebar::fit_client(g_ui_hwnd, ui_width, ui_height + titlebar::height(g_ui_hwnd));
-    RECT frame{};
-    GetWindowRect(g_ui_hwnd, &frame);
-    SetWindowPos(g_ui_hwnd, nullptr, (GetSystemMetrics(SM_CXSCREEN) - (frame.right - frame.left)) / 2,
-                 (GetSystemMetrics(SM_CYSCREEN) - (frame.bottom - frame.top)) / 2, 0, 0,
-                 SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+    HMODULE dwm = LoadLibraryW(L"dwmapi.dll");
+    if (dwm) {
+        using DarkTitleBar = HRESULT (WINAPI*)(HWND, DWORD, LPCVOID, DWORD);
+        auto set_attribute = reinterpret_cast<DarkTitleBar>(GetProcAddress(dwm, "DwmSetWindowAttribute"));
+        if (set_attribute) {
+            BOOL enabled = TRUE;
+            set_attribute(g_ui_hwnd, 20, &enabled, sizeof(enabled));
+        }
+        FreeLibrary(dwm);
+    }
     ShowWindow(g_ui_hwnd, SW_SHOW);
     UpdateWindow(g_ui_hwnd);
     MSG message{};
