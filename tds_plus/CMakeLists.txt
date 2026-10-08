@@ -8,7 +8,7 @@ set(CMAKE_AUTOMOC ON)
 find_package(Qt6 6.10 REQUIRED COMPONENTS Quick QuickControls2 ShaderTools)
 
 set(APP_SOURCES qt/main.cpp qt/control_model.cpp qt/control_model.hpp tds_plus.cpp backend_api.hpp)
-set(UI_ASSETS qml/Main.qml qml/AmbientBackground.qml qt/tds_plus.ico
+set(UI_ASSETS qml/Main.qml qml/AmbientBackground.qml qml/TitleBar.qml qt/tds_plus.ico
     assets/fonts/GeistMono-Medium.ttf assets/fonts/GeistMono-SemiBold.ttf
     assets/fonts/OFL.txt assets/fonts/SOURCE.txt)
 qt_add_executable(tds_plus_qt WIN32 ${APP_SOURCES} qt/app.rc)
@@ -26,6 +26,12 @@ if(TDS_BUILD_UI_TEST)
     add_executable(tds_plus_chain_state_test tests/chain_state_test.cpp)
     set_target_properties(tds_plus_chain_state_test PROPERTIES AUTOMOC OFF)
     add_test(NAME chain_state COMMAND tds_plus_chain_state_test)
+    add_executable(tds_plus_frame_zone_test tests/frame_zone_test.cpp)
+    set_target_properties(tds_plus_frame_zone_test PROPERTIES AUTOMOC OFF)
+    if(MSVC)
+        target_compile_options(tds_plus_frame_zone_test PRIVATE /utf-8 /W4)
+    endif()
+    add_test(NAME frame_zone COMMAND tds_plus_frame_zone_test)
     add_executable(tds_plus_game_state_test tests/game_state_test.cpp)
     set_target_properties(tds_plus_game_state_test PROPERTIES AUTOMOC OFF)
     target_compile_definitions(tds_plus_game_state_test PRIVATE TDS_PLUS_QT NOMINMAX WIN32_LEAN_AND_MEAN _CRT_SECURE_NO_WARNINGS)

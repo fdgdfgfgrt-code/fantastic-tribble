@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <dwmapi.h>
 #include "control_model.hpp"
+#include "frame_filter.hpp"
 #include <QCommandLineParser>
 #include <QDir>
 #include <QFileInfo>
@@ -14,6 +15,7 @@
 #include <QQuickWindow>
 #include <QSettings>
 #include <cstdio>
+#include <memory>
 #include <thread>
 #ifdef TDS_UI_SMOKE
 #include "smoke_test.hpp"
@@ -41,6 +43,7 @@ int main(int argc, char* argv[]) {
     QCommandLineParser parser;
     parser.addHelpOption();
     parser.addOption({"offline", "Open the UI without attaching to Roblox."});
+    parser.addOption({"native-frame", "Use the standard Windows title bar instead of the custom one."});
     parser.addOption({"config-dir", "Directory containing the existing tds+ INI files.", "path"});
     parser.process(app);
 
@@ -64,6 +67,7 @@ int main(int argc, char* argv[]) {
     });
 
     const bool offline = parser.isSet("offline");
+    const bool custom_frame = !parser.isSet("native-frame");
     std::thread engine_thread([offline] { tds_run_engine(offline); });
     ControlModel control_model(offline);
     QQmlApplicationEngine qml_engine;
@@ -71,6 +75,7 @@ int main(int argc, char* argv[]) {
     SystemParametersInfoW(SPI_GETCLIENTAREAANIMATION, 0, &motion_enabled, 0);
     qml_engine.rootContext()->setContextProperty("systemMotionEnabled", motion_enabled != FALSE);
     qml_engine.rootContext()->setContextProperty("controlModel", &control_model);
+    qml_engine.rootContext()->setContextProperty("customFrameEnabled", custom_frame);
     QObject::connect(&control_model, &ControlModel::exitRequested, &app, &QCoreApplication::quit);
     qml_engine.load(QUrl("qrc:/qml/Main.qml"));
     if (qml_engine.rootObjects().isEmpty()) {
@@ -79,9 +84,26 @@ int main(int argc, char* argv[]) {
         return 3;
     }
     auto* window = qobject_cast<QQuickWindow*>(qml_engine.rootObjects().front());
+    std::unique_ptr<FrameFilter> frame_filter;  // must live as long as the event loop
     if (window) {
+        const HWND hwnd = reinterpret_cast<HWND>(window->winId());
         const BOOL dark = TRUE;
-        DwmSetWindowAttribute(reinterpret_cast<HWND>(window->winId()), 20, &dark, sizeof(dark));
+        DwmSetWindowAttribute(hwnd, 20, &dark, sizeof(dark));
+        if (custom_frame) {
+            frame_filter = std::make_unique<FrameFilter>(window);
+            app.installNativeEventFilter(frame_filter.get());
+            tds_frame::install(hwnd);
+            // The frameless window relies on Qt agreeing with Windows about the client size; say so in the log if not.
+            QTimer::singleShot(800, window, [window, hwnd] {
+                RECT client{};
+                if (!GetClientRect(hwnd, &client)) return;
+                const qreal ratio = window->devicePixelRatio();
+                if (qAbs(client.right - qRound(window->width() * ratio)) > 2 ||
+                    qAbs(client.bottom - qRound(window->height() * ratio)) > 2)
+                    qWarning("custom frame: Qt window is %dx%d, client area is %ldx%ld (use --native-frame)",
+                             window->width(), window->height(), client.right, client.bottom);
+            });
+        }
 #ifndef TDS_UI_SMOKE
         QSettings settings;
         QSize size = settings.value("window/size", window->size()).toSize();
