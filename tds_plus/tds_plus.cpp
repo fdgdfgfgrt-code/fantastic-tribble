@@ -344,20 +344,26 @@ static std::optional<int> btn_ready_count(const AbilityBtn& button) {
     return parse_ready_count(read_string(label + off::GUI_TEXT));
 }
 
-static bool btn_ready(const AbilityBtn& b, char* key_out) {
-    if (gui_visible(b.locked)) return false;                       // locked slot
+// why (optional) receives a short reason when the slot cannot be pressed
+static bool btn_ready(const AbilityBtn& b, char* key_out, std::string* why = nullptr) {
+    const auto refuse = [&](std::string reason) {
+        if (why) *why = std::move(reason);
+        return false;
+    };
+    if (gui_visible(b.locked)) return refuse("is locked");
     std::string tl = read_string(b.time_left + off::GUI_TEXT);
-    if (!tl.empty()) return false;                                 // counting down = on cooldown
+    if (!tl.empty()) return refuse("shows a cooldown timer \"" + tl + "\"");   // counting down
     if (gui_visible(b.price)) {
         std::string p = read_string(b.price + off::GUI_TEXT);
-        if (!p.empty()) return false;                              // costs money right now
+        if (!p.empty()) return refuse("costs money right now (" + p + ")");
     }
     if (b.ammo) {
         const auto count = btn_ready_count(b);
-        if (!count || *count == 0) return false;
+        if (!count) return refuse("ready count is unreadable");
+        if (*count == 0) return refuse("has no ready charges");
     }
     std::string key = read_string(b.binding + off::GUI_TEXT);
-    if (key.empty()) return false;
+    if (key.empty()) return refuse("has no hotkey label");
     *key_out = key[0];
     return true;
 }
@@ -416,12 +422,12 @@ static bool focus_game() {
 // roblox reads scancodes — vk-only synthetic keys are ignored, KEYEVENTF_SCANCODE lands.
 // never VkKeyScanA here: it resolves through the thread's keyboard layout and returns
 // -1 for latin letters when the layout is cyrillic — letters map to vks directly
-static void press_key(char k) {
+static bool press_key(char k) {
     WORD vk = 0;
     if (k >= 'A' && k <= 'Z') vk = (WORD)k;
     else if (k >= 'a' && k <= 'z') vk = (WORD)(k - 'a' + 'A');
     else if (k >= '0' && k <= '9') vk = (WORD)k;
-    else return;
+    else return false;
     WORD scan = (WORD)MapVirtualKeyA(vk, MAPVK_VK_TO_VSC);
     INPUT in[2]{};
     in[0].type = INPUT_KEYBOARD;
@@ -430,9 +436,10 @@ static void press_key(char k) {
     in[0].ki.dwFlags = KEYEVENTF_SCANCODE;
     in[1] = in[0];
     in[1].ki.dwFlags = KEYEVENTF_SCANCODE | KEYEVENTF_KEYUP;
-    SendInput(1, in, sizeof(INPUT));
+    const UINT down = SendInput(1, in, sizeof(INPUT));
     Sleep(30 + rand() % 25);
-    SendInput(1, in + 1, sizeof(INPUT));
+    const UINT up = SendInput(1, in + 1, sizeof(INPUT));
+    return down == 1 && up == 1;
 }
 
 static DWORD find_pid(const char* name) {
@@ -877,9 +884,11 @@ int tds_run_engine(bool offline) {
         std::unordered_map<std::string, std::string> link;   // button asset id -> ability name (from stream)
         std::unordered_map<std::string, ChainState> chain_states;
         std::string last_phase;
+        struct PressBlock { std::string key; std::chrono::steady_clock::time_point since; bool logged = false; };
+        PressBlock press_block;
         auto last_buttons = std::chrono::steady_clock::now() - std::chrono::seconds(10);
         auto last_resolve = std::chrono::steady_clock::now() - std::chrono::seconds(10);
-        logf("F6 = toggle auto-ability | F7 = debug slots | END = exit\n");
+        logf("auto-ability starts OFF: press Start or F6 (the log shows [on]) | F7 = debug slots | END = exit\n");
 
         while (!g_exit_requested.load()) {
             if (WaitForSingleObject(g_proc, 0) == WAIT_OBJECT_0) {
@@ -975,7 +984,6 @@ int tds_run_engine(bool offline) {
                 // sync the UI entry list with what's live + what's configured + the full wiki list
                 {
                     std::lock_guard<std::mutex> lock(g_ui.mtx);
-                    g_ui.running = running;
                     g_ui.entries.clear();
                     auto push_entry = [&](const std::string& name, const std::string& tower = "",
                                           double cd = 0, bool live = false) {
@@ -1064,6 +1072,16 @@ int tds_run_engine(bool offline) {
             }
 
             const bool can_send = running && !menu_open && !game_over;
+            // first reason this pass could not press anything for an enabled ability; reported only when
+            // it lasts longer than its threshold, so normal cooldown waits stay out of the log
+            std::string block_key, block_detail;
+            int block_after_s = 0;
+            const auto block = [&](const char* key, int after_s, std::string detail = "") {
+                if (!block_key.empty()) return;
+                block_key = key;
+                block_after_s = after_s;
+                block_detail = std::move(detail);
+            };
             if (!buttons.empty() && !game_over) {
                 bool game_focused = false;
                 std::unordered_map<std::string, bool> group_fired;  // one press per group per pass
@@ -1110,16 +1128,25 @@ int tds_run_engine(bool offline) {
                             logf("manual fire adopted %s, buff until +%ds", rname.c_str(), r.duration);
                         else if (event == ChainEvent::Unconfirmed)
                             logf("chain unconfirmed %s, holding buff window", rname.c_str());
-                        if (!can_send || !chain->can_fire(observed_at)) continue;
-                        if (b.ammo && !chain->count_is_stable(ammo_n)) continue;
-                        if (!btn_ready(b, &key)) continue;
+                        if (!can_send) { block(running ? "menu" : "paused", 5); continue; }
+                        if (!chain->can_fire(observed_at)) continue;   // buff window / waiting for the game's ack
+                        if (b.ammo && !chain->count_is_stable(ammo_n)) {
+                            block("count", 20, ammo_n ? "ready count keeps changing" : "ready count is unreadable");
+                            continue;
+                        }
+                        std::string why;
+                        if (!btn_ready(b, &key, &why)) { block("slot", 45, why); continue; }
                         if (group_fired[group_key]) continue;
                     } else {
-                        if (!can_send) continue;
+                        if (!can_send) { block(running ? "menu" : "paused", 5); continue; }
                         if (!btn_ready(b, &key)) continue;
                     }
                     if (!game_focused) {
-                        if (!focus_game()) continue;
+                        if (!focus_game()) {
+                            block("focus", 3, g_game_wnd ? "the Roblox window could not be brought to the front"
+                                                         : "no Roblox window was found");
+                            continue;
+                        }
                         game_focused = true;
                     }
                     if (chain) {
@@ -1128,9 +1155,13 @@ int tds_run_engine(bool offline) {
                         chain->begin_press(std::chrono::steady_clock::now(), current_count, std::chrono::seconds(rule->duration));
                         group_fired[group_key] = true;
                     }
-                    press_key(key);
+                    const bool sent = press_key(key);
                     const double fired_s = std::chrono::duration<double>(std::chrono::steady_clock::now() - g_t0).count();
-                    logf("fired ability [%c] %s | t=%.3fs", key, rname.empty() ? id.c_str() : rname.c_str(), fired_s);
+                    if (sent)
+                        logf("fired ability [%c] %s | t=%.3fs", key, rname.empty() ? id.c_str() : rname.c_str(), fired_s);
+                    else
+                        logf("key [%c] for %s was rejected by Windows (error %lu)", key,
+                             rname.empty() ? id.c_str() : rname.c_str(), GetLastError());
                     {
                         std::lock_guard<std::mutex> lock(g_ui.mtx);
                         double now_s = std::chrono::duration<double>(
@@ -1138,6 +1169,24 @@ int tds_run_engine(bool offline) {
                         g_ui.fired_at[canon_key(rname.empty() ? id : rname)] = now_s;
                     }
                     Sleep(150 + rand() % 100);
+                }
+            }
+            {
+                const auto t = std::chrono::steady_clock::now();
+                if (block_key != press_block.key) { press_block = {block_key, t, false}; }
+                if (!block_key.empty() && !press_block.logged &&
+                    t - press_block.since >= std::chrono::seconds(block_after_s)) {
+                    press_block.logged = true;
+                    if (block_key == "paused")
+                        logf("not pressing: auto-ability is OFF, press Start or F6 (the log shows [on] when it is enabled)");
+                    else if (block_key == "menu")
+                        logf("not pressing: the upgrade menu is open or the ability bar is hidden");
+                    else if (block_key == "focus")
+                        logf("not pressing: %s", block_detail.c_str());
+                    else if (block_key == "count")
+                        logf("not pressing: chain: %s", block_detail.c_str());
+                    else
+                        logf("not pressing: the slot %s", block_detail.c_str());
                 }
             }
             Sleep(60);
