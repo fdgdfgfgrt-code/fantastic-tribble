@@ -6,6 +6,12 @@ name: windows-qt-build
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - 'hoplite/**'
+    paths:
+      - 'tds_plus/**'
+      - '.github/workflows/windows-qt-build.yml'
   pull_request:
     paths:
       - 'tds_plus/**'
