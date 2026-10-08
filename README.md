@@ -8,6 +8,8 @@ from process memory (no injection) and presses ability hotkeys via OS-level inpu
 | tool | what it does |
 |---|---|
 | `tds_plus.cpp` | the main tool: auto-ability (spam / commander chain), native dark UI window (Win32/GDI), state-stream parsing |
+| `ui_titlebar.hpp` | header-only custom title bar for the UI window: replaces the stock Windows caption with in-app min / max / close, keeps drag, resize, snap; wiring steps in the file header |
+| `titlebar_demo.cpp` | bare window using `ui_titlebar.hpp`: style preview and reference wiring |
 | `tds_state.cpp` | live watcher: HUD (wave / base HP / timer / players), hover panel, serialized tower cards with DPS, ability cooldowns |
 | `tds_roster.cpp` | tower roster from the instance tree (owner, level-insensitive fingerprint) |
 | `tds_tree.cpp` | DataModel instance-tree dumper |
@@ -18,6 +20,7 @@ from process memory (no injection) and presses ability hotkeys via OS-level inpu
 
 ```sh
 g++ -O2 -std=c++17 -mwindows -static src/tds_plus.cpp -o tds_plus.exe -lpsapi -lgdi32
+g++ -O2 -std=c++17 -mwindows -static src/titlebar_demo.cpp -o titlebar_demo.exe -lgdi32
 g++ -O2 -std=c++17 -static src/tds_state.cpp -o tds_state.exe -lpsapi
 g++ -O2 -std=c++17 -static src/tds_roster.cpp -o tds_roster.exe -lpsapi
 g++ -O2 -std=c++17 -static src/tds_tree.cpp  -o tds_tree.exe  -lpsapi
