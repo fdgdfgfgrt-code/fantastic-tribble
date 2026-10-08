@@ -1,0 +1,3198 @@
+== Workspace\Towers ==
+[Folder] Towers  @0x256602183c0
+  [Model] Default  @0x2562831eb00
+    [ModuleScript] UpgradesModule  @0x2570be7d980
+    [Model] DJRig  @0x2562831e780
+      [Model] LampRig  @0x25628318200
+        [Part] Swivel1R  @0x256589bc000
+          [Motor6D] Lamp2R  @0x25631f3a180
+        [Part] Swivel1M  @0x256589bda00
+          [Motor6D] Lamp2M  @0x25631f398c0
+        [Part] Lamp2R  @0x256589bdc00
+        [Part] Lamp2M  @0x256589be000
+        [Part] Swivel1L  @0x256589bde00
+          [Motor6D] Lamp2L  @0x25631f38ac0
+        [Part] Lamp2L  @0x256589be200
+      [Part] 0 Disk  @0x256589be400
+      [Part] 3 DiskL  @0x256589be600
+      [Part] 3 DiskR  @0x256589be800
+      [Part] 5 Disk2R  @0x256589bea00
+      [Part] 5 Disk1L  @0x256589bec00
+      [Part] 5 Disk2L  @0x256589bee00
+      [Part] 5 Disk1R  @0x256589bf000
+    [Model] Weapon  @0x2562831a500
+      [Model] Booth  @0x2562831ba00
+        [Model] Stage  @0x25628313880
+          [MeshPart] BoothMax  @0x25657267400
+          [MeshPart] BoothScreen  @0x25657264000
+          [MeshPart] Controls  @0x25657266000
+          [MeshPart] Disc_5L  @0x25657263c00
+            [WeldConstraint] WeldConstraint  @0x2564a2d3b40
+          [MeshPart] Disc_5R  @0x2565726b000
+            [WeldConstraint] WeldConstraint  @0x2564a2d6840
+          [MeshPart] MaxControls_Neon  @0x25657261400
+          [MeshPart] OverheadL_Frame  @0x25657265000
+            [WeldConstraint] WeldConstraint  @0x2564a2d8780
+          [MeshPart] OverheadL_Swivel  @0x2565726f000
+            [WeldConstraint] WeldConstraint  @0x2564a2db0c0
+          [MeshPart] OverheadM_Frame  @0x25657268000
+            [WeldConstraint] WeldConstraint  @0x2564a2d10c0
+          [MeshPart] OverheadM_Swivel  @0x25657262800
+            [WeldConstraint] WeldConstraint  @0x2564a2d4b80
+          [MeshPart] OverheadR_Frame  @0x2565726bc00
+            [WeldConstraint] WeldConstraint  @0x2564a2d2c40
+          [MeshPart] OverheadR_Swivel  @0x2565726c000
+            [WeldConstraint] WeldConstraint  @0x2564a2d33c0
+          [MeshPart] SecondaryDisc_L  @0x2565726a000
+            [WeldConstraint] WeldConstraint  @0x2564a2d9f40
+          [MeshPart] SecondaryDisc_R  @0x2565726f400
+            [WeldConstraint] WeldConstraint  @0x2564a2dd280
+        [Model] SpeakerMax_R  @0x25628310e80
+          [MeshPart] SpeakerRightMax  @0x25657262400
+            [WeldConstraint] SpeakerRightMax  @0x2564a2dbd40
+          [MeshPart] SpeakerMax_RGlow  @0x2565726a400
+            [WeldConstraint] SpeakerRightMax  @0x2564a2d7740
+          [MeshPart] SpeakerMax_R_Turbine1  @0x25657266c00
+            [WeldConstraint] SpeakerRightMax  @0x2564a2d0300
+          [MeshPart] SpeakerMax_R_Turbine2  @0x25657266400
+            [WeldConstraint] SpeakerRightMax  @0x2564a2dbac0
+        [Model] SpeakersMiddle  @0x2562831b300
+          [Model] MaxSpeakerL  @0x2562831cf00
+            [MeshPart] SpeakerFrontLeft  @0x2565726d000
+            [MeshPart] MaxSpeakerL_Glow  @0x25657261800
+          [Model] MaxSpeakerM  @0x2562831bd80
+            [MeshPart] SpeakerFrontMiddle  @0x25657260800
+            [MeshPart] MaxSpeakersM_Glow  @0x2565726c400
+          [Model] MaxSpeakerR  @0x25628319000
+            [MeshPart] SpeakerFrontRight  @0x2565726dc00
+            [MeshPart] MaxSpeakerR_Glow  @0x25657269800
+        [Model] Visualizer  @0x25628314a00
+          [Model] Bars  @0x25628316980
+            [MeshPart] 1  @0x25657268400
+            [MeshPart] 6  @0x256248c2400
+            [MeshPart] 5  @0x256248c1800
+            [MeshPart] 4  @0x256248c1400
+            [MeshPart] 3  @0x256248c0c00
+            [MeshPart] 2  @0x256248c1000
+          [Part] Root  @0x256433c4c00
+            [Motor6D] 1  @0x25631f38900
+            [Motor6D] 2  @0x25631f38580
+            [Motor6D] 3  @0x25631f32700
+            [Motor6D] 4  @0x25631f37cc0
+            [Motor6D] 5  @0x25631f37940
+            [Motor6D] 6  @0x25631f33880
+        [Model] SpeakerMax_L  @0x2570fe87080
+          [MeshPart] SpeakerMax_LGlow  @0x256248c0400
+            [WeldConstraint] SpeakerLeftMax  @0x256531ee180
+          [MeshPart] SpeakerMax_L_Turbine1  @0x256248c4c00
+            [WeldConstraint] SpeakerLeftMax  @0x256531ee7c0
+          [MeshPart] SpeakerMax_L_Turbine2  @0x256248c6800
+            [WeldConstraint] SpeakerLeftMax  @0x256531eea40
+          [MeshPart] SpeakerLeftMax  @0x256248c6400
+            [WeldConstraint] SpeakerLeftMax  @0x256531ef6c0
+    [] AnimationController  @0x2564ad32d80
+      [Animator] Animator  @0x25657466c80
+    [Folder] Upgrades  @0x2563ad31580
+      [Folder] 0  @0x2563ad3a960
+        [Model] Headgear  @0x2562831f200
+          [MeshPart] BackwardsCap  @0x25658abbc00
+            [WeldConstraint] WeldConstraint  @0x2564a2df300
+        [MeshPart] LShoe  @0x25658abc400
+          [WeldConstraint] WeldConstraint  @0x2564a2d3780
+        [MeshPart] RShoe  @0x25658abcc00
+          [WeldConstraint] WeldConstraint  @0x2564a2db200
+      [Folder] 1  @0x2563ad3ee80
+        [Model] Headgear  @0x2562831f580
+          [MeshPart] Headphones  @0x25658abdc00
+            [WeldConstraint] WeldConstraint  @0x2564a2d74c0
+        [MeshPart] LGlove1  @0x25658abf400
+          [WeldConstraint] WeldConstraint  @0x2564a2d9e00
+        [MeshPart] RGlove1  @0x25658abf800
+          [WeldConstraint] WeldConstraint  @0x2564a2d5300
+      [Folder] 2  @0x2563ad3ea20
+      [Folder] 3  @0x2563ad39e00
+        [MeshPart] Necklace  @0x2565726f800
+          [WeldConstraint] WeldConstraint  @0x2564a2df940
+        [MeshPart] UpperBelt  @0x25657261c00
+          [WeldConstraint] WeldConstraint  @0x2564a2dd8c0
+        [MeshPart] RPants2  @0x25657262000
+          [WeldConstraint] WeldConstraint  @0x2564a2d8dc0
+        [MeshPart] LPants2  @0x2565726d400
+          [WeldConstraint] WeldConstraint  @0x2564a2d5e40
+      [Folder] 4  @0x2563ad32620
+        [Model] Headgear  @0x2562831d280
+          [MeshPart] Visor  @0x2565726c800
+            [WeldConstraint] WeldConstraint  @0x2564a2db480
+          [MeshPart] VisorGlow  @0x25657268800
+            [WeldConstraint] WeldConstraint  @0x2564a2d6ac0
+        [MeshPart] LSleeve1  @0x25657269000
+          [WeldConstraint] WeldConstraint  @0x2564a2d3f00
+      [Folder] 5  @0x2563ad30a20
+        [MeshPart] SleevedTop  @0x256248c4800
+          [WeldConstraint] WeldConstraint  @0x256531ef580
+        [MeshPart] RSleeve2  @0x256248c5800
+          [WeldConstraint] WeldConstraint  @0x256531ef940
+        [MeshPart] OverheadL_Neon  @0x256248c5400
+          [WeldConstraint] WeldConstraint  @0x256531e0e40
+          [Attachment] Attachment  @0x2565bdb1400
+          [Attachment] Attachment  @0x2565bdbfe00
+          [Beam] Beam  @0x256433c4e00
+        [MeshPart] OverheadM_Neon  @0x256248c5000
+          [WeldConstraint] WeldConstraint  @0x256531e01c0
+          [Attachment] Attachment  @0x2565bdbbc00
+          [Beam] Beam  @0x256433c5000
+          [Attachment] Attachment  @0x2565bdbba80
+        [MeshPart] OverheadR_Neon  @0x256248c7000
+          [WeldConstraint] WeldConstraint  @0x256531e0440
+          [Attachment] Attachment  @0x2565bdbae80
+          [Attachment] Attachment  @0x2565bdb9680
+          [Beam] Beam  @0x256433c4a00
+    [Folder] Animations  @0x25654c2cc60
+      [Folder] Idle  @0x25654c2c020
+        [Animation] 0  @0x2563d565480
+        [Animation] 5  @0x2563d562e00
+        [Animation] 3  @0x2563d563f80
+        [Animation] 1  @0x25654c2b680
+    [Model] SpeakerRig  @0x2570fe85100
+      [Part] SpeakerCenter  @0x256433c5200
+      [Part] SpeakerMini  @0x256433c5400
+      [Part] SpeakerLeft  @0x256433c5600
+      [Part] SpeakerRight  @0x256433c5800
+      [Part] SpeakerRightTop  @0x256433c5a00
+      [Part] SpeakerLeftTop  @0x256433c5c00
+      [Part] SpeakerLeftMax  @0x256433c5e00
+      [Part] SpeakerRightMax  @0x256433c6000
+      [Part] SpeakerMiniLeft  @0x256433c6200
+      [Part] SpeakerMiniRight  @0x256433c6400
+      [Part] SpeakerFrontLeft  @0x256433c6600
+      [Part] SpeakerFrontMiddle  @0x256433c6800
+      [Part] SpeakerFrontRight  @0x256433c6a00
+    [Part] HumanoidRootPart  @0x256433c6c00
+      [Sound] SellSound  @0x2563aebbe80
+      [Sound] Music  @0x2563aeb1700
+      [Motor6D] Torso  @0x25631f313c0
+      [Motor6D] 3 DiskL  @0x25631f37080
+      [Motor6D] 3 DiskR  @0x25631f36600
+      [Motor6D] 5 Disk1L  @0x25631f35d40
+      [Motor6D] 5 Disk1R  @0x25631f35800
+      [Motor6D] 5 Disk2L  @0x25631f35480
+      [Motor6D] 5 Disk2R  @0x25631f32c40
+      [Motor6D] 0 Disk  @0x25631f31740
+      [Motor6D] Swivel1L  @0x25631f3e400
+      [Motor6D] Swivel1R  @0x25631f3e240
+      [Motor6D] Swivel1M  @0x25631f3e080
+      [Attachment] HeightOffset  @0x2565bdb8c00
+      [Motor6D] SpeakerRightMax  @0x25631f3dec0
+      [Motor6D] SpeakerRight  @0x25631f3dd00
+      [Motor6D] SpeakerLeftMax  @0x25631f3d980
+      [Motor6D] SpeakerLeft  @0x25631f3d7c0
+      [Motor6D] SpeakerCenter  @0x25631f3d600
+      [Motor6D] SpeakerMini  @0x25631f3d440
+      [Motor6D] SpeakerMiniRight  @0x25631f3d280
+      [Motor6D] SpeakerMiniLeft  @0x25631f3d0c0
+      [Motor6D] SpeakerFrontLeft  @0x25631f3cf00
+      [Motor6D] SpeakerFrontMiddle  @0x25631f3cd40
+      [Motor6D] SpeakerFrontRight  @0x25631f3cb80
+      [Motor6D] SpeakerRightTop  @0x25631f38c80
+      [Motor6D] SpeakerLeftTop  @0x25631f3c9c0
+      [AudioPlayer] AudioPlayer  @0x25654c8a800
+        [AudioAnalyzer] AudioAnalyzer  @0x256523f0080
+        [Wire] AnalyzeWire  @0x256494a6700
+        [Wire] Wire  @0x256494a5bc0
+      [AudioEmitter] AudioEmitter  @0x256601a0200
+        [Wire] AudioEmitterWire  @0x256494a5f80
+      [BillboardGui] lifeSpan  @0x25660dfa080
+        [Frame] frame  @0x25633843080
+          [Frame] frame1  @0x25633840080
+      [Sound] Sound  @0x25653212100
+      [BillboardGui] allBuffs  @0x256578c1e80
+        [Frame] content  @0x25662a8a880
+          [Frame] 1  @0x25662a89080
+            [TextLabel] text  visible=1 text="20%"  @0x256439c5080
+            [ImageLabel] icon  visible=1 text=""  @0x256587b9c80
+            [] aspectRatio  @0x25662f26ec0
+          [UIListLayout] layout  @0x2564bb459c0
+    [MeshPart] Right Arm  @0x2565dc16800
+    [MeshPart] Right Leg  @0x2565dc16400
+    [MeshPart] Left Arm  @0x2565dc16000
+    [MeshPart] Left Leg  @0x2565dc15c00
+    [MeshPart] Torso  @0x2565dc15400
+      [Motor6D] Right Leg  @0x25631f3c800
+      [Motor6D] Right Arm  @0x25631f3c640
+      [Motor6D] Left Leg  @0x25631f3c2c0
+      [Motor6D] Left Arm  @0x25631f3c100
+      [Motor6D] Head  @0x25631f3bf40
+    [MeshPart] Head  @0x2565dc15800
+      [Decal] Decal  @0x2563b0dd880
+    [ObjectValue] Target  @0x2565d52d520
+    [NumberValue] Owner  @0x2565c2bd940
+    [Folder] Units  @0x2565d52c480
+    [Folder] TowerReplicator  @0x2565d52dd00
+      [Folder] Attributes  @0x2565d52dfa0
+      [Folder] Abilities  @0x2565d52e240
+      [Folder] AbilityData  @0x2565d52e400
+      [Folder] StatusEffects  @0x2565d52e5c0
+      [Folder] AbilityEffects  @0x2565d52e780
+      [Folder] Stuns  @0x2565d52e940
+    [Folder] Queues  @0x2565d52eb00
+    [Folder] Display  @0x2565d52e080
+      [NumberValue] Cooldown  @0x2565c2bd340
+      [IntValue] Hidden  @0x2565c2b7e80
+      [NumberValue] Range  @0x2565c2bb240
+      [NumberValue] Damage  @0x2565c2bb840
+      [NumberValue] Discount  @0x2565c2bb000
+      [NumberValue] Fatigue  @0x2565c2bb0c0
+      [NumberValue] Scared  @0x2565c2bb600
+      [IntValue] Upgrade  @0x2565c2bce00
+      [NumberValue] HiddenExposed  @0x2565c2b1dc0
+      [NumberValue] DisableDiscount  @0x2565c2b4280
+      [NumberValue] Coordination  @0x2565c2b26c0
+      [NumberValue] SharedOptics  @0x2565c2b5180
+      [NumberValue] FireworkBuff  @0x2565c2b3080
+  [Model] Default  @0x256591a7080
+    [ModuleScript] UpgradesModule  @0x2564bb4d0c0
+    [Folder] Weapon  @0x25662f29d20
+      [Folder] Weapon  @0x2563d5689e0
+        [Configuration] Configuration  @0x25628764b80
+          [ObjectValue] RightArm  @0x2563d567f60
+          [ObjectValue] LeftArm  @0x2563d563dc0
+          [ObjectValue] Start  @0x2563d560940
+          [ObjectValue] FlashbangExplosion  @0x2563d561c80
+          [ObjectValue] Flashbang  @0x2563d564140
+        [MeshPart] PumpShotty_5  @0x256549a9c00
+          [Motor6D] PumpShotty_5Motor6D  @0x25631f34f40
+          [] SurfaceAppearance  @0x2563f867a00
+    [Folder] Effects  @0x25662f21e40
+      [Part] MaxExplosion  @0x256601a4e00
+        [ParticleEmitter] SoftGlitter  @0x2564b84d580
+        [Attachment] VFX  @0x256523f4700
+          [ParticleEmitter] GlowfFlash  @0x2564b84cf80
+          [ParticleEmitter] Blast  @0x2564b84ea80
+          [ParticleEmitter] Drops  @0x2564b84c980
+          [ParticleEmitter] Swipe 2  @0x2564b84c380
+          [ParticleEmitter] Sparkles  @0x2564b84fc80
+          [ParticleEmitter] Circle  @0x25654abed80
+          [ParticleEmitter] ProjectileGlow  @0x2565d8a3c80
+          [ParticleEmitter] AOE  @0x2565d8a8180
+          [ParticleEmitter] GlowWave  @0x2565d8a0f80
+          [ParticleEmitter] GlowfFlash  @0x2565d8a0c80
+      [Part] MinExplosion  @0x256601a6000
+        [Attachment] VFX  @0x256523f2000
+          [ParticleEmitter] Sparkles  @0x25662958180
+          [ParticleEmitter] GlowfFlash  @0x2566295b480
+          [ParticleEmitter] Blast  @0x25662952780
+          [ParticleEmitter] ProjectileGlow  @0x25662952480
+          [ParticleEmitter] GlowfFlash  @0x25662953380
+          [ParticleEmitter] AOE  @0x25662959980
+          [ParticleEmitter] Swipe 2  @0x25662950080
+        [ParticleEmitter] SoftGlitter  @0x25662959c80
+    [Folder] Upgrades  @0x25662f22e00
+      [Folder] 4  @0x2562b12cfe0
+        [MeshPart] CombatBoots_4B  @0x256248cb800
+          [Motor6D] CombatBoots_4BMotor6D  @0x2564baab300
+          [] SurfaceAppearance  @0x256433ca600
+      [Folder] 3  @0x2562b129a80
+        [MeshPart] Torso_3  @0x256248cf800
+          [] SurfaceAppearance  @0x256433ca000
+          [Motor6D] Torso_3Motor6D  @0x2564baae940
+      [Folder] 7b  @0x2562b12ac00
+        [MeshPart] Mask_7B  @0x256248c2800
+          [Motor6D] Mask_7BMotor6D  @0x2564baac480
+          [] SurfaceAppearance  @0x256433c9600
+        [MeshPart] Kit_7B  @0x256248c5c00
+          [Motor6D] Kit_7BMotor6D  @0x2564baad440
+          [] SurfaceAppearance  @0x256433c9400
+        [MeshPart] Shield_7B  @0x256248c0800
+          [] SurfaceAppearance  @0x256433c9200
+          [Motor6D] Shield_7BMotor6D  @0x2564baae780
+        [MeshPart] Hammer_7B  @0x256248c4400
+          [Motor6D] Hammer_7BMotor6D  @0x2564baab680
+          [] SurfaceAppearance  @0x2563f86b200
+        [MeshPart] CamoSuits_7B  @0x25651c3f800
+          [] SurfaceAppearance  @0x2563f869400
+          [Motor6D] CamoSuits_7BMotor6D  @0x25631f36b40
+      [Folder] 5b  @0x2563d567cc0
+        [MeshPart] Backpack_5B  @0x256549ac400
+          [] SurfaceAppearance  @0x2563f868200
+          [Motor6D] Backpack_5BMotor6D  @0x25631f32fc0
+        [MeshPart] Mask_5B  @0x256549ac800
+          [Motor6D] Mask_5BMotor6D  @0x25631f38040
+          [] SurfaceAppearance  @0x2563f868400
+      [Folder] 6b  @0x2563d562540
+        [MeshPart] ShoulderPads_6B  @0x256549acc00
+          [Motor6D] ShoulderPads_6BMotor6D  @0x25631f30940
+          [] SurfaceAppearance  @0x2563f86cc00
+      [Folder] 2  @0x2563d568660
+      [Folder] 0  @0x2562b128820
+        [MeshPart] Watch_0  @0x256248c9400
+          [Motor6D] Watch_0Motor6D  @0x2564baabf40
+          [] SurfaceAppearance  @0x256433c7600
+      [Folder] 1  @0x2562b125720
+        [MeshPart] LeftGlove_1  @0x256248cc800
+          [] SurfaceAppearance  @0x256433c7200
+          [Motor6D] LeftGlove_1Motor6D  @0x2564baad7c0
+        [MeshPart] RightGlove_1  @0x256248cc400
+          [] SurfaceAppearance  @0x256433c7400
+          [Motor6D] RightGlove_1Motor6D  @0x2564baac100
+    [Folder] Animations  @0x2562b121c80
+      [Folder] Reload  @0x2562b12bbc0
+        [Animation] 5a  @0x25651bd9000
+      [Folder] Flash  @0x2562b124060
+        [Animation] 5a  @0x2562b1237a0
+        [Animation] 0  @0x2562b120400
+      [Folder] Idle  @0x2562b1299a0
+        [Animation] 0  @0x2562b121040
+        [Animation] 5a  @0x2562b129fc0
+      [Folder] Fire  @0x2562b123420
+        [Animation] 0  @0x2562b1213c0
+        [Animation] 5a  @0x2562b12f660
+      [Folder] Radio  @0x2562b12e860
+        [Animation] 0  @0x2562b12aea0
+        [Animation] 5a  @0x2562b1282e0
+    [Part] RootPart  @0x256433c9000
+      [Attachment] HeightOffset  @0x25647328600
+      [Bone] Torso  @0x256433c8c00
+        [Bone] Right Arm  @0x256433c8e00
+          [Bone] DEF_Gun  @0x256433cbc00
+            [Bone] DEF_Mech  @0x256433cae00
+            [Bone] DEF_Mag  @0x256433cb200
+        [Bone] Left Arm  @0x256433cbe00
+          [Bone] DEF_Flash  @0x256433cb400
+            [Bone] DEF_Spoon  @0x256433cb800
+        [Bone] Right Leg  @0x256433cb600
+        [Bone] Left Leg  @0x256433cac00
+        [Bone] Head  @0x256433c8a00
+          [Attachment] HeadAttachment  @0x25647325780
+      [AudioEmitter] AudioEmitter_Towers  @0x256601a0e00
+      [BillboardGui] lifeSpan  @0x2563b331e80
+        [Frame] frame  @0x25657d9e480
+          [Frame] frame1  @0x25657d98480
+      [BillboardGui] allBuffs  @0x2565ee29680
+        [Frame] content  @0x25631816080
+          [Frame] 1  @0x25638526080
+            [TextLabel] text  visible=1 text="15%"  @0x25662afc080
+            [ImageLabel] icon  visible=1 text=""  @0x25643a23c80
+            [] aspectRatio  @0x25638fb1900
+          [Frame] 2  @0x2565f4a3080
+            [TextLabel] text  visible=1 text="20%"  @0x2566294e080
+            [ImageLabel] icon  visible=1 text=""  @0x25643a26080
+            [] aspectRatio  @0x25638fb5aa0
+          [Frame] 3  @0x2565f4a3c80
+            [TextLabel] text  visible=1 text="7.5%"  @0x25662940080
+            [ImageLabel] icon  visible=1 text=""  @0x25643a26c80
+            [] aspectRatio  @0x2565e970e80
+          [UIListLayout] layout  @0x25631f39700
+          [Frame] 4  @0x25663017880
+            [TextLabel] text  visible=1 text="10%"  @0x25638204080
+            [ImageLabel] icon  visible=1 text=""  @0x25661d0d880
+            [] aspectRatio  @0x25638fbd980
+    [MeshPart] Flashbang5b  @0x256248cbc00
+      [Motor6D] StunGrenadeAmmo_5Motor6D  @0x2564baaa180
+      [] SurfaceAppearance  @0x256433c6e00
+    [Part] RadioVFX  @0x256433cc200
+      [Attachment] BeamEnd  @0x25647324e80
+        [Attachment] Attachment  @0x25647325000
+          [ParticleEmitter] BrightFlareBits  @0x256472d8a80
+          [ParticleEmitter] ParticleEmitter  @0x256472d6080
+        [ParticleEmitter] ProjectileGlow  @0x256472d6f80
+        [ParticleEmitter] DarkGlow  @0x256472d6980
+      [RigidConstraint] RigidConstraint  @0x25647328480
+    [MeshPart] Flashbang0  @0x256248cfc00
+      [Motor6D] Flashbang_0Motor6D  @0x2564baabd80
+      [] SurfaceAppearance  @0x256433cc400
+    [Folder] BoneVFX  @0x2562b12b680
+      [Part] Torso  @0x256433cc800
+        [Attachment] _BoneAttachment  @0x25647326080
+        [RigidConstraint] _BoneConstraint  @0x25647328300
+        [Part] Right Arm  @0x256433cca00
+          [Attachment] _BoneAttachment  @0x25647325300
+          [RigidConstraint] _BoneConstraint  @0x25647325900
+          [Part] DEF_Gun  @0x256433ccc00
+            [Attachment] _BoneAttachment  @0x25647325a80
+            [RigidConstraint] _BoneConstraint  @0x25647328000
+            [Attachment] Start6a  @0x25647329080
+            [Attachment] Start5b  @0x25647320380
+            [Attachment] StartBase  @0x25647322c00
+    [Humanoid] AnimationController  @0x25643a69a80
+      [Animator] Animator  @0x256471ed880
+    [ObjectValue] Target  @0x2562b126ec0
+    [NumberValue] Owner  @0x25654b83c80
+    [Folder] Units  @0x2562b1206a0
+    [Folder] TowerReplicator  @0x2562b12f040
+      [Folder] Attributes  @0x2562b120b00
+      [Folder] Abilities  @0x25662f27320
+      [Folder] AbilityData  @0x25662f260c0
+      [Folder] StatusEffects  @0x25662f258e0
+      [Folder] AbilityEffects  @0x25662f26600
+      [Folder] Stuns  @0x25662f25640
+    [Folder] Queues  @0x25662f27cc0
+    [Folder] Display  @0x25662f22a80
+      [NumberValue] Cooldown  @0x2564a8aadc0
+      [IntValue] Hidden  @0x2564a8ae480
+      [NumberValue] Range  @0x2564a8aecc0
+      [NumberValue] Damage  @0x2564a8a8840
+      [NumberValue] Discount  @0x2564a8a08c0
+      [NumberValue] Fatigue  @0x2564a8addc0
+      [NumberValue] Scared  @0x2564a8a14c0
+      [IntValue] Upgrade  @0x2564a8a8fc0
+      [NumberValue] HiddenExposed  @0x2564a8a4ac0
+      [NumberValue] DisableDiscount  @0x2564a8aba80
+      [NumberValue] Coordination  @0x2564a8a0380
+      [NumberValue] SharedOptics  @0x2564a8acbc0
+      [NumberValue] FireworkBuff  @0x2564a8af680
+  [Model] Default  @0x2565cb8c100
+    [ModuleScript] UpgradesModule  @0x2563fd167c0
+    [Folder] Weapon  @0x2563d567be0
+      [Folder] Sword  @0x256629a35e0
+        [Configuration] Configuration  @0x25628033440
+          [ObjectValue] Trail  @0x256629a0e80
+          [ObjectValue] BloodStrikeTrail  @0x256629a1120
+        [Folder] NormalTrail  @0x256629a6a60
+          [Trail] Base  @0x2564a4bf200
+        [Folder] BloodStrikeTrail  @0x256629a5d40
+          [Trail] Glow  @0x2564a4bf400
+          [Trail] Glow  @0x2564a4bf600
+          [Trail] Base  @0x2564a4bf800
+        [MeshPart] Sword_5  @0x25642d5e400
+          [] SurfaceAppearance  @0x2564a4bfa00
+          [Motor6D] Sword_5Motor6D  @0x2564bb48200
+        [Part] VFX  @0x2564a4bfc00
+          [Attachment] Attachment  @0x256333af080
+            [Attachment] BladeBase  @0x256333a2c00
+            [Attachment] BladeTip  @0x256333ada00
+          [RigidConstraint] RigidConstraint  @0x256333a5a80
+    [Folder] Upgrades  @0x2563d56fba0
+      [Folder] 0  @0x2563d562a80
+        [MeshPart] Face_0  @0x25642d57000
+          [Motor6D] Face_0Motor6D  @0x2564baae5c0
+          [Decal] Decal  @0x2563f3c8480
+      [Folder] 1  @0x2563d561d60
+      [Folder] 2  @0x2563d561200
+      [Folder] 3  @0x2563d56e4e0
+      [Folder] 4  @0x2563d56eb00
+      [Folder] 5  @0x256629a6d00
+        [MeshPart] Torso_5  @0x25642d5e000
+          [] SurfaceAppearance  @0x2564a4bfe00
+          [Motor6D] Torso_5Motor6D  @0x2563fd11e40
+        [MeshPart] HideThis_5  @0x25642d5a800
+          [] SurfaceAppearance  @0x2563300ce00
+          [Motor6D] HideThis_5Motor6D  @0x2563fd12540
+    [Folder] Animations  @0x256629a3f80
+      [Folder] Attack1  @0x256629a19e0
+        [Animation] 0  @0x2563548f9e0
+      [Folder] Attack2  @0x256629a1d60
+        [Animation] 0  @0x256385d28c0
+      [Folder] Attack3  @0x256629a13c0
+        [Animation] 0  @0x256385d04e0
+      [Folder] Idle  @0x256629a1580
+        [Animation] 0  @0x256351b5aa0
+      [Folder] Parry  @0x256629a1ac0
+        [Animation] 0  @0x2563548bae0
+      [Folder] WarCry  @0x256629a0160
+        [Animation] 0  @0x2563d56cb80
+    [Part] RootPart  @0x2563300cc00
+      [Bone] Root  @0x2563300d000
+        [Bone] DEF_Torso  @0x25633001a00
+          [Bone] DEF_Arm_l  @0x2563f86a000
+            [Bone] DEF_Arm-Pouldron_l  @0x2563f867800
+          [Bone] DEF_Arm_r  @0x2563f869c00
+            [Bone] DEF_Arm-Pouldron_r  @0x2563f867400
+          [Bone] DEF_Head  @0x2563f86d000
+            [Bone] DEF_Helmet  @0x2563f869600
+            [Bone] DEF_Tail01  @0x2563f867e00
+            [Bone] DEF_Nose  @0x2563f86fe00
+          [Bone] DEF_Leg_r  @0x2563f86fc00
+          [Bone] DEF_Leg_l  @0x2563f86fa00
+          [Bone] DEF_Sheathe01  @0x2563f86f800
+          [Bone] DEF_Sheathe02  @0x2563f86f600
+          [Bone] DEF_Leg-Pouldron_r  @0x2563f86f400
+          [Bone] DEF_Leg-Pouldron_l  @0x2563f86f200
+          [Bone] DEF_Waistcloth  @0x2563f86f000
+          [Bone] DEF_Fur  @0x2563f86ee00
+          [Bone] DEF_Cape01  @0x2563f86ec00
+            [Bone] DEF_Cape02  @0x2563f86ea00
+          [Bone] DEF_Skirt  @0x2563f86e600
+        [Bone] DEF_Sword  @0x2563f86e400
+          [Bone] DEF_Sword-Crystal_r  @0x2563f86e200
+          [Bone] DEF_Sword-Crystal_l  @0x2563f86e000
+          [Attachment] Attachment  @0x256333a8780
+      [Attachment] HeightOffset  @0x256333aad00
+      [AudioEmitter] AudioEmitter_Towers  @0x256601a5800
+      [BillboardGui] lifeSpan  @0x25657d15080
+        [Frame] frame  @0x25662d5c080
+          [Frame] frame1  @0x25643a9cc80
+      [BillboardGui] allBuffs  @0x25657d1a080
+        [Frame] content  @0x25661e6e480
+          [Frame] 1  @0x25643a9b480
+            [TextLabel] text  visible=1 text="15%"  @0x256604fe080
+            [ImageLabel] icon  visible=1 text=""  @0x25661801880
+            [] aspectRatio  @0x256629a4f40
+          [Frame] 2  @0x25662d5b480
+            [TextLabel] text  visible=1 text="20%"  @0x25635108080
+            [ImageLabel] icon  visible=1 text=""  @0x25661805480
+            [] aspectRatio  @0x256629a0080
+          [Frame] 3  @0x25661e6cc80
+            [TextLabel] text  visible=1 text="7.5%"  @0x25635109080
+            [ImageLabel] icon  visible=1 text=""  @0x25639133080
+            [] aspectRatio  @0x256629a3ce0
+          [UIListLayout] layout  @0x2563fd1ac00
+          [Frame] 4  @0x25644b6e480
+            [TextLabel] text  visible=1 text="10%"  @0x25662af4080
+            [ImageLabel] icon  visible=1 text=""  @0x256587bcc80
+            [] aspectRatio  @0x25662f2b680
+    [Humanoid] AnimationController  @0x2565d4e0080
+      [Animator] Animator  @0x25634406c80
+    [ObjectValue] Target  @0x256629a8200
+    [NumberValue] Owner  @0x25628030080
+    [Folder] Units  @0x256629a84a0
+    [Folder] TowerReplicator  @0x256629a8660
+      [Folder] Attributes  @0x256629a8820
+      [Folder] Abilities  @0x256629a89e0
+      [Folder] AbilityData  @0x256629a8ba0
+      [Folder] StatusEffects  @0x256629a8d60
+      [Folder] AbilityEffects  @0x256629a8f20
+      [Folder] Stuns  @0x256629a90e0
+    [Folder] Queues  @0x256629a92a0
+    [Folder] Display  @0x256629a9460
+      [NumberValue] Cooldown  @0x2562803f980
+      [IntValue] Hidden  @0x2562803dd00
+      [NumberValue] Range  @0x2562803d4c0
+      [NumberValue] Damage  @0x25628031880
+      [NumberValue] Discount  @0x2562803b240
+      [NumberValue] Fatigue  @0x256280338c0
+      [NumberValue] Scared  @0x2562803f740
+      [IntValue] Upgrade  @0x25628032180
+      [NumberValue] HiddenExposed  @0x2562803e780
+      [NumberValue] DisableDiscount  @0x2562803b780
+      [NumberValue] Coordination  @0x25628038180
+      [NumberValue] SharedOptics  @0x25628038a80
+      [NumberValue] FireworkBuff  @0x2562803a700
+  [Model] Beach  @0x2565ddc2700
+    [ModuleScript] UpgradesModule  @0x2565dc2e240
+    [Folder] Animations  @0x25638fba0a0
+      [Folder] Idle  @0x25638fb7400
+        [Animation] 0  @0x25651bd75c0
+        [Animation] 5  @0x25662f20160
+      [Folder] FireLoop  @0x25638fbb680
+        [Animation] 0  @0x25638fb7780
+        [Animation] 5  @0x2563548dde0
+      [Folder] FireIntro  @0x25638fb9fc0
+        [Animation] 0  @0x25635483b20
+        [Animation] 5  @0x25651bd2460
+      [Folder] FireOutro  @0x25638fba880
+        [Animation] 0  @0x25638fb9c40
+        [Animation] 5  @0x25638fbadc0
+      [Folder] UberIntro  @0x25638fb4840
+        [Animation] 0  @0x25638fb0160
+        [Animation] 5  @0x25638fb7be0
+      [Folder] UberLoop  @0x25638fb9000
+        [Animation] 0  @0x25638fba6c0
+        [Animation] 5  @0x25638fb66e0
+      [Folder] UberOutro  @0x25638fb28c0
+        [Animation] 0  @0x25638fbaf80
+        [Animation] 5  @0x256351bea20
+    [Folder] Upgrades  @0x25638fb2b60
+      [Folder] 0  @0x25638fb37a0
+        [ObjectValue] Beam  @0x25638fb7080
+        [MeshPart] Face0  @0x2565dc13c00
+          [Motor6D] Face0Motor6D  @0x25631f3f900
+          [Decal] Decal  @0x2566295c980
+        [MeshPart] Base0  @0x2564b8e6c00
+          [Motor6D] Base0Motor6D  @0x2563fd144c0
+      [Folder] 1  @0x25662f26b40
+        [ObjectValue] Beam  @0x25662f23180
+        [MeshPart] Accessory1  @0x2564b8e9400
+          [Motor6D] Accessory1Motor6D  @0x2564bb47080
+      [Folder] 2  @0x25662f2b840
+        [ObjectValue] Beam  @0x25662f28d60
+      [Folder] 3  @0x25662f20b00
+        [ObjectValue] Beam  @0x25662f27080
+        [MeshPart] Accessory3  @0x2564b8ed400
+          [Motor6D] Accessory3Motor6D  @0x2564bb475c0
+      [Folder] 4  @0x25662f24760
+        [ObjectValue] Beam  @0x25662f275c0
+        [MeshPart] Accessory4  @0x2564b8e6800
+          [Motor6D] Accessory4Motor6D  @0x2564bb47b00
+      [Folder] 5  @0x25662f21040
+        [ObjectValue] Beam  @0x25662f25720
+        [MeshPart] Cloth5  @0x2564b8ea800
+          [Motor6D] Cloth5Motor6D  @0x25631f391c0
+    [Folder] Weapon  @0x25662f20cc0
+      [MeshPart] Staff  @0x2564b8eec00
+        [Motor6D] Lvl5Motor6D  @0x25631f3adc0
+    [Part] RootPart  @0x256601a7c00
+      [Attachment] HeightOffset  @0x256523f3800
+      [Bone] Torso  @0x256601a7e00
+        [Bone] Head  @0x256601a8000
+          [Bone] DEF_Bun  @0x256601a8200
+        [Bone] DEF_Leg_l  @0x256601a8400
+        [Bone] DEF_Arm_r  @0x256601a8600
+        [Bone] DEF_Skirt_r  @0x256601a8800
+        [Bone] DEF_Wand  @0x256601a8a00
+          [Attachment] WandBeam  @0x256523f7100
+          [Attachment] StaffBeam  @0x256523fd580
+            [ParticleEmitter] Glow  @0x2563f3c7b80
+            [ParticleEmitter] Rays  @0x2563f3c1880
+            [ParticleEmitter] Spark  @0x2563f3c0680
+            [ParticleEmitter] TinyFlecks  @0x2563f3c7e80
+        [Bone] DEF_Arm_l  @0x256601a8c00
+        [Bone] DEF_Skirt_l  @0x256601a8e00
+        [Bone] DEF_Leg_r  @0x256601a9000
+        [Bone] DEF_Skirt_b  @0x256601a9200
+      [BillboardGui] lifeSpan  @0x256484bbe80
+        [Frame] frame  @0x25633846c80
+          [Frame] frame1  @0x25633844880
+      [BillboardGui] allBuffs  @0x256484b8280
+        [Frame] content  @0x2563384a880
+          [Frame] 1  @0x25633849080
+            [TextLabel] text  visible=1 text="15%"  @0x25661d16080
+            [ImageLabel] icon  visible=1 text=""  @0x2564880cc80
+            [] aspectRatio  @0x256629a7320
+          [Frame] 2  @0x2563384f080
+            [TextLabel] text  visible=1 text="20%"  @0x25661d18080
+            [ImageLabel] icon  visible=1 text=""  @0x25637e46c80
+            [] aspectRatio  @0x256629a5f00
+          [Frame] 3  @0x25643a21880
+            [TextLabel] text  visible=1 text="7.5%"  @0x25638514080
+            [ImageLabel] icon  visible=1 text=""  @0x25643a22480
+            [] aspectRatio  @0x256629a8900
+          [UIListLayout] layout  @0x2565dc2bbc0
+          [Frame] 4  @0x25662a85480
+            [TextLabel] text  visible=1 text="10%"  @0x256439c4080
+            [ImageLabel] icon  visible=1 text=""  @0x256587b6c80
+            [] aspectRatio  @0x25662f27a20
+      [AudioEmitter] AudioEmitter_Towers  @0x2564a4b9400
+    [Humanoid] AnimationController  @0x2565e8a0e80
+      [Animator] Animator  @0x256571d3c80
+    [ObjectValue] Target  @0x25662f274e0
+    [NumberValue] Owner  @0x2563ce8f140
+    [Folder] Units  @0x25662f29380
+    [Folder] TowerReplicator  @0x25662f28c80
+      [Folder] Attributes  @0x25662f283c0
+      [Folder] Abilities  @0x25662f23c00
+      [Folder] AbilityData  @0x25662f25b80
+      [Folder] StatusEffects  @0x25662f22000
+      [Folder] AbilityEffects  @0x25662f2a880
+      [Folder] Stuns  @0x25662f27f60
+    [Folder] Queues  @0x25662f28ba0
+    [Folder] Display  @0x25662f2b920
+      [NumberValue] Cooldown  @0x2563ce8b9c0
+      [IntValue] Hidden  @0x2563ce8c140
+      [NumberValue] Range  @0x2563ce898c0
+      [NumberValue] Damage  @0x2563ce80740
+      [NumberValue] Discount  @0x2563ce81ac0
+      [NumberValue] Fatigue  @0x2563ce8d4c0
+      [NumberValue] Scared  @0x2563ce85fc0
+      [IntValue] Upgrade  @0x2563ce8f980
+      [NumberValue] HiddenExposed  @0x2563ce85d80
+      [NumberValue] DisableDiscount  @0x2563ce88cc0
+      [NumberValue] Coordination  @0x2563ce80200
+      [NumberValue] SharedOptics  @0x2563ce84580
+      [NumberValue] FireworkBuff  @0x2563ce85180
+  [Model] Holiday  @0x2565ddc2e00
+    [ModuleScript] UpgradesModule  @0x2565dc24f40
+    [Folder] Upgrades  @0x25638fb21c0
+      [Folder] 1  @0x25638fb5020
+        [Model] Gloves  @0x2565ddc5f00
+          [MeshPart] Glove  @0x2565dc1b800
+            [WeldConstraint] WeldConstraint  @0x2565d86aa80
+          [MeshPart] Glove  @0x2565dc18400
+            [WeldConstraint] WeldConstraint  @0x2565d868280
+        [Part] Tags  @0x256350daa00
+          [SpecialMesh] Mesh  @0x256625d2480
+          [WeldConstraint] WeldConstraint  @0x2565d868000
+      [Folder] 2  @0x2562b127940
+      [Folder] 0  @0x2562b12f9e0
+      [Folder] 3  @0x2562b125480
+      [Folder] 4  @0x2562b120e80
+        [Model] Outfit  @0x2570fe8b300
+          [MeshPart] Cap  @0x256248c8400
+            [WeldConstraint] WeldConstraint  @0x25657abd500
+          [MeshPart] Coat  @0x25642d5d800
+            [WeldConstraint] WeldConstraint  @0x25657abcb00
+          [MeshPart] Sleeve  @0x25642d52c00
+            [WeldConstraint] WeldConstraint  @0x25657ab06c0
+          [MeshPart] Badge  @0x25642d5dc00
+            [WeldConstraint] WeldConstraint  @0x25657ab6840
+          [MeshPart] Sleeve  @0x25642d5b000
+            [WeldConstraint] WeldConstraint  @0x25657ab29c0
+          [MeshPart] Beard  @0x25642d5f400
+            [WeldConstraint] Beard  @0x25657ab6fc0
+          [MeshPart] Shades  @0x25642d5c800
+            [] SurfaceAppearance  @0x2564a4bce00
+            [WeldConstraint] Shades  @0x25657abb840
+        [Model] Colors  @0x2565cb8c480
+          [MeshPart] Shirt  @0x25642d5ec00
+            [WeldConstraint] WeldConstraint  @0x25657ab5f80
+          [MeshPart] RightPant  @0x25642d5a400
+            [WeldConstraint] WeldConstraint  @0x25657ab15c0
+          [MeshPart] LeftPant  @0x25642d5f000
+            [WeldConstraint] WeldConstraint  @0x25657ab8000
+    [] AnimationController  @0x2563e4f7ac0
+      [Animator] Animator  @0x2566180b480
+    [Model] Weapon  @0x2565cb8d280
+      [Model] Radio  @0x2565cb8e080
+        [MeshPart] Bell  @0x25642d54800
+          [WeldConstraint] WeldConstraint  @0x25657ab0bc0
+      [Model] Gun  @0x2565cb8a880
+        [MeshPart] Handle  @0x25642d50800
+          [Sound] Fire  @0x25640dc5f80
+          [WeldConstraint] Handle  @0x25657ab4180
+          [Attachment] Start  @0x25657ac5600
+            [ParticleEmitter] flash1  @0x2566260f980
+            [ParticleEmitter] flash2  @0x2566260d580
+            [ParticleEmitter] smoke  @0x25662601b80
+            [ParticleEmitter] smoke2  @0x25662606980
+            [ParticleEmitter] sparks  @0x2566260c980
+        [MeshPart] Slide  @0x256351d2000
+          [WeldConstraint] Slide  @0x25657abd280
+      [Model] Stool  @0x2565cb8ee80
+        [MeshPart] Stand  @0x25642d5cc00
+    [Model] GunRig  @0x2565cb89a80
+      [Part] Gun  @0x2564a4b4200
+        [Motor6D] Slide  @0x2564bb491c0
+      [Part] Slide  @0x2564a4b0200
+    [Folder] Animations  @0x256629ab3e0
+      [Folder] Idle  @0x256629ab4c0
+        [Animation] 0  @0x25638fbb920
+      [Folder] Fire  @0x256629aa6c0
+        [Folder] 0  @0x256629a9e00
+          [Animation] Fire  @0x25638fbba00
+          [Animation] Equip  @0x25638fb13c0
+          [Animation] Stance  @0x25638fb3420
+          [Animation] Unequip  @0x25638fb58e0
+    [Part] HumanoidRootPart  @0x2564a4bd200
+      [Sound] SellSound  @0x25640dc4b80
+      [Sound] PlaceSound  @0x25640dc4900
+      [Motor6D] RootJoint  @0x2564baab140
+      [Attachment] Pivot  @0x25657ac8600
+      [Motor6D] Right Leg  @0x2564baaba00
+      [Motor6D] Left Leg  @0x2564baab4c0
+      [ParticleEmitter] PlaceParticle  @0x2566260ab80
+      [Attachment] HeightOffset  @0x25657ac4280
+      [BillboardGui] lifeSpan  @0x256578c2880
+        [Frame] frame  @0x25644b60c80
+          [Frame] frame1  @0x25644b6f080
+      [BillboardGui] allBuffs  @0x256578c3c80
+        [Frame] content  @0x25644b66080
+          [Frame] 1  @0x25644b63080
+            [TextLabel] text  visible=1 text="15%"  @0x25662af5080
+            [ImageLabel] icon  visible=1 text=""  @0x256587c0080
+            [] aspectRatio  @0x25662f27400
+          [Frame] 2  @0x25644b63c80
+            [TextLabel] text  visible=1 text="7.5%"  @0x25662af6080
+            [ImageLabel] icon  visible=1 text=""  @0x256587c0c80
+            [] aspectRatio  @0x25662f20860
+          [Frame] 3  @0x25644b65480
+            [TextLabel] text  visible=1 text="10%"  @0x25662af7080
+            [ImageLabel] icon  visible=1 text=""  @0x256587c2480
+            [] aspectRatio  @0x25662f2a180
+          [UIListLayout] layout  @0x2564bb4e780
+    [MeshPart] Left Arm  @0x256351d1800
+      [Motor6D] Bell  @0x2564baa8c80
+    [MeshPart] Left Leg  @0x256351d2400
+    [MeshPart] Right Arm  @0x256351d2c00
+      [Motor6D] Gun  @0x2564baa60c0
+    [MeshPart] Right Leg  @0x256351d3000
+    [MeshPart] Torso  @0x256351d3400
+      [Motor6D] Left Shoulder  @0x2564bb467c0
+      [Motor6D] Neck  @0x2564bb46980
+      [Motor6D] Right Shoulder  @0x2563fd113c0
+    [Part] Head  @0x2564a4b1000
+      [Sound] ExtraSound  @0x25640dc3c80
+      [SpecialMesh] Mesh  @0x25657acdd00
+      [Attachment] Scream  @0x25657ac6c80
+        [ParticleEmitter] Effect  @0x2566260de80
+      [Decal] face  @0x25662608480
+      [Decal] face2  @0x2566260b180
+      [Sound] Sound  @0x25640dc4680
+      [Sound] Sound  @0x25640dc9400
+      [Sound] Sound  @0x25640dc9180
+    [ObjectValue] Target  @0x256629a3180
+    [NumberValue] Owner  @0x2563e4f7400
+    [Folder] Units  @0x256629ac1e0
+    [Folder] TowerReplicator  @0x256629a60c0
+      [Folder] Attributes  @0x256629a6de0
+      [Folder] Abilities  @0x256629a5800
+      [Folder] AbilityData  @0x256629aa500
+      [Folder] StatusEffects  @0x256629a6c20
+      [Folder] AbilityEffects  @0x256629a3c00
+      [Folder] Stuns  @0x256629a5c60
+    [Folder] Queues  @0x256629a2c40
+    [Folder] Display  @0x256629a9a80
+      [NumberValue] Cooldown  @0x2563e4fd580
+      [IntValue] Hidden  @0x2563e4f0e00
+      [NumberValue] Range  @0x2563e4fecc0
+      [NumberValue] Damage  @0x2563e4f26c0
+      [NumberValue] Discount  @0x2563e4fdc40
+      [NumberValue] Fatigue  @0x2563e4ff440
+      [NumberValue] Scared  @0x2563e4f5d80
+      [IntValue] Upgrade  @0x2563e4fa580
+      [NumberValue] HiddenExposed  @0x2563e4f5780
+      [NumberValue] DisableDiscount  @0x2563e4f3a40
+      [NumberValue] Coordination  @0x2563e4f9a40
+      [NumberValue] SharedOptics  @0x2563e4f7640
+      [NumberValue] FireworkBuff  @0x2563e4fa640
+  [Model] Holiday  @0x2565cb8a500
+    [ModuleScript] UpgradesModule  @0x2563fd13c00
+    [Folder] Upgrades  @0x256629ae5c0
+      [Folder] 1  @0x256629a58e0
+        [Model] Gloves  @0x2565cb88580
+          [MeshPart] Glove  @0x25624b11800
+            [WeldConstraint] WeldConstraint  @0x25632a2fa80
+          [MeshPart] Glove  @0x25624b11c00
+            [WeldConstraint] WeldConstraint  @0x25632a28640
+        [Part] Tags  @0x2564a4be000
+          [SpecialMesh] Mesh  @0x25657acf800
+          [WeldConstraint] WeldConstraint  @0x25632a233c0
+      [Folder] 2  @0x256629a0940
+      [Folder] 0  @0x256629a4140
+      [Folder] 3  @0x256629a3420
+      [Folder] 4  @0x256629af4a0
+        [Model] Outfit  @0x2565cb8bd80
+          [MeshPart] Cap  @0x25642d5ac00
+            [WeldConstraint] WeldConstraint  @0x25632a2bc00
+          [MeshPart] Coat  @0x25642d5bc00
+            [WeldConstraint] WeldConstraint  @0x25632a29180
+          [MeshPart] Sleeve  @0x25642d5b800
+            [WeldConstraint] WeldConstraint  @0x25632a21fc0
+          [MeshPart] Badge  @0x25642d52400
+            [WeldConstraint] WeldConstraint  @0x25632a2a080
+          [MeshPart] Sleeve  @0x25642d55c00
+            [WeldConstraint] WeldConstraint  @0x25632a26700
+          [MeshPart] Beard  @0x25642d56c00
+            [WeldConstraint] Beard  @0x25632a25f80
+          [MeshPart] Shades  @0x25642d52000
+            [] SurfaceAppearance  @0x2564a4b4600
+            [WeldConstraint] Shades  @0x25632a25e40
+        [Model] Colors  @0x2565cb8ba00
+          [MeshPart] Shirt  @0x25642d51800
+            [WeldConstraint] WeldConstraint  @0x25632a26c00
+          [MeshPart] RightPant  @0x25642d5fc00
+            [WeldConstraint] WeldConstraint  @0x25632a20e40
+          [MeshPart] LeftPant  @0x25642d5a000
+            [WeldConstraint] WeldConstraint  @0x25632a25300
+    [] AnimationController  @0x256366d4400
+      [Animator] Animator  @0x256587bd880
+    [Model] Weapon  @0x2565cb8ac00
+      [Model] Radio  @0x2565cb89000
+        [MeshPart] Bell  @0x25642d54400
+          [WeldConstraint] WeldConstraint  @0x25632a28c80
+      [Model] Gun  @0x2565cb8f900
+        [MeshPart] Handle  @0x25642d57400
+          [Sound] Fire  @0x2562a806980
+          [WeldConstraint] Handle  @0x25632a2bfc0
+          [Attachment] Start  @0x256333a6200
+            [ParticleEmitter] flash1  @0x25654ab6c80
+            [ParticleEmitter] flash2  @0x25654ab8a80
+            [ParticleEmitter] smoke  @0x25654abd280
+            [ParticleEmitter] smoke2  @0x25654abb180
+            [ParticleEmitter] sparks  @0x25654abcc80
+        [MeshPart] Slide  @0x25642d55800
+          [WeldConstraint] Slide  @0x25632a2e400
+      [Model] Stool  @0x2565cb8f200
+        [MeshPart] Stand  @0x25642d5d000
+    [Model] GunRig  @0x2565cb89380
+      [Part] Gun  @0x2564a4b5a00
+        [Motor6D] Slide  @0x2563fd10cc0
+      [Part] Slide  @0x2564a4bd600
+    [Folder] Animations  @0x2563d56b840
+      [Folder] Idle  @0x2563d56bd80
+        [Animation] 0  @0x25638fb53a0
+      [Folder] Fire  @0x2563d56ac00
+        [Folder] 0  @0x2563d569d20
+          [Animation] Fire  @0x2563d56ef60
+          [Animation] Equip  @0x25651bda880
+          [Animation] Stance  @0x2563d562d20
+          [Animation] Unequip  @0x25638fb7b00
+    [Part] HumanoidRootPart  @0x2564a4b1600
+      [Sound] SellSound  @0x25640dc3f00
+      [Sound] PlaceSound  @0x25640dc0080
+      [Motor6D] RootJoint  @0x2564bb46b40
+      [Attachment] Pivot  @0x256333a5d80
+      [Motor6D] Right Leg  @0x25631f32380
+      [Motor6D] Left Leg  @0x2564bb47240
+      [ParticleEmitter] PlaceParticle  @0x2563f3ca280
+      [Attachment] HeightOffset  @0x256333ae300
+      [BillboardGui] lifeSpan  @0x25703e85a80
+        [Frame] frame  @0x2565c426c80
+          [Frame] frame1  @0x2565c426080
+      [BillboardGui] allBuffs  @0x256484b6e80
+        [Frame] content  @0x256587b5480
+          [Frame] 1  @0x256587b3080
+            [TextLabel] text  visible=1 text="15%"  @0x256330b8080
+            [ImageLabel] icon  visible=1 text=""  @0x25643a20080
+            [] aspectRatio  @0x2563d56b680
+          [Frame] 2  @0x256587b2480
+            [TextLabel] text  visible=1 text="7.5%"  @0x256330b5080
+            [ImageLabel] icon  visible=1 text=""  @0x25639136c80
+            [] aspectRatio  @0x2563d56dde0
+          [Frame] 3  @0x256587b7880
+            [TextLabel] text  visible=1 text="10%"  @0x256330bd080
+            [ImageLabel] icon  visible=1 text=""  @0x25631819080
+            [] aspectRatio  @0x2563d562620
+          [UIListLayout] layout  @0x2563fd19700
+    [MeshPart] Left Arm  @0x25642d5e800
+      [Motor6D] Bell  @0x2564bb483c0
+    [MeshPart] Left Leg  @0x25642d53800
+    [MeshPart] Right Arm  @0x25642d5c400
+      [Motor6D] Gun  @0x2564baadec0
+    [MeshPart] Right Leg  @0x25642d55000
+    [MeshPart] Torso  @0x25642d57c00
+      [Motor6D] Left Shoulder  @0x2564baadb40
+      [Motor6D] Neck  @0x2564baa1e40
+      [Motor6D] Right Shoulder  @0x25631f3fe40
+    [Part] Head  @0x2564a4b0c00
+      [Sound] ExtraSound  @0x25640dc8f00
+      [SpecialMesh] Mesh  @0x25657aca580
+      [Attachment] Scream  @0x256333a4700
+        [ParticleEmitter] Effect  @0x2563f3c3680
+      [Decal] face  @0x256472dcc80
+      [Decal] face2  @0x25637cec380
+      [Sound] Sound  @0x25640dc4180
+      [Sound] Sound  @0x25640dcf800
+      [Sound] Sound  @0x25640dcda00
+    [ObjectValue] Target  @0x2563d562700
+    [NumberValue] Owner  @0x256366dfd40
+    [Folder] Units  @0x2563d56bf40
+    [Folder] TowerReplicator  @0x2563d563260
+      [Folder] Attributes  @0x2563d569ee0
+      [Folder] Abilities  @0x2563d56a420
+      [Folder] AbilityData  @0x2563d564760
+      [Folder] StatusEffects  @0x2563d56b4c0
+      [Folder] AbilityEffects  @0x2563d56bae0
+      [Folder] Stuns  @0x2563d5692a0
+    [Folder] Queues  @0x2563d569fc0
+    [Folder] Display  @0x2563d563880
+      [NumberValue] Cooldown  @0x256366df080
+      [IntValue] Hidden  @0x256366d7a00
+      [NumberValue] Range  @0x256366d7340
+      [NumberValue] Damage  @0x256366d5cc0
+      [NumberValue] Discount  @0x256366d9bc0
+      [NumberValue] Fatigue  @0x256366dd4c0
+      [NumberValue] Scared  @0x256366dae80
+      [IntValue] Upgrade  @0x256366d7280
+      [NumberValue] HiddenExposed  @0x256366de300
+      [NumberValue] DisableDiscount  @0x256366daa00
+      [NumberValue] Coordination  @0x256366dc080
+      [NumberValue] SharedOptics  @0x256366d6800
+      [NumberValue] FireworkBuff  @0x256366def00
+  [Model] Holiday  @0x2565cb8cb80
+    [ModuleScript] UpgradesModule  @0x2563fd16ec0
+    [Folder] Upgrades  @0x2563d568e40
+      [Folder] 1  @0x2563d56a500
+        [Model] Gloves  @0x2565cb87780
+          [MeshPart] Glove  @0x25642d59000
+            [WeldConstraint] WeldConstraint  @0x25632a2ee00
+          [MeshPart] Glove  @0x25642d59c00
+            [WeldConstraint] WeldConstraint  @0x25632a26ac0
+        [Part] Tags  @0x2564a4b0400
+          [SpecialMesh] Mesh  @0x2571d209680
+          [WeldConstraint] WeldConstraint  @0x25632a2f080
+      [Folder] 2  @0x2563d569c40
+      [Folder] 0  @0x2563d56eda0
+      [Folder] 3  @0x2563d56a180
+      [Folder] 4  @0x25638fbeb00
+        [Model] Outfit  @0x2565e181c80
+          [MeshPart] Cap  @0x2563ad0f800
+            [WeldConstraint] WeldConstraint  @0x2570435bfc0
+          [MeshPart] Coat  @0x2563ad08800
+            [WeldConstraint] WeldConstraint  @0x25704350bc0
+          [MeshPart] Sleeve  @0x2563ad0ec00
+            [WeldConstraint] WeldConstraint  @0x2570435dc80
+          [MeshPart] Badge  @0x2563ad02000
+            [WeldConstraint] WeldConstraint  @0x25704357d80
+          [MeshPart] Sleeve  @0x2563ad04000
+            [WeldConstraint] WeldConstraint  @0x2563a00abc0
+          [MeshPart] Beard  @0x2563ad08000
+            [WeldConstraint] Beard  @0x2563a00f940
+          [MeshPart] Shades  @0x2563ad06c00
+            [] SurfaceAppearance  @0x256350d3400
+            [WeldConstraint] Shades  @0x2563a006fc0
+        [Model] Colors  @0x2565e182a80
+          [MeshPart] Shirt  @0x2563ad0d800
+            [WeldConstraint] WeldConstraint  @0x2563a009900
+          [MeshPart] RightPant  @0x2563ad0a400
+            [WeldConstraint] WeldConstraint  @0x2563a0065c0
+          [MeshPart] LeftPant  @0x2563ad0b800
+            [WeldConstraint] WeldConstraint  @0x2563a005a80
+    [] AnimationController  @0x25641055cc0
+      [Animator] Animator  @0x2563d037880
+    [Model] Weapon  @0x2565e18c480
+      [Model] Radio  @0x2565e18af80
+        [MeshPart] Bell  @0x2563ad09c00
+          [WeldConstraint] WeldConstraint  @0x2563a009e00
+      [Model] Gun  @0x2565e185f00
+        [MeshPart] Handle  @0x2563ad09800
+          [Sound] Fire  @0x2563a6af300
+          [WeldConstraint] Handle  @0x2563a003f00
+          [Attachment] Start  @0x25634ad2a80
+            [ParticleEmitter] flash1  @0x25637ce5180
+            [ParticleEmitter] flash2  @0x25637ceab80
+            [ParticleEmitter] smoke  @0x25637ce3f80
+            [ParticleEmitter] smoke2  @0x25637ceed80
+            [ParticleEmitter] sparks  @0x25637ceae80
+        [MeshPart] Slide  @0x2563ad00c00
+          [WeldConstraint] Slide  @0x2563a005300
+      [Model] Stool  @0x2565e18cf00
+        [MeshPart] Stand  @0x2563ad0a000
+    [Model] GunRig  @0x2565e18c100
+      [Part] Gun  @0x256350d8000
+        [Motor6D] Slide  @0x2564bb46280
+      [Part] Slide  @0x256350d0c00
+    [Folder] Animations  @0x25638fbbae0
+      [Folder] Idle  @0x25638fbc3a0
+        [Animation] 0  @0x25638fb9e00
+      [Folder] Fire  @0x25638fb0860
+        [Folder] 0  @0x25638fbdb40
+          [Animation] Fire  @0x2563548fba0
+          [Animation] Equip  @0x25638fb14a0
+          [Animation] Stance  @0x25638fb59c0
+          [Animation] Unequip  @0x25638fb19e0
+    [Part] HumanoidRootPart  @0x256350d1800
+      [Sound] SellSound  @0x2563a6a8500
+      [Sound] PlaceSound  @0x2563a6a6200
+      [Motor6D] RootJoint  @0x25631f3f740
+      [Attachment] Pivot  @0x25634add100
+      [Motor6D] Right Leg  @0x25631f34bc0
+      [Motor6D] Left Leg  @0x2564bb47780
+      [ParticleEmitter] PlaceParticle  @0x25637ce5d80
+      [Attachment] HeightOffset  @0x25634ad6500
+      [BillboardGui] lifeSpan  @0x256578c4680
+        [Frame] frame  @0x2565b241880
+          [Frame] frame1  @0x2565b240080
+      [BillboardGui] allBuffs  @0x256578c5a80
+        [Frame] content  @0x25631815480
+          [Frame] 1  @0x25643a94880
+            [TextLabel] text  visible=1 text="15%"  @0x256371b8080
+            [ImageLabel] icon  visible=1 text=""  @0x25635111880
+            [] aspectRatio  @0x25662f2ba00
+          [Frame] 2  @0x25643a9d880
+            [TextLabel] text  visible=1 text="7.5%"  @0x25638426080
+            [ImageLabel] icon  visible=1 text=""  @0x25635112480
+            [] aspectRatio  @0x25662f2cfe0
+          [Frame] 3  @0x25657d9d880
+            [TextLabel] text  visible=1 text="10%"  @0x25624697080
+            [ImageLabel] icon  visible=1 text=""  @0x25635119c80
+            [] aspectRatio  @0x25662f2dfa0
+          [UIListLayout] layout  @0x2564bb4f740
+    [MeshPart] Left Arm  @0x2563ad04800
+      [Motor6D] Bell  @0x2564bb48580
+    [MeshPart] Left Leg  @0x2563ad04400
+    [MeshPart] Right Arm  @0x2563ad07400
+      [Motor6D] Gun  @0x2564bb460c0
+    [MeshPart] Right Leg  @0x2563ad07800
+    [MeshPart] Torso  @0x2563ad0e800
+      [Motor6D] Left Shoulder  @0x2564bb46ec0
+      [Motor6D] Neck  @0x2564baaaf80
+      [Motor6D] Right Shoulder  @0x2564baacd40
+    [Part] Head  @0x256350dbc00
+      [Sound] ExtraSound  @0x2563a6a6700
+      [SpecialMesh] Mesh  @0x25657aca100
+      [Attachment] Scream  @0x25634ad7400
+        [ParticleEmitter] Effect  @0x25637cef980
+      [Decal] face  @0x2563f3c3980
+      [Decal] face2  @0x2563f3c9680
+      [Sound] Sound  @0x2563a6a1480
+      [Sound] Sound  @0x2563a6a0300
+      [Sound] Sound  @0x2563a6a0800
+    [ObjectValue] Target  @0x25638fb8660
+    [NumberValue] Owner  @0x25641059bc0
+    [Folder] Units  @0x25638fb8ac0
+    [Folder] TowerReplicator  @0x25638fb3880
+      [Folder] Attributes  @0x25638fbdde0
+      [Folder] Abilities  @0x25638fb2700
+      [Folder] AbilityData  @0x25638fb44c0
+      [Folder] StatusEffects  @0x25638fb3ea0
+      [Folder] AbilityEffects  @0x25638fba5e0
+      [Folder] Stuns  @0x25638fb0320
+    [Folder] Queues  @0x25638fb0080
+    [Folder] Display  @0x25638fbdfa0
+      [NumberValue] Cooldown  @0x2564105a400
+      [IntValue] Hidden  @0x25641052840
+      [NumberValue] Range  @0x25641058240
+      [NumberValue] Damage  @0x25641056e00
+      [NumberValue] Discount  @0x25641057280
+      [NumberValue] Fatigue  @0x256410574c0
+      [NumberValue] Scared  @0x25641056980
+      [IntValue] Upgrade  @0x2564105cec0
+      [NumberValue] HiddenExposed  @0x2564105bcc0
+      [NumberValue] DisableDiscount  @0x25641057d00
+      [NumberValue] Coordination  @0x256410598c0
+      [NumberValue] SharedOptics  @0x2564105f980
+      [NumberValue] FireworkBuff  @0x2564105be40
+
+== PlayerGui ==
+[PlayerGui] PlayerGui  @0x25703351c80
+  [ScreenGui] LoadingScreen  @0x2563dc3dc80
+    [Sound] Woosh  @0x25638625f80
+    [Frame] content  @0x25661cef080
+      [Frame] circle  @0x257034fd880
+        [UICorner] UICorner  @0x25660fe2c00
+      [Frame] progress  @0x25661cec080
+        [] uIAspectRatioConstraint3  @0x25633e03420
+        [Frame] squares  @0x25661ceb480
+          [UIListLayout] uIListLayout  @0x25704b491c0
+          [Frame] periodTwo  @0x257034ff080
+            [] uIAspectRatioConstraint  @0x25633e03500
+            [Frame] content  @0x257034fe480
+          [Frame] periodThree  @0x25661ce9080
+            [] uIAspectRatioConstraint  @0x25633e035e0
+            [Frame] content  @0x25661ce6c80
+          [Frame] periodOne  @0x25661cea880
+            [] uIAspectRatioConstraint  @0x25633e036c0
+            [Frame] content  @0x25661ce9c80
+      [Frame] center  @0x25661cecc80
+        [ImageLabel] characters  visible=1 text=""  @0x25654972480
+      [Frame] hint  @0x25661cee480
+        [UIListLayout] uIListLayout  @0x25704b49000
+        [TextLabel] text  visible=1 text="Label"  @0x25642429080
+          [UIStroke] uIStroke  @0x256482e4900
+        [TextLabel] title  visible=1 text="Hint:"  @0x2564242a080
+          [UIStroke] uIStroke  @0x256482e4a00
+      [UICorner] UICorner  @0x25660fe2b00
+      [ImageLabel] background  visible=1 text=""  @0x256549e8480
+        [UIGradient] UIGradient  @0x256246acc80
+  [ScreenGui] SoundGui  @0x2565db2e680
+    [Sound] Logbook Select  @0x2564bcbdf00
+    [Sound] CancelPurchase  @0x2564bcb3500
+    [Sound] New Upgrade  @0x2564bcb2b00
+    [Sound] MediumDamage  @0x2564bcb0300
+    [Sound] Blip3  @0x2564bcb0a80
+    [Sound] Beep  @0x2564bcb1700
+    [Sound] prompt/normal  @0x2564bcb1c00
+    [Sound] DangerAlert  @0x2564bcb4680
+    [Sound] Keystroke6  @0x2564bcb4e00
+    [Sound] Damage  @0x2564bcb3c80
+    [Sound] SpinReward  @0x2564bcb4900
+    [Sound] Seasons  @0x2564bcb6e80
+    [Sound] PurchaseCoins  @0x2564bcb7100
+    [Sound] GoldenPerks  @0x2564bcb7600
+    [Sound] DailyCoins  @0x2564bcb9e00
+    [Sound] New Hover  @0x2564bcbeb80
+    [Sound] PurchaseHold  @0x2564bcb3f00
+    [Sound] Page Right  @0x256377a7100
+    [Sound] Crystal Click 2  @0x256377ab480
+    [Sound] CurseUIHover  @0x256377aa800
+    [Sound] ElevatorExit  @0x256377a8780
+    [Sound] Skin  @0x256377a8c80
+    [Sound] Skill Tree Upgrade  @0x256377a1980
+    [Sound] Skill Tree Ambience Foliage  @0x2565efc1c00
+    [Sound] Skill Tree Unlock  @0x2565efc6e80
+    [Sound] Skill Tree Maximum Upgrade  @0x2565efc1980
+    [Sound] Skill Tree Select  @0x2565efc2380
+    [Sound] Skill Tree Cursor Hover  @0x2565efc2b00
+    [Sound] Appear  @0x2565efceb80
+    [Sound] Radio Incorrect  @0x2565efc0f80
+    [Sound] FatalHealth  @0x2565efc7d80
+    [Sound] Keystroke5  @0x2565efc5080
+    [Sound] Bleep  @0x2565efcee00
+    [Sound] Unequip  @0x2565efc5a80
+    [Sound] Confirm  @0x2565efc9680
+    [Sound] DailyPremium  @0x2565efc8c80
+    [Sound] teleport/start  @0x2565efc4b80
+    [Sound] Shine  @0x2565efcf080
+    [Sound] Correct Code  @0x2565efc0800
+    [Sound] Difficulty  @0x2565efc6480
+    [Sound] ClassicOof  @0x2565efcf580
+    [Sound] On  @0x2565efcf800
+    [Sound] Keystroke3  @0x2565efc5580
+    [Sound] Keystroke2  @0x2565efc0d00
+    [Sound] Keystroke1  @0x2565efc0a80
+    [Sound] Twitter  @0x2565efcad00
+    [Sound] CurseUIClose  @0x2565efc1480
+    [Sound] Page Left  @0x2565efc9e00
+    [Sound] Logbook Open  @0x2565efcdc80
+    [Sound] Achievements  @0x2565efc9180
+    [Sound] Notification  @0x2565efc0580
+    [Sound] InventoryOpen  @0x2565efc7600
+    [Sound] Radio Correct  @0x2565efc3a00
+    [Sound] Equip  @0x2565efc3f00
+    [Sound] HealthHeal  @0x2565efce180
+    [Sound] Crystal Click 1  @0x2565efc6980
+    [Sound] Click  @0x2565efcdf00
+    [Sound] Hover  @0x2565efcb980
+    [Sound] LowDamage  @0x2565efccd80
+    [Sound] ShieldDamage  @0x2565efcd780
+    [Sound] Invite  @0x2565efc8500
+    [Sound] HoverHotbar  @0x2565efc5800
+    [Sound] CurseUIOpen  @0x2565efcda00
+    [Sound] New Click  @0x2565efc4e00
+    [Sound] PurchaseGems  @0x256377a4900
+    [Sound] Deny  @0x256377a3c80
+    [Sound] WaveStart  @0x256377a6700
+    [Sound] CurseUIDrone  @0x256377a7b00
+    [Sound] Timer  @0x256377a8a00
+    [Sound] Release  @0x256377a1e80
+    [Sound] Sell  @0x256377a0a80
+    [Sound] Error  @0x256377a0800
+    [Sound] Keystroke7  @0x256377a1700
+    [Sound] GiftHit3  @0x256377a2100
+    [Sound] GiftHit2  @0x256377a9b80
+    [Sound] prompt/alert  @0x256377ab700
+    [Sound] GiftOpen  @0x256377a7d80
+    [Sound] Place  @0x256377ab980
+    [Sound] XmasTransition  @0x256377aaa80
+    [Sound] CashBlip  @0x256377a5d00
+    [Sound] Blip2  @0x256377ad780
+    [Sound] New Upgrade Open  @0x256377ada00
+    [Sound] Purchase  @0x256377a5580
+    [Sound] Boot Super Computer  @0x256377a5800
+    [Sound] Redeem  @0x256377a2380
+    [Sound] Keystroke4  @0x256377aa080
+    [Sound] GiftHit1  @0x256377a7600
+    [Sound] CurseUIClick  @0x256377a4680
+    [Sound] Blip  @0x256377a2600
+    [Sound] ElevatorEnter  @0x256377a1480
+    [Sound] Swoosh  @0x256377aad00
+    [Sound] Trash  @0x256377a8500
+    [Sound] Obtain  @0x256385e0580
+    [Sound] New Upgrade Hover  @0x256385e2d80
+    [Sound] Incorrect Code  @0x256385e0300
+    [Sound] ShopOpen  @0x256385e4400
+    [Sound] Woosh  @0x256385e0a80
+    [Sound] Countdown  @0x256385e2600
+    [Sound] Off  @0x256385e2880
+    [Sound] UpgradeOpen  @0x256385e3000
+    [Sound] New Upgrade Close  @0x256385e1e80
+    [Sound] New Sell  @0x256385e2100
+    [Sound] Rotate  @0x256385e2380
+    [Sound] DailyBasic  @0x256385eee00
+    [Sound] Press  @0x256385eb700
+    [Sound] Controller Global Intro  @0x2562f200080
+    [Sound] Controller Global Background  @0x2562f200580
+    [Sound] Controller CutScene Intro  @0x25630651700
+    [Sound] Controller CutScene Background  @0x25630651c00
+    [Sound] Static  @0x2563065e680
+    [Sound] 5446303515  @0x25630653280
+    [Sound] 5446303189  @0x25630654680
+    [Sound] Controller Crate Intro  @0x25630651480
+    [Sound] Controller Crate Background  @0x25630655f80
+  [ScreenGui] FFlag  @0x256625a3c80
+    [Folder] PlayerFFlagReplicator  @0x2565297a180
+  [ScreenGui] CustomFreecam  @0x25637749680
+    [LocalScript] FreecamScript  @0x25632ffadc0
+  [ScreenGui] GameGui  @0x25637741480
+    [UIScale] UIScale  @0x257036ed6e0
+    [Frame] MobileButtons  @0x25658b91880
+      [ImageButton] Cancel  visible=1 text=""  @0x256619b5080
+        [ImageLabel] ImageLabel  visible=1 text=""  @0x25658b93c80
+      [UIListLayout] UIListLayout  @0x25632ffaf80
+      [ImageButton] Rotate  visible=1 text=""  @0x25662747080
+        [ImageLabel] ImageLabel  visible=1 text=""  @0x25658b9d880
+      [UIScale] UIScale  @0x257036ecf00
+    [Frame] Backdrop  @0x25658b97880
+      [UIGradient] UIGradient  @0x2565c831280
+    [Frame] Dialog  @0x25658b98480
+      [TextLabel] Message  visible=1 text=""  @0x25662745080
+      [ImageLabel] Speaker  visible=1 text=""  @0x25658b93080
+        [UIGradient] UIGradient  @0x2565c837700
+        [TextLabel] TextLabel  visible=1 text="Fallen King"  @0x2566274b080
+      [ImageLabel] SpeakerIcon  visible=1 text=""  @0x25658b9cc80
+        [UIGradient] UIGradient  @0x2565c830980
+      [TextLabel] TargetMessage  visible=1 text=""  @0x25662742080
+    [Frame] Background  @0x25658b95480
+      [TextButton] Button  visible=1 text=""  @0x25632fb3c80
+    [Frame] Menu  @0x25658b99c80
+      [Frame] Containers  @0x25658b96080
+        [Frame] MusicNew  @0x256ff460080
+          [ImageLabel] Content  visible=0 text=""  @0x256ff466080
+            [ImageButton] Close  visible=1 text=""  @0x25662744080
+            [TextLabel] TextTitle  visible=1 text="DJ BOOTH"  @0x2566274c080
+            [TextLabel] Testing  visible=1 text="DJ BOOTH"  @0x25662746080
+            [ScrollingFrame] Queue  @0x2566274a080
+            [ImageLabel] Scroll  visible=0 text=""  @0x2570faef080
+            [Frame] Button  @0x2570fae3c80
+            [ImageLabel] Input  visible=1 text=""  @0x2570fae2480
+            [TextLabel] SongName  visible=1 text="Yo Momma Theme"  @0x256330e4080
+            [TextLabel] Length  visible=1 text="130 Secs"  @0x256330e5080
+        [Frame] Music  @0x2570fae9080
+          [ImageLabel] Content  visible=0 text=""  @0x2570fae4880
+            [ImageButton] Close  visible=1 text=""  @0x256330e6080
+            [Frame] Button  @0x2570fae8480
+            [ImageLabel] Input  visible=1 text=""  @0x2570faecc80
+            [TextLabel] Title  visible=0 text="Song Title"  @0x256330e8080
+            [TextLabel] Length  visible=0 text="3 Mins"  @0x256330e9080
+            [TextLabel] Testing  visible=0 text="DJ BOOTH"  @0x256330ea080
+      [Frame] Buttons  @0x25660fbe480
+        [ImageButton] Music  visible=0 text=""  @0x256330eb080
+          [ImageLabel] IconShop  visible=1 text=""  @0x25703480c80
+          [TextLabel] TextShop  visible=0 text="Options"  @0x256330ec080
+        [UIListLayout] UIListLayout  @0x25632ffb300
+        [UIScale] UIScale  @0x257048dc020
+    [ScreenGui] HoverGui  @0x2563774aa80
+      [Frame] Towers  @0x25657613c80
+        [ImageLabel] Bar  visible=1 text=""  @0x25657615480
+        [TextLabel] Level  visible=1 text="Lvl. 5"  @0x256330ed080
+          [] Text Size  @0x257048dfc80
+        [TextLabel] Title  visible=1 text="Minigunner"  @0x256330ee080
+          [] Text Size  @0x257048dfba0
+        [ImageLabel] Owner  visible=1 text=""  @0x25657616080
+          [ImageLabel] Corner  visible=1 text=""  @0x25657614880
+          [TextLabel] TextLabel  visible=1 text="BelowNatural"  @0x25633100080
+            [] Text Size  @0x257048d36c0
+      [Frame] Enemies  @0x25657613080
+        [ImageLabel] Bar  visible=1 text=""  @0x25658b30080
+        [ImageLabel] Title  visible=1 text=""  @0x25658b3e480
+          [ImageLabel] Corner  visible=1 text=""  @0x25658b3f080
+          [TextLabel] TextLabel  visible=1 text="Normal"  @0x25633101080
+            [] Text Size  @0x257048de240
+        [Frame] Attributes  @0x25658b30c80
+          [UIListLayout] UIListLayout  @0x25632ffb4c0
+          [ImageLabel] Defense  visible=0 text=""  @0x2565b4d0c80
+            [ImageLabel] Icon  visible=1 text=""  @0x2565b4d2480
+            [TextLabel] TextLabel  visible=1 text="100%"  @0x25633102080
+          [ImageLabel] Energy  visible=0 text=""  @0x2565b4d1880
+            [ImageLabel] Icon  visible=1 text=""  @0x2565b4d0080
+            [TextLabel] TextLabel  visible=1 text="ENGY"  @0x25633103080
+          [ImageLabel] Explosion  visible=0 text=""  @0x2565bf15480
+            [ImageLabel] Icon  visible=1 text=""  @0x2562c6a2480
+            [TextLabel] TextLabel  visible=1 text="EXP"  @0x25633110080
+          [ImageLabel] Fire  visible=0 text=""  @0x256331c0080
+            [ImageLabel] Icon  visible=1 text=""  @0x256331c0c80
+            [TextLabel] TextLabel  visible=1 text="BRN"  @0x25633111080
+          [ImageLabel] Floating  visible=0 text=""  @0x256331c1880
+            [ImageLabel] Icon  visible=1 text=""  @0x256331c2480
+            [TextLabel] TextLabel  visible=1 text="FLY"  @0x25633112080
+          [ImageLabel] Freeze  visible=0 text=""  @0x256331c3080
+            [ImageLabel] Icon  visible=1 text=""  @0x256331c3c80
+            [TextLabel] TextLabel  visible=1 text="ICE"  @0x25633113080
+          [ImageLabel] Ghost  visible=0 text=""  @0x256331c4880
+            [ImageLabel] Icon  visible=1 text=""  @0x256331c5480
+            [TextLabel] TextLabel  visible=1 text="GHST"  @0x25633114080
+          [ImageLabel] Hidden  visible=0 text=""  @0x256331c6080
+            [ImageLabel] Icon  visible=1 text=""  @0x256331c6c80
+            [TextLabel] TextLabel  visible=1 text="HDN"  @0x25633115080
+          [ImageLabel] Lead  visible=0 text=""  @0x256331c7880
+            [ImageLabel] Icon  visible=1 text=""  @0x256331c8480
+            [TextLabel] TextLabel  visible=1 text="LEAD"  @0x25633116080
+        [Frame] Health  @0x256331c9080
+          [TextLabel] Count  visible=1 text="25/25"  @0x25633117080
+            [] Text Size  @0x256383bd980
+          [Frame] Shield  @0x25657b79080
+            [ImageLabel] Holder  visible=1 text=""  @0x25657b70080
+          [Frame] Bar  @0x25657b70c80
+            [ImageLabel] Holder  visible=1 text=""  @0x25657b71880
+      [Frame] Units  @0x25657b72480
+        [ImageLabel] Bar  visible=1 text=""  @0x25657b73080
+        [ImageLabel] Title  visible=1 text=""  @0x25657b73c80
+          [ImageLabel] Corner  visible=1 text=""  @0x25657b74880
+          [TextLabel] TextLabel  visible=1 text="Unit"  @0x25657b61080
+            [] Text Size  @0x256383b99a0
+        [Frame] Health  @0x25657b75480
+          [TextLabel] Count  visible=1 text="25/25"  @0x25657b62080
+            [] Text Size  @0x256383b4920
+          [Frame] Bar  @0x25657b77880
+            [ImageLabel] Holder  visible=1 text=""  @0x25657b78480
+        [Frame] Attributes  @0x25657b76080
+          [UIListLayout] UIListLayout  @0x2565fb4ba00
+          [ImageLabel] Cooldown  visible=1 text=""  @0x25657b76c80
+            [ImageLabel] Icon  visible=1 text=""  @0x25657b79c80
+            [TextLabel] TextLabel  visible=1 text="10"  @0x25657b63080
+          [ImageLabel] Damage  visible=1 text=""  @0x25657b7a880
+            [ImageLabel] Icon  visible=1 text=""  @0x25657b7b480
+            [TextLabel] TextLabel  visible=1 text="10"  @0x25657b64080
+          [ImageLabel] ExplosionDamage  visible=1 text=""  @0x25657b7c080
+            [ImageLabel] Icon  visible=1 text=""  @0x25657b7cc80
+            [TextLabel] TextLabel  visible=1 text="10"  @0x25657b65080
+          [ImageLabel] Range  visible=1 text=""  @0x25657b7d880
+            [ImageLabel] Icon  visible=1 text=""  @0x25657b7e480
+            [TextLabel] TextLabel  visible=1 text="10"  @0x25657b66080
+      [Frame] Keybinds  @0x25657b7f080
+        [UIListLayout] UIListLayout  @0x2565fb4c800
+        [Frame] Template  @0x25657f80080
+          [ImageLabel] Bg  visible=1 text=""  @0x25657f80c80
+          [TextLabel] Title  visible=1 text="Sample"  @0x25657b67080
+            [] UITextSizeConstraint  @0x256383b2460
+          [Frame] Icon  @0x25657f81880
+            [ImageLabel] PC  visible=0 text=""  @0x25657f82480
+            [TextLabel] TextLabel  visible=1 text=""  @0x25657b60080
+            [ImageLabel] Console  visible=0 text=""  @0x25657f83080
+            [ImageLabel] Bumper  visible=0 text=""  @0x25657f83c80
+            [ImageLabel] DoubleTap  visible=0 text=""  @0x25657f84880
+            [ImageLabel] LMB  visible=0 text=""  @0x25657f85480
+            [ImageLabel] RMB  visible=0 text=""  @0x25657f86080
+  [ScreenGui] Streaming  @0x2570f240080
+    [Folder] Tower  @0x257109719e0
+  [ScreenGui] ProximityPrompts  @0x25635233c80
+  [ScreenGui] WorldParallax  @0x25635235080
+  [LocalScript] RemoveFreecam  @0x2563333bbc0
+  [LocalScript] Scaling  @0x2563333bd80
+  [ScreenGui] Test  @0x2563336dc80
+    [Frame] Frame  @0x25657379c80
+      [UIGradient] UIGradient  @0x256344d8d80
+      [Frame] Fade  @0x25657378480
+        [UIGradient] UIGradient  @0x256344d8f00
+      [Frame] Holder  @0x25657375480
+        [ImageLabel] ImageLabel  visible=1 text=""  @0x25633b67880
+          [UIGradient] UIGradient  @0x25634e7fb00
+        [TextLabel] Top  visible=1 text="CURSE ACTIVE"  @0x2564b712080
+          [UIGradient] UIGradient  @0x25649cd0b00
+        [TextLabel] Curse  visible=1 text="THE MOON"  @0x2564b711080
+          [UIGradient] UIGradient  @0x25649cd0e00
+          [UIStroke] UIStroke  @0x25708ab3200
+            [UIGradient] UIGradient  @0x25649cd0f80
+          [TextLabel] CurseDS  visible=1 text="THE MOON"  @0x2564b710080
+            [UIStroke] UIStroke  @0x25708abf800
+        [] UIAspectRatioConstraint  @0x25649b5ecc0
+  [ScreenGui] t  @0x25649b24680
+  [ScreenGui] ScreenGui  @0x25649b25080
+    [ViewportFrame] R  @0x2565f281880
+    [ViewportFrame] G  @0x2565bf1e480
+    [ViewportFrame] B  @0x2565bf11880
+  [ScreenGui] VersionInfo  @0x25637746e80
+    [TextLabel] TextLabel  visible=1 text="v2.12.1"  @0x256296ca080
+      [UIStroke] UIStroke  @0x25636b87500
+      [UIPadding] UIPadding  @0x25636a1f4a0
+  [Folder] Iris_Root  @0x25636a1d8a0
+    [ScreenGui] PseudoWindowScreenGui  @0x2563774be80
+      [Frame] PseudoWindow  @0x2565e806080
+        [UIPadding] UIPadding  @0x25636a1d7c0
+        [UIListLayout] UIListLayout  @0x25636a2cb80
+    [ScreenGui] PopupScreenGui  @0x2563774a080
+      [Frame] TooltipContainer  @0x2565e80e480
+        [UIListLayout] UIListLayout  @0x25636a2c9c0
+      [Frame] MenuBarContainer  @0x2565e80a880
+  [ScreenGui] ScreenGui  @0x25635238280
+    [Frame] StatEditorExport  @0x25637896080
+      [TextButton] TextButton  visible=1 text="/‹ÿÿÿÿ`ªãTV"  @0x25634530080
+        [] UIAspectRatioConstraint  @0x2563548c3a0
+      [TextLabel] TextLabel  visible=1 text="Press Ctrl+A to select all and Ctrl+C to copy"  @0x25637778080
+      [ScrollingFrame] ScrollingFrame  @0x25637779080
+        [TextBox] TextBox  visible=1 text="èÅ¼?V"  @0x2563453a080
+  [ScreenGui] Currency  @0x25635231e80
+    [Frame] Frame  @0x25637897880
+  [ScreenGui] Interface  @0x2570da8e680
+    [Frame] Root  @0x25637898480
+      [Frame] Matchmaking  @0x2565d6f3080
+        [Frame] Frame  @0x2565d6f7880
+        [Frame] Frame  @0x2565d6f8480
+    [Frame] Prompt  @0x2565d6f1880
+  [ScreenGui] ReactGameAbilities  @0x2570da8a080
+    [Frame] Frame  @0x2565cfa3080
+      [UIListLayout] uIListLayout  @0x25636eb6280
+      [UIScale] uiScale  @0x25636da7860
+      [Frame] 1  @0x25631812480
+        [UIListLayout] listLayout  @0x2564bb4e940
+        [Frame] 1  @0x25631811880
+          [ImageLabel] particle  visible=1 text=""  @0x2566301d880
+          [TextButton] content  visible=1 text=""  @0x25663096480
+            [TextLabel] priceLabel  visible=0 text=""  @0x25663026080
+            [UIScale] scale  @0x25662f23f80
+            [Frame] AbilityTooltip_4233626F-55B4-4E82-99CE-98547CB4F916  @0x2566301e480
+            [Frame] timerOutlineGradientFrame  @0x2566301f080
+            [ImageButton] imageButton  visible=1 text=""  @0x25663027080
+            [Frame] progressGradientFrame  @0x25662a8cc80
+            [TextLabel] AmmoLabel  visible=1 text="3"  @0x25663028080
+            [Frame] Locked  @0x25631810c80
+            [UIStroke] uIStroke  @0x25662d4a800
+            [TextLabel] timeLeftAbility  visible=0 text=""  @0x25663029080
+            [UICorner] uICorner  @0x25662d4a400
+            [TextLabel] binding  visible=1 text="K"  @0x2566302e080
+        [Frame] 2  @0x2565e8b2480
+          [ImageLabel] particle  visible=1 text=""  @0x25635117880
+          [TextButton] content  visible=1 text=""  @0x25658622880
+            [TextLabel] priceLabel  visible=1 text="$2,000"  @0x256247b7080
+            [UIScale] scale  @0x25638fbd600
+            [Frame] AbilityTooltip_08158C04-6BC6-4DEA-B99B-0FEAAC4B5AB4  @0x2565d6fd880
+            [Frame] timerOutlineGradientFrame  @0x25662a86c80
+            [ImageButton] imageButton  visible=1 text=""  @0x256247b5080
+            [Frame] progressGradientFrame  @0x25662a8b480
+            [TextLabel] AmmoLabel  visible=1 text="3"  @0x256247b4080
+            [Frame] Locked  @0x25662a84880
+            [UIStroke] uIStroke  @0x2565e890200
+            [TextLabel] timeLeftAbility  visible=0 text=""  @0x256247b3080
+            [UICorner] uICorner  @0x2563ad14500
+            [TextLabel] binding  visible=1 text="L"  @0x256247b8080
+      [Frame] 2  @0x25624a73c80
+        [UIListLayout] listLayout  @0x2563fd198c0
+        [Frame] 1  @0x25624a72480
+          [ImageLabel] particle  visible=1 text=""  @0x256391a6c80
+          [TextButton] content  visible=1 text=""  @0x25662993c80
+            [TextLabel] priceLabel  visible=0 text=""  @0x2563865e080
+            [UIScale] scale  @0x256629a2ee0
+            [Frame] AbilityTooltip_1D08BFCC-05BA-4B43-B804-F40C28F11512  @0x25624a74880
+            [Frame] timerOutlineGradientFrame  @0x25624a75480
+            [ImageButton] imageButton  visible=1 text=""  @0x2563865b080
+            [Frame] progressGradientFrame  @0x25624a7d880
+            [TextLabel] AmmoLabel  visible=0 text="1"  @0x2563865c080
+            [Frame] Locked  @0x25624a7cc80
+            [UIStroke] uIStroke  @0x25639f85700
+            [TextLabel] timeLeftAbility  visible=0 text=""  @0x25638640080
+            [UICorner] uICorner  @0x25639f89800
+            [TextLabel] binding  visible=1 text="F"  @0x25638b71080
+      [Frame] 3  @0x2564a924880
+        [UIListLayout] listLayout  @0x2570be7cd40
+        [Frame] 1  @0x25643a9c080
+          [ImageLabel] particle  visible=1 text=""  @0x2563bffd880
+          [TextButton] content  visible=1 text=""  @0x25660dcc880
+            [TextLabel] priceLabel  visible=0 text=""  @0x25635100080
+            [UIScale] scale  @0x2565e9714a0
+            [Frame] AbilityTooltip_3C6E542B-E0D0-4260-A1BE-ACBD1F1F5AAA  @0x2563bffe480
+            [Frame] timerOutlineGradientFrame  @0x25643a99080
+            [ImageButton] imageButton  visible=1 text=""  @0x256472ca080
+            [Frame] progressGradientFrame  @0x25643a9a880
+            [TextLabel] AmmoLabel  visible=0 text="1"  @0x2563510b080
+            [Frame] Locked  @0x25643a9e480
+            [UIStroke] uIStroke  @0x25639f8c600
+            [TextLabel] timeLeftAbility  visible=0 text=""  @0x25638202080
+            [UICorner] uICorner  @0x25657a50600
+            [TextLabel] binding  visible=1 text="B"  @0x256330b9080
+      [Frame] 4  @0x25662a8c080
+        [UIListLayout] listLayout  @0x2565dc2c640
+        [Frame] 1  @0x25662a88480
+          [ImageLabel] particle  visible=1 text=""  @0x25644b64880
+          [TextButton] content  visible=1 text=""  @0x25662ab0080
+            [TextLabel] priceLabel  visible=0 text=""  @0x256604fc080
+            [UIScale] scale  @0x25638fba420
+            [Frame] AbilityTooltip_584174A6-5081-4DAD-A659-8934F0BA1596  @0x2563181a880
+            [Frame] timerOutlineGradientFrame  @0x25662a8e480
+            [ImageButton] imageButton  visible=1 text=""  @0x25662947080
+            [Frame] progressGradientFrame  @0x25662a82480
+            [TextLabel] AmmoLabel  visible=0 text="1"  @0x256371b9080
+            [Frame] Locked  @0x25662a81880
+            [UIStroke] uIStroke  @0x25638505800
+            [TextLabel] timeLeftAbility  visible=0 text=""  @0x256371bb080
+            [UICorner] uICorner  @0x2565e899a00
+            [TextLabel] binding  visible=1 text="H"  @0x2562461b080
+      [Frame] 5  @0x25663016c80
+        [UIListLayout] listLayout  @0x2563fd14a00
+        [Frame] 1  @0x25663014880
+          [ImageLabel] particle  visible=1 text=""  @0x25624a76c80
+          [TextButton] content  visible=1 text=""  @0x2565f795080
+            [TextLabel] priceLabel  visible=0 text=""  @0x256371bc080
+            [UIScale] scale  @0x256629ac640
+            [Frame] AbilityTooltip_64CAF39A-FF47-4FA7-A86F-D00367237659  @0x2565ba03080
+            [Frame] timerOutlineGradientFrame  @0x25657d9cc80
+            [ImageButton] imageButton  visible=1 text=""  @0x256439c7080
+            [Frame] progressGradientFrame  @0x2565f4a5480
+            [TextLabel] AmmoLabel  visible=0 text="1"  @0x256371bd080
+            [Frame] Locked  @0x256471e5480
+            [UIStroke] uIStroke  @0x25624af3400
+            [TextLabel] timeLeftAbility  visible=0 text=""  @0x25643430080
+            [UICorner] uICorner  @0x25658601500
+            [TextLabel] binding  visible=1 text="J"  @0x25643434080
+  [ScreenGui] ReactGameAbilityIndicator  @0x2570da8dc80
+  [ScreenGui] ReactGameAreaIndicators  @0x2570da89680
+  [ScreenGui] ReactGameBlackOut  @0x2570da83c80
+    [Frame] Frame  @0x2565cfa6c80
+  [ScreenGui] ReactGameBossHealthBarView  @0x2570da80a80
+    [Frame] Frame  @0x256375e0080
+      [] uIAspectRatioConstraint  @0x25636da9540
+      [UIListLayout] iListLayout  @0x25636eb67c0
+      [UIScale] uIScale  @0x25636da9620
+  [ScreenGui] ReactGameBountySelectEnemy  @0x256314ddc80
+  [ScreenGui] ReactGameCloneSelectTower  @0x2570e411e80
+  [ScreenGui] ReactGameCommunicationSuggestions  @0x2570e41a080
+  [ScreenGui] ReactGameConsumablesView  @0x2570e418c80
+  [ScreenGui] ReactGameCrosshairView  @0x2570e411480
+  [ScreenGui] ReactGameCurseSelectedPopup  @0x2570e416e80
+  [ScreenGui] ReactGameDifficulty  @0x2570e413c80
+    [Frame] Frame  @0x25637cb0080
+      [TextLabel] title  visible=1 text="Vote For a Difficulty"  @0x2563758c080
+        [UIStroke] uIStroke  @0x25636e58600
+      [UIScale] uiScale  @0x25636da9b60
+      [Frame] vipAd  @0x256375e2480
+        [TextButton] textButton  visible=1 text=""  @0x25636ea2880
+          [UIStroke] borderStroke  @0x25636e58700
+          [UICorner] uICorner8  @0x25636e58800
+          [UIStroke] uIStroke15  @0x25636e58900
+        [TextLabel] textLabel  visible=1 text="[VIP] users get x2 extra votes!"  @0x2563206a080
+        [UIListLayout] uIListLayout  @0x25636eb6b40
+      [Frame] buttons  @0x2563761d880
+        [Frame] casualButton  @0x256375e8480
+          [Frame] button  @0x256375e7880
+            [ImageLabel] dropShadow  visible=1 text=""  @0x25647440080
+            [Frame] content  @0x256375e6c80
+          [ImageLabel] glow  visible=0 text=""  @0x2564a888480
+            [UIGradient] iGradient  @0x25636e8aa00
+        [Frame] easyButton  @0x25637162480
+          [Frame] button  @0x25637160c80
+            [ImageLabel] dropShadow  visible=1 text=""  @0x2564a88a880
+            [Frame] content  @0x25637160080
+          [ImageLabel] glow  visible=0 text=""  @0x25637161880
+            [UIGradient] iGradient  @0x25636e8b600
+        [Frame] fallenButton  @0x2563716cc80
+          [Frame] button  @0x2563716b480
+            [ImageLabel] dropShadow  visible=1 text=""  @0x25637163080
+            [Frame] content  @0x2563716a880
+          [ImageLabel] glow  visible=0 text=""  @0x2563716c080
+            [UIGradient] iGradient  @0x25636e8c200
+        [Frame] moltenButton  @0x25637177880
+          [Frame] button  @0x25637176080
+            [ImageLabel] dropShadow  visible=1 text=""  @0x2563716d880
+            [Frame] content  @0x25637175480
+          [ImageLabel] glow  visible=0 text=""  @0x25637176c80
+            [UIGradient] iGradient  @0x25636e8cc80
+        [UIListLayout] uiListLayout  @0x25636eb7240
+        [Frame] intermediateButton  @0x25637612480
+          [Frame] button  @0x25637610c80
+            [ImageLabel] dropShadow  visible=1 text=""  @0x25637178480
+            [Frame] content  @0x25637610080
+          [ImageLabel] glow  visible=0 text=""  @0x25637611880
+            [UIGradient] iGradient  @0x25636e8d880
+        [Frame] frostButton  @0x2563761cc80
+          [Frame] button  @0x2563761b480
+            [ImageLabel] dropShadow  visible=1 text=""  @0x25637613080
+            [Frame] content  @0x2563761a880
+          [ImageLabel] glow  visible=0 text=""  @0x2563761c080
+            [UIGradient] iGradient  @0x25636e8e480
+      [Frame] ready  @0x2563761f080
+        [UIListLayout] uIListLayout  @0x25636eb7780
+        [TextButton] readyButton  visible=1 text=""  @0x25636eab480
+          [UICorner] uICorner  @0x25636e5fc00
+          [UIStroke] borderStroke  @0x25636e5fd00
+          [ImageLabel] imageLabel  visible=1 text=""  @0x2563761e480
+        [TextLabel] textLabel  visible=1 text="Ready? (0/1)"  @0x256375fb080
+          [UIStroke] uIStroke  @0x25636e5ff00
+  [ScreenGui] ReactGameEnemies  @0x2570e41be80
+  [ScreenGui] ReactGameEnemyQueue  @0x2570e410a80
+  [ScreenGui] ReactGameFakeKickMessage  @0x2570e417880
+  [ScreenGui] ReactGameGameModifiers  @0x2570e414680
+    [Frame] Modifiers  @0x2565bf1b480
+      [] uIAspectRatioConstraint  @0x25636dac100
+      [Frame] background  @0x2565bf1c080
+        [Frame] backgroundFrame  @0x25637cb3080
+          [UICorner] uICorner  @0x25637cc0600
+          [UIStroke] uIStroke  @0x25637cc0700
+          [UIScale] uIScale  @0x25636dac020
+        [Frame] ApplyModifiers  @0x25637cb5480
+          [ImageButton] button  visible=1 text=""  @0x256375fd080
+            [UIScale] scale  @0x25636dabf40
+            [ImageLabel] bG  visible=1 text=""  @0x25637cb3c80
+            [Frame] content  @0x25637cb4880
+        [TextLabel] title  visible=1 text="Game Modifiers"  @0x256375fe080
+        [Frame] close  @0x25637cb7880
+          [UIScale] uIScale  @0x25636dac480
+          [TextButton] content  visible=1 text=""  @0x25636eac880
+            [UIScale] scale  @0x25636dac560
+            [Frame] content  @0x25637cb6c80
+        [TextLabel] totalRewards  visible=1 text="Total Rewards: 1X"  @0x25637cd0080
+        [Frame] selectedModifiers  @0x25637cb8480
+          [TextLabel] title  visible=1 text="Selected Modifiers (0/13)"  @0x25637cd1080
+          [UIPadding] uIPadding  @0x25636dacaa0
+          [UIScale] uIScale  @0x25636dacb80
+          [UICorner] uICorner  @0x25637cc0400
+          [UIStroke] uIStroke  @0x25637cc1100
+          [ScrollingFrame] scrollingFrame  @0x25637cd2080
+            [UIGridLayout] uIGridLayout  @0x25636ed4900
+            [UIPadding] uIPadding  @0x25636dac9c0
+          [UIGradient] uIGradient  @0x25636e8ec00
+        [Frame] modifiers  @0x25633ed5480
+          [UIPadding] uIPadding  @0x25636dacc60
+          [UIScale] UIScale  @0x25636dacd40
+          [UICorner] uICorner  @0x25637cc1200
+          [UIStroke] uIStroke  @0x25637cc1300
+          [ScrollingFrame] scrollingFrame  @0x25637a74080
+            [Frame] HiddenEnemies  @0x25637cba880
+            [Frame] Glass  @0x25637ab7880
+            [Frame] ExplodingEnemies  @0x25637ab9c80
+            [Frame] Limitation  @0x25637abc080
+            [Frame] Committed  @0x25637abe480
+            [Frame] HealthyEnemies  @0x25657372480
+            [Frame] SpeedyEnemies  @0x2565737d880
+            [Frame] Quarantine  @0x2565c4fb480
+            [Frame] Fog  @0x2565c4fa880
+            [Frame] FlyingEnemies  @0x2565cfa1880
+            [Frame] Broke  @0x25633ed0080
+            [Frame] JailedTowers  @0x25633ed2480
+            [Frame] Inflation  @0x25633ed4880
+            [UIGridLayout] uIGridLayout  @0x25630651200
+        [Frame] bar  @0x25633ed9080
+          [UIListLayout] uIListLayout  @0x25630644680
+          [Frame] search  @0x25633ed8480
+            [Frame] main  @0x25633ed7880
+  [ScreenGui] ReactGameHitmarkerView  @0x25637744680
+  [ScreenGui] ReactGameIntermission  @0x2563320d280
+    [Frame] Frame  @0x25638e3a880
+      [Frame] mapOverride  @0x25638e32480
+        [Frame] categories  @0x2564942cc80
+          [UIListLayout] 1  @0x2564b21d7c0
+          [TextButton] Hard  visible=1 text=""  @0x2564b5c0080
+            [UIStroke] stroke  @0x25708abb600
+            [UICorner] corner  @0x25708abae00
+            [UIPadding] padding  @0x25649ce36c0
+          [TextButton] Insane  visible=1 text=""  @0x2564b5cc880
+            [UIStroke] stroke  @0x25708ab6900
+            [UICorner] corner  @0x25708abba00
+            [UIPadding] padding  @0x25649ce0da0
+          [TextButton] Normal  visible=1 text=""  @0x2564b5cdc80
+            [UIStroke] stroke  @0x25708abfc00
+            [UICorner] corner  @0x25708ab4d00
+            [UIPadding] padding  @0x25649ce0e80
+          [TextButton] Easy  visible=1 text=""  @0x2570d67a080
+            [UIStroke] stroke  @0x25708abe700
+            [UICorner] corner  @0x25708ab5400
+            [UIPadding] padding  @0x25649ce0160
+          [TextButton] all  visible=1 text=""  @0x2570d67c880
+            [UIStroke] stroke  @0x25708abc200
+            [UICorner] corner  @0x25708ab4800
+            [UIPadding] padding  @0x25649ce3a40
+        [UIScale] uiScale  @0x25649ce3960
+        [UIListLayout] uiListLayout  @0x2564b21d980
+        [TextLabel] exitLabel  visible=1 text="Press 'ESC' or click anywhere off the menu to exit."  @0x25637a75080
+        [Frame] list  @0x25638b4f080
+          [ScrollingFrame] content  @0x25638c22080
+            [ImageButton] 1Retro Stained Temple  visible=1 text=""  @0x25637a7a080
+            [ImageButton] 2Spring Fever  visible=1 text=""  @0x25638150080
+            [ImageButton] 0Summer Castle  visible=1 text=""  @0x25638155080
+            [ImageButton] 1Northern Lights  visible=1 text=""  @0x2563815a080
+            [ImageButton] 2Chess Board  visible=1 text=""  @0x25638200080
+            [UIPadding] padding  @0x256385d76a0
+            [ImageButton] 2Four Seasons  visible=1 text=""  @0x2563820a080
+            [ImageButton] 2Moon Base  visible=1 text=""  @0x256382d0080
+            [ImageButton] 4Black Spot Exchange  visible=1 text=""  @0x256382d5080
+            [ImageButton] 3Construction Crazy  visible=1 text=""  @0x256382da080
+            [ImageButton] 2Cyber City  visible=1 text=""  @0x25638410080
+            [ImageButton] 3Cataclysm  visible=1 text=""  @0x25638415080
+            [ImageButton] 2Stained Temple  visible=1 text=""  @0x2563841a080
+            [ImageButton] 2Ruby Escort  visible=1 text=""  @0x25638420080
+            [ImageButton] 1Necropolis  visible=1 text=""  @0x25638425080
+            [UIGridLayout] gridLayout  @0x25630657880
+            [ImageButton] 4Lay By  visible=1 text=""  @0x25638470080
+            [ImageButton] 1Crossroads  visible=1 text=""  @0x25638475080
+            [ImageButton] 1Forest Camp  visible=1 text=""  @0x2563847a080
+            [ImageButton] 2Farm Lands  visible=1 text=""  @0x25638480080
+            [ImageButton] 3Dusty Bridges  visible=1 text=""  @0x25638485080
+            [ImageButton] 4Infernal Abyss  visible=1 text=""  @0x25638c1b080
+            [ImageButton] 4Dead Ahead  visible=1 text=""  @0x256384d0080
+            [ImageButton] 1Retro Rocket Arena  visible=1 text=""  @0x256384d5080
+            [ImageButton] 2Nether  visible=1 text=""  @0x256384da080
+            [ImageButton] 1Toyboard  visible=1 text=""  @0x256384f0080
+            [ImageButton] 1Harbor  visible=1 text=""  @0x256384f5080
+            [ImageButton] 2Sugar Rush  visible=1 text=""  @0x256384fa080
+            [ImageButton] 1U-Turn  visible=1 text=""  @0x25638510080
+            [ImageButton] 1Grass Isle  visible=1 text=""  @0x25638c16080
+            [ImageButton] 2Retro Lighthouse  visible=1 text=""  @0x2563851a080
+            [ImageButton] 2Iceville  visible=1 text=""  @0x256385b0080
+            [ImageButton] 2Simplicity  visible=1 text=""  @0x256385b5080
+            [ImageButton] 2Wrecked Battlefield  visible=1 text=""  @0x256385ba080
+            [ImageButton] 1Autumn Falling  visible=1 text=""  @0x25638600080
+            [ImageButton] 1Retro Crossroads  visible=1 text=""  @0x25638c11080
+            [ImageButton] 1Tropical Isles  visible=1 text=""  @0x2563860a080
+            [ImageButton] 2Meltdown  visible=1 text=""  @0x25638b9b080
+            [ImageButton] 3Sacred Mountains  visible=1 text=""  @0x25638645080
+            [ImageButton] 2Tropical Industries  visible=1 text=""  @0x2563864a080
+            [ImageButton] 1Fungi Island  visible=1 text=""  @0x25638650080
+            [ImageButton] 1Portland  visible=1 text=""  @0x25638655080
+            [ImageButton] 4Winter Stronghold  visible=1 text=""  @0x2563865a080
+            [ImageButton] 2Wrecked Battlefield II  visible=1 text=""  @0x25638ba6080
+            [ImageButton] 3The Heights  visible=1 text=""  @0x256386a5080
+            [ImageButton] 3Forgetten Docks  visible=1 text=""  @0x256386aa080
+            [ImageButton] 2Lighthaos  visible=1 text=""  @0x25638780080
+            [ImageButton] 3Candy Valley  visible=1 text=""  @0x25638ba1080
+            [ImageButton] 2Crystal Cave  visible=1 text=""  @0x2563878b080
+            [ImageButton] 2Marshlands  visible=1 text=""  @0x256387b1080
+            [ImageButton] 1Abandoned City  visible=1 text=""  @0x256387b6080
+            [ImageButton] 3Winter Abyss  visible=1 text=""  @0x256387bb080
+            [ImageButton] 2Night Station  visible=1 text=""  @0x256387e1080
+            [ImageButton] 3Retro The Heights  visible=1 text=""  @0x256387e6080
+            [ImageButton] 2Medieval Times  visible=1 text=""  @0x256387eb080
+            [ImageButton] 1Sky Islands  visible=1 text=""  @0x25638801080
+            [ImageButton] 4Space City  visible=1 text=""  @0x25638806080
+            [ImageButton] 3Abyssal Trench  visible=1 text=""  @0x2563880b080
+            [ImageButton] 1Rocket Arena  visible=1 text=""  @0x25638961080
+            [ImageButton] 4Gilded Path  visible=1 text=""  @0x25638966080
+            [ImageButton] 2Pier Pressure  visible=1 text=""  @0x2563896b080
+            [ImageButton] 3Retro Zone  visible=1 text=""  @0x25638c21080
+            [ImageButton] 2Coral Deep  visible=1 text=""  @0x25638b96080
+            [ImageButton] 2Winter Bridges  visible=1 text=""  @0x25638b7b080
+            [ImageButton] 4Mason Arch  visible=1 text=""  @0x25638b81080
+            [ImageButton] 4Hot Spot  visible=1 text=""  @0x25638b86080
+            [ImageButton] 2Midnight Issue  visible=1 text=""  @0x25638b8b080
+            [ImageButton] 2Deserted Village  visible=1 text=""  @0x25638b91080
+          [Frame] background  @0x25638b4e480
+            [UICorner] corner  @0x256387fd300
+            [ImageLabel] dropShadow  visible=1 text=""  @0x25638b4d880
+        [Frame] searchbox  @0x25638e31880
+          [ImageLabel] icon  visible=1 text=""  @0x25638e30080
+          [TextBox] serach  visible=1 text=""  @0x25633ef7880
+            [UIPadding] padding  @0x256385d7b00
+          [UICorner] corner  @0x256387fd500
+          [ImageLabel] dropShadow  visible=1 text=""  @0x25638e30c80
+      [Frame] top  @0x25638e36c80
+        [Frame] status  @0x25638e33c80
+          [Frame] banner  @0x25638e33080
+            [UIGradient] bannerGradient  @0x2563419fb00
+          [TextLabel] label  visible=1 text="Vote For A Map"  @0x25638c23080
+            [UIStroke] stroke  @0x256387fd600
+            [UIPadding] padding  @0x256385d7cc0
+            [UIGradient] gradient  @0x2563419fc80
+        [UIScale] scale  @0x256385d7a20
+        [Frame] timer  @0x25638e36080
+          [Frame] timerTitle  @0x25638e35480
+            [ImageLabel] icon  visible=1 text=""  @0x25638e34880
+            [TextLabel] title  visible=1 text="Time Left:"  @0x25638c24080
+          [TextLabel] time  visible=1 text="00:00"  @0x25638c25080
+            [UIGradient] gradient  @0x25660e1ef00
+            [UIStroke] stroke  @0x256387fda00
+      [Frame] buttons  @0x25638e39c80
+        [ImageButton] inventory  visible=1 text=""  @0x25638c27080
+          [TextLabel] value  visible=1 text="Inventory"  @0x25638c26080
+            [UIStroke] stroke  @0x256387fdb00
+          [UIPadding] padding  @0x256385d7f60
+          [ImageLabel] icon  visible=1 text=""  @0x25638e37880
+          [UIScale] scale  @0x256385d8040
+        [ImageButton] veto  visible=1 text=""  @0x25638c29080
+          [TextLabel] value  visible=1 text="Veto (0/0)"  @0x25638c28080
+            [UIStroke] stroke  @0x256387fe100
+          [UIPadding] padding  @0x256385d8200
+          [ImageLabel] icon  visible=1 text=""  @0x25638e38480
+          [UIScale] scale  @0x256385d82e0
+        [UIListLayout] uiListLayout  @0x25630644300
+        [UIScale] scale  @0x256385d83c0
+        [ImageButton] ready  visible=1 text=""  @0x25638c2b080
+          [TextLabel] value  visible=1 text="Ready (0/0)"  @0x25638c2a080
+            [UIStroke] stroke  @0x256387fe700
+          [UIPadding] padding  @0x256385d8580
+          [ImageLabel] icon  visible=1 text=""  @0x25638e39080
+          [UIScale] scale  @0x256385d8660
+  [ScreenGui] ReactGameKeybindView  @0x25635238c80
+  [ScreenGui] ReactGameLoadoutSelection  @0x25724bf5080
+  [ScreenGui] ReactGameMedicTowerSelection  @0x25724bf3280
+  [ScreenGui] ReactGameMouseIcon  @0x25724bf7880
+    [ImageLabel] ImageLabel  visible=1 text=""  @0x25637e49c80
+      [UIScale] scale  @0x256381ef900
+      [] ratio  @0x256381ef9e0
+  [ScreenGui] ReactGameMusicSync  @0x25724bfa080
+    [ImageLabel] ImageLabel  visible=1 text=""  @0x25637e48480
+  [ScreenGui] ReactGameNewRewards  @0x25724bfc880
+    [Frame] Frame  @0x25638fd5480
+      [Frame] gameOver  @0x25638fd4880
+        [ImageLabel] commander  visible=1 text=""  @0x25637e47880
+        [UIScale] uIScale  @0x256381efac0
+        [Frame] RewardsScreen  @0x25638fd2480
+          [Frame] PlayAgain  @0x2563818a880
+            [ImageButton] button  visible=1 text=""  @0x25637cde080
+          [UICorner] uICorner  @0x25637e6a700
+          [Frame] gameStats  @0x2563818cc80
+            [Frame] stats  @0x2563818b480
+            [UICorner] uICorner  @0x25637e6a800
+            [UIStroke] uIStroke  @0x25637e6a900
+            [ImageButton] adVideoButton  visible=0 text=""  @0x25632d71080
+          [ImageLabel] RewardBanner  visible=1 text=""  @0x2563818d880
+            [TextLabel] textLabel  visible=1 text="YOU LOST"  @0x25632d72080
+          [Frame] confetti  @0x2563818f080
+            [Frame] ConfettiEmitter  @0x2563818e480
+          [Frame] other  @0x25632d88480
+            [Frame] level  @0x25632d87880
+          [Frame] RewardAd  @0x25632d8cc80
+            [Frame] textContainer  @0x25632d89080
+            [UICorner] uICorner  @0x25637e6be00
+            [UIStroke] uIStroke  @0x25637e6bf00
+            [Frame] price  @0x25632d8b480
+            [ImageLabel] gamepass  visible=1 text=""  @0x25632d8c080
+          [UIStroke] uIStroke  @0x25637e6c500
+          [Frame] ReturnToLobby  @0x25632d8f080
+            [ImageButton] button  visible=1 text=""  @0x25632d7e080
+          [Frame] TryAgain  @0x25638fd1880
+            [ImageButton] button  visible=1 text=""  @0x25638fe1080
+        [] uIAspectRatioConstraint  @0x25637f94bc0
+        [ImageLabel] bubble  visible=1 text=""  @0x25638fd3c80
+          [TextLabel] textLabel  visible=1 text="We need back up sergeant!"  @0x25638fe2080
+            [] uITextSizeConstraint  @0x25637f94ae0
+          [ImageLabel] tail  visible=1 text=""  @0x25638fd3080
+  [ScreenGui] ReactGameOldUpgrades  @0x256378b2880
+  [ScreenGui] ReactGameOwnedTowers  @0x256378b5a80
+  [ScreenGui] ReactGamePVPIntermission  @0x256378ba080
+  [ScreenGui] ReactGamePlacementCursor  @0x256378baa80
+  [ScreenGui] ReactGamePursuitAbilityView  @0x256378bb480
+  [ScreenGui] ReactGameRadioInput  @0x256378bbe80
+  [ScreenGui] ReactGameRange  @0x256378bdc80
+  [ScreenGui] ReactGameRewards  @0x256378e0080
+  [ScreenGui] ReactGameSandboxExit  @0x256378e1480
+    [Frame] Frame  @0x25638fdd880
+      [Frame] ExitButtonContainer  @0x25638fdcc80
+        [ImageButton] ExitButton  visible=1 text=""  @0x25638fe5080
+          [UIStroke] stroke  @0x25637e6dd00
+          [TextLabel] text  visible=1 text="Return to Lobby"  @0x25638fe4080
+            [UIStroke] uIStroke  @0x25637e6da00
+          [UIPadding] padding  @0x25637f928c0
+          [UICorner] corner  @0x25637e6df00
+          [UIScale] uIScale  @0x25637f92460
+          [UIGradient] gradient  @0x2563817b480
+          [UIShadow] UIShadow  @0x25637f8fbc0
+          [UIListLayout] listLayout  @0x256381a9000
+        [UIScale] UIScale  @0x25637f92380
+  [ScreenGui] ReactGameSandboxPanel  @0x256378e6e80
+    [Frame] Frame  @0x25638fde480
+  [ScreenGui] ReactGameShrineActivatedPopup  @0x256378e7880
+  [ScreenGui] ReactGameTVStatic  @0x256378e8280
+  [ScreenGui] ReactGameTooltip  @0x256378e9680
+    [Frame] Frame  @0x25639000c80
+  [ScreenGui] ReactGameTopGameDisplay  @0x256378eb480
+    [Frame] Frame  @0x2563900a880
+      [Frame] wave  @0x25639002480
+        [TextLabel] title  visible=1 text="Wave:"  @0x25638fe6080
+          [UIStroke] uiStroke  @0x25637e6e900
+        [UIListLayout] listLayout  @0x256381aa180
+        [Frame] container  @0x25639001880
+          [TextLabel] value  visible=1 text="--"  @0x25638fe7080
+            [UIStroke] uiStroke  @0x25637e6ea00
+            [UIPadding] padding  @0x25637f91e40
+            [UIGradient] gradient  @0x2563817bc00
+      [Frame] healthbar  @0x25639006c80
+        [Frame] lag1  @0x25639003080
+          [UICorner] corner  @0x25637e6eb00
+          [UIGradient] gradient  @0x2563817bf00
+        [ImageLabel] shield  visible=1 text=""  @0x25639003c80
+          [UICorner] corner  @0x25637e6ec00
+          [UIGradient] gradient  @0x2563817c080
+        [UIStroke] stroke  @0x25637e6ed00
+        [ImageLabel] health  visible=1 text=""  @0x25639004880
+          [UICorner] corner  @0x25637e6ee00
+          [UIGradient] gradient  @0x2563817c200
+        [UICorner] corner  @0x25637e6ef00
+        [TextLabel] title  visible=1 text="Base Health"  @0x25638fe8080
+          [UIStroke] uiStroke  @0x25637e6f000
+        [TextLabel] progress  visible=1 text="âˆž"  @0x25638fe9080
+          [UIStroke] uiStroke  @0x25637e6e700
+        [ImageLabel] icon  visible=1 text=""  @0x25639005480
+        [Frame] lag2  @0x25639006080
+          [UICorner] corner  @0x25637e6e400
+          [UIGradient] gradient  @0x2563817ba80
+      [] sizeConstraint  @0x25637f91820
+      [] aspectRatio  @0x25637f91660
+      [Frame] waveTimer  @0x25639009c80
+        [Frame] container  @0x25639007880
+          [TextLabel] value  visible=1 text="00:00"  @0x25638fea080
+            [UIStroke] uiStroke  @0x25637e6e500
+            [UIPadding] padding  @0x25637f91580
+            [UIGradient] gradient  @0x2563817b900
+        [UIListLayout] listLayout  @0x256381aa340
+        [Frame] bin  @0x25639009080
+          [ImageLabel] icon  visible=1 text=""  @0x25639008480
+          [UIListLayout] listLayout  @0x256381aa500
+          [TextLabel] title  visible=1 text="Time Left:"  @0x25638feb080
+            [UIStroke] uiStroke  @0x25637e6e200
+  [ScreenGui] ReactGameTopbar  @0x256378ed280
+  [ScreenGui] ReactGameTowerAmmoPreview  @0x256378edc80
+    [Frame] Frame  @0x25639132480
+      [UICorner] uiCorner  @0x25637e6fc00
+      [UIStroke] uiStroke  @0x25637e6fd00
+      [TextLabel] valueText  visible=1 text="0/0"  @0x25638fec080
+        [UIStroke] uiStroke  @0x25637e6fe00
+      [Frame] fillBar  @0x25639130c80
+        [UICorner] uiCorner  @0x25637e6ff00
+        [Frame] fillFrame  @0x25639130080
+          [UICorner] uiCorner  @0x25637e6f400
+      [ImageLabel] reloadImage  visible=0 text=""  @0x25639131880
+        [UIScale] uIscale  @0x25637f90e80
+  [ScreenGui] ReactGameTowerBuffs  @0x256378ee680
+  [ScreenGui] ReactGameTowerTimeSpans  @0x256378ef080
+  [ScreenGui] ReactGameTutorial  @0x25637900080
+  [ScreenGui] ReactGameUpgrades  @0x25637905080
+  [ScreenGui] ReactGameVignetteAnimation  @0x25637908280
+    [ImageLabel] ImageLabel  visible=1 text=""  @0x256391acc80
+  [ScreenGui] NPC VIEWS Void Reaver  @0x2563790a080
+  [ScreenGui] ReactOverridesDialog  @0x2563790aa80
+    [Frame] Frame  @0x256327dd880
+      [ImageLabel] dialogIcon  visible=1 text=""  @0x256327db480
+        [UIGradient] gradient  @0x25638e9da00
+      [ViewportFrame] dialogCharacter  @0x256327dc080
+        [Camera] camera  @0x25635470400
+        [UIGradient] gradient  @0x25638e9de80
+        [WorldModel] worldModel  @0x25660dbd780
+      [Frame] content  @0x256327dcc80
+        [UICorner] uICorner  @0x25638e4e400
+        [UIStroke] uIStroke  @0x25638e4e500
+          [UIGradient] uIGradient  @0x25638e9e480
+        [TextLabel] dialogRichText  visible=1 text=""  @0x256327cd080
+          [UIStroke] uIStroke2  @0x25638e4e600
+          [UIPadding] uIPadding1  @0x25632d3cc60
+        [TextLabel] speaker  visible=1 text=""  @0x256327ce080
+          [UIPadding] uIPadding  @0x25632d3c640
+          [UIStroke] uIStroke1  @0x25638e4e700
+      [UIScale] uiScale  @0x25632d3ce20
+  [ScreenGui] ReactOverridesTopBar  @0x2563790b480
+    [Frame] Frame  @0x25660a83080
+      [Frame] items  @0x25660a82480
+        [UIListLayout] uIListLayout  @0x2565498d280
+        [TextButton] settings  visible=1 text=""  @0x2565ee9dc80
+          [] uIAspectRatioConstraint1  @0x256549de320
+          [Frame] sizeContainer  @0x2564346a880
+            [ImageLabel] glow  visible=1 text=""  @0x25643466080
+            [Frame] content  @0x25643468480
+            [Frame] text  @0x25643469c80
+          [Frame] SpotLight:Settings  @0x2564346b480
+        [TextButton] music  visible=1 text=""  @0x25660aa0080
+          [] uIAspectRatioConstraint1  @0x256549deb00
+          [Frame] sizeContainer  @0x25660a80c80
+            [ImageLabel] glow  visible=1 text=""  @0x2564346c080
+            [Frame] content  @0x2564346e480
+            [Frame] text  @0x25660a80080
+          [Frame] SpotLight:Music  @0x25660a81880
+  [ScreenGui] ReactOverridesVote  @0x2563790be80
+    [Frame] Frame  @0x25660a88480
+      [Frame] votes  @0x25657d00c80
+        [UIPadding] padding  @0x2565d5297e0
+        [UIScale] uiScale  @0x2565d5298c0
+        [Frame] vote  @0x25657d03080
+          [Frame] votesNo  @0x2565730f080
+            [TextButton] content  visible=1 text=""  @0x25660dc0080
+          [TextLabel] count  visible=1 text="0/0 Required"  @0x25639ec1080
+            [UIStroke] uIStroke1  @0x2565d19ab00
+          [UICorner] uICorner  @0x2565d19a400
+          [TextLabel] prompt  visible=1 text=""  @0x25639ec3080
+            [UIStroke] uIStroke  @0x2565d19a500
+          [ImageLabel] dropShadow  visible=1 text=""  @0x2565730e480
+          [Frame] votesYes  @0x25657d05480
+            [TextButton] content  visible=1 text=""  @0x25660dc1480
+  [ScreenGui] ReactOverridesCurseVoteView  @0x2563790c880
+    [Frame] Frame  @0x256327d7880
+      [Frame] content  @0x256327d6c80
+        [TextLabel] VotingText  visible=1 text=""  @0x256327c9080
+          [UIStroke] uIStroke  @0x25638e4ca00
+        [ImageLabel] placeholderForVFX2  visible=1 text=""  @0x256327d3080
+        [Frame] cardContainer  @0x256327d3c80
+        [] uIAspectRatioConstraint  @0x25632d3caa0
+        [Frame] titleContainer  @0x256327d5480
+          [TextLabel] header  visible=1 text="Select A Curse!"  @0x256327ca080
+            [UIGradient] uIGradient  @0x25638e9e000
+            [UIStroke] uIStroke  @0x25638e4cd00
+          [ImageLabel] underline  visible=1 text=""  @0x256327d4880
+        [ImageLabel] placeholderForVFX  visible=1 text=""  @0x256327d6080
+  [ScreenGui] ReactOverridesTooltips  @0x2563790d280
+    [Frame] Frame  @0x25643465480
+  [ScreenGui] ReactOverridesSpotlight  @0x2563790dc80
+    [CanvasGroup] CanvasGroup  @0x2565ee23280
+      [Frame] inputSink  @0x25643461880
+        [Frame] top  @0x2565f14e480
+        [Frame] right  @0x2565f14f080
+        [Frame] left  @0x25643460080
+        [Frame] bottom  @0x25643460c80
+      [Frame] overlay  @0x25643463c80
+        [Frame] clickbait  @0x25643462480
+          [UICorner] UICorner  @0x2565c52e500
+          [UIStroke] stroke  @0x2565c52e600
+        [ImageLabel] cover  visible=1 text=""  @0x25643463080
+  [ScreenGui] ReactOverridesLoading  @0x2563790e680
+    [TextButton] TextButton  visible=0 text=""  @0x2563aae1480
+      [UIGradient] gradient  @0x25636d4d280
+  [ScreenGui] ReactOverridesModifiers  @0x2563790f080
+    [Frame] Frame  @0x2565d4ce480
+      [UIListLayout] uIListLayout  @0x2564bb40240
+      [Frame] Defense  @0x2565d6f3c80
+        [TextButton] 1  visible=1 text=""  @0x25657d26480
+          [UIScale] UIScale  @0x25649cee400
+          [ImageLabel] Icon  visible=1 text=""  @0x2565d6f5480
+          [UICorner] UICorner  @0x2564ba71600
+          [ImageLabel] DropShadow  visible=1 text=""  @0x2565d6f6080
+          [Frame] Modifier:Defense  @0x2565d6f6c80
+      [Frame] Strategy  @0x2565d6f0080
+        [TextButton] 1  visible=1 text=""  @0x25657d20080
+          [UIScale] UIScale  @0x25649ce45a0
+          [ImageLabel] Icon  visible=1 text=""  @0x2565d6f4880
+          [UICorner] UICorner  @0x2564ba71e00
+          [ImageLabel] DropShadow  visible=1 text=""  @0x2565d6f0c80
+          [Frame] Modifier:Strategy  @0x2565d6f2480
+      [Frame] Offense  @0x2565b27d880
+        [TextButton] 1  visible=1 text=""  @0x25657d25080
+          [UIScale] UIScale  @0x25649ce3880
+          [ImageLabel] Icon  visible=1 text=""  @0x2565b27f080
+          [UICorner] UICorner  @0x2564ba70f00
+          [ImageLabel] DropShadow  visible=1 text=""  @0x2565b27e480
+          [Frame] Modifier:Offense  @0x2565b27cc80
+      [Frame] Economy  @0x2565d4cf080
+        [TextButton] 1  visible=1 text=""  @0x25657d23c80
+          [UIScale] UIScale  @0x25649cecd40
+          [ImageLabel] Icon  visible=1 text=""  @0x2565b27b480
+          [UICorner] UICorner  @0x2564ba70900
+          [ImageLabel] DropShadow  visible=1 text=""  @0x2565b27c080
+          [Frame] Modifier:Economy  @0x2565d4ccc80
+  [ScreenGui] ReactOverridesNotifications  @0x256379d0080
+    [Frame] Frame  @0x2565d4cc080
+      [UIListLayout] listLayout  @0x2564bb41040
+  [ScreenGui] SoftShutdown  @0x256379d0a80
+    [Frame] Frame  @0x2565f14d880
+      [UIPadding] uIPadding  @0x256549de940
+      [Frame] contentContainer  @0x2565f14cc80
+        [UIListLayout] uIListLayout  @0x2565498d600
+        [Frame] labelContainer  @0x2565f14a880
+          [TextLabel] subtitleLabel  visible=1 text="Teleporting you back in a moment!"  @0x2565f12c080
+          [TextLabel] titleLabel  visible=1 text="Rebooting servers for an update"  @0x2565f12d080
+          [] uIAspectRatioConstraint  @0x256549de6a0
+        [Frame] imageLabelContainer  @0x2565f14c080
+          [ImageLabel] imageLabel  visible=1 text=""  @0x2565f14b480
+        [UIScale] uIScale  @0x256549de5c0
+  [ScreenGui] PlayerCountdown  @0x256379d1480
+    [Frame] Frame  @0x2565ebe9c80
+      [Frame] contentContainer  @0x2565ebe9080
+        [TextLabel] counter  visible=1 text="0"  @0x25649435080
+          [UIStroke] stroke  @0x2564ba73c00
+        [ImageLabel] vignette  visible=1 text=""  @0x2565ebe7880
+          [UIScale] scale  @0x25649ceb300
+          [UIGradient] gradient  @0x2564b856980
+        [TextLabel] title  visible=1 text="WAITING FOR PLAYERS..."  @0x25649436080
+          [UIStroke] stroke  @0x2564ba73700
+        [Frame] loader  @0x2565ebe8480
+          [UIScale] scale  @0x25649ce92a0
+          [UIStroke] stroke  @0x2564ba73800
+            [UIGradient] gradient  @0x2564b856680
+          [UICorner] corner  @0x2564ba73300
+  [ScreenGui] ReactUniversalAdminNotification  @0x256379d1e80
+    [Frame] Frame  @0x256391af080
+      [UIListLayout] UIListLayout  @0x256381aaa40
+  [ScreenGui] ReactUniversalChapterGates  @0x256379d2880
+  [ScreenGui] ReactUniversalCommunications  @0x256379d5080
+    [Frame] notifications  @0x2565e178480
+      [UIScale] scale  @0x25632d3a880
+      [UIListLayout] list  @0x25632d53880
+    [TextButton] wheel  visible=0 text=""  @0x25633efdc80
+      [Frame] container  @0x256327d2480
+        [UIScale] scale  @0x25632d3a960
+        [Frame] center  @0x2565e17c080
+          [TextLabel] textLabel  visible=1 text="Page"  @0x256327c0080
+            [UIStroke] uIStroke  @0x25638e4b800
+          [ImageButton] next  visible=1 text=""  @0x256327c1080
+            [UICorner] uICorner1  @0x25638e4b900
+            [UIStroke] uIStroke3  @0x25638e4ba00
+            [] uIAspectRatioConstraint2  @0x25632d3ac00
+          [ImageButton] previous  visible=1 text=""  @0x256327c2080
+            [UICorner] uICorner  @0x25638e4bc00
+            [] uIAspectRatioConstraint1  @0x25632d3adc0
+            [UIStroke] uIStroke2  @0x25638e4bd00
+          [] uIAspectRatioConstraint  @0x25632d3aea0
+          [TextLabel] textLabel1  visible=1 text="1/1"  @0x256327c3080
+            [UIStroke] uIStroke1  @0x25638e4bf00
+        [Frame] 1  @0x25637e4e480
+          [UIScale] scale  @0x25632d3b060
+          [ImageLabel] shadow  visible=1 text=""  @0x2565e17cc80
+          [ImageLabel] container  visible=1 text="àƒ5û÷"  @0x25637e4f080
+            [UIGradient] color  @0x25638e9ce00
+            [Frame] content  @0x25637e4c080
+        [Frame] 3  @0x25638182480
+          [UIScale] scale  @0x25632d3b3e0
+          [ImageLabel] shadow  visible=1 text=""  @0x25637e4d880
+          [ImageLabel] container  visible=1 text=""  @0x25638183080
+            [UIGradient] color  @0x25638e9cc80
+            [Frame] content  @0x25638184880
+        [Frame] 2  @0x2565c4f5480
+          [UIScale] scale  @0x25632d3b760
+          [ImageLabel] shadow  visible=1 text=""  @0x25638181880
+          [ImageLabel] container  visible=1 text=""  @0x2565c4f4880
+            [UIGradient] color  @0x25638e9d280
+            [Frame] content  @0x2565c4f6080
+        [Frame] 5  @0x2565e170c80
+          [UIScale] scale  @0x25632d3bae0
+          [ImageLabel] shadow  visible=1 text=""  @0x2565c4f6c80
+          [ImageLabel] container  visible=1 text=""  @0x2565cfacc80
+            [UIGradient] color  @0x25638e9d400
+            [Frame] content  @0x2565cfaf080
+        [Frame] 4  @0x2565ecd0c80
+          [UIScale] scale  @0x25632d3be60
+          [ImageLabel] shadow  visible=1 text=""  @0x2565e171880
+          [ImageLabel] container  visible=1 text=""  @0x2565ecd5480
+            [UIGradient] color  @0x25638e9d580
+            [Frame] content  @0x2565ecd4880
+        [Frame] 6  @0x256327d1880
+          [UIScale] scale  @0x25632d3c1e0
+          [ImageLabel] shadow  visible=1 text=""  @0x2565ecd1880
+          [ImageLabel] container  visible=1 text=""  @0x256327d0c80
+            [UIGradient] color  @0x25638e9d700
+            [Frame] content  @0x256327d0080
+  [ScreenGui] ReactUniversalCutsceneLetterbox  @0x256379d8c80
+  [ScreenGui] ReactUniversalCutsceneSubtitle  @0x256379d9680
+    [ImageLabel] fadeImage  visible=0 text=""  @0x256327d9c80
+    [TextLabel] label  visible=0 text=": "  @0x256327cb080
+      [] textSizeConstraint  @0x25632d3c8e0
+  [ScreenGui] ReactUniversalEmotes  @0x256379da080
+    [TextButton] TextButton  visible=0 text=""  @0x25633efc880
+      [Frame] container  @0x256391a9c80
+        [UIScale] scale  @0x25632d3cf00
+        [Frame] center  @0x256327df080
+          [TextLabel] textLabel  visible=1 text="Page"  @0x25637a73080
+            [UIStroke] uIStroke  @0x25638e4d300
+          [ImageButton] next  visible=1 text=""  @0x2563919e080
+            [UICorner] uICorner1  @0x25638e4d400
+            [UIStroke] uIStroke3  @0x25638e4f100
+            [] uIAspectRatioConstraint2  @0x25632d3d0c0
+          [ImageButton] previous  visible=1 text=""  @0x2563919b080
+            [UICorner] uICorner  @0x25638e4f300
+            [] uIAspectRatioConstraint1  @0x25632d3d1a0
+            [UIStroke] uIStroke2  @0x25638e4f400
+          [] uIAspectRatioConstraint  @0x25632d3d280
+          [TextLabel] textLabel1  visible=1 text="1/2"  @0x2563919c080
+            [UIStroke] uIStroke1  @0x25638e4f600
+        [Frame] 1  @0x25638fdf080
+          [UIScale] scale  @0x25632d3d440
+          [ImageLabel] shadow  visible=1 text=""  @0x25637e4a880
+          [ImageLabel] container  visible=1 text=""  @0x25637a0f080
+            [UIGradient] color  @0x25638e9e780
+            [Frame] content  @0x2565cfa7880
+        [Frame] 3  @0x25638fd9c80
+          [UIScale] scale  @0x25632d3d6e0
+          [ImageLabel] shadow  visible=1 text=""  @0x25638fd6080
+          [ImageLabel] container  visible=1 text=""  @0x25638fd9080
+            [UIGradient] color  @0x25638e9e900
+            [Frame] content  @0x25638fd8480
+        [Frame] 2  @0x2563900f080
+          [UIScale] scale  @0x25632d3d980
+          [ImageLabel] shadow  visible=1 text=""  @0x25638fda880
+          [ImageLabel] container  visible=1 text=""  @0x25637a03c80
+            [UIGradient] color  @0x25638e9ea80
+            [Frame] content  @0x25638fdc080
+        [Frame] 5  @0x2563900e480
+          [UIScale] scale  @0x25632d3dc20
+          [ImageLabel] shadow  visible=1 text=""  @0x25639000080
+          [ImageLabel] container  visible=1 text=""  @0x2563900cc80
+            [UIGradient] color  @0x25638e9ec00
+            [Frame] content  @0x2563900c080
+        [Frame] 4  @0x256391ae480
+          [UIScale] scale  @0x25632d3dec0
+          [ImageLabel] shadow  visible=1 text=""  @0x25639135480
+          [ImageLabel] container  visible=1 text=""  @0x25639134880
+            [UIGradient] color  @0x25638e9ed80
+            [Frame] content  @0x25639133c80
+        [Frame] 6  @0x256391a9080
+          [UIScale] scale  @0x25632d3e160
+          [ImageLabel] shadow  visible=1 text=""  @0x256391a6080
+          [ImageLabel] container  visible=1 text=""  @0x256391a8480
+            [UIGradient] color  @0x25638e9ef00
+            [Frame] content  @0x256391a7880
+  [ScreenGui] ReactUniversalEventDirector  @0x256379dbe80
+  [ScreenGui] ReactUniversalGlitchEffect  @0x256379df080
+    [Frame] Frame  @0x256391ab480
+      [ImageLabel] fade  visible=1 text=""  @0x256391aa880
+  [ScreenGui] ReactUniversalGlitchEffectTextEvent  @0x256378e3280
+  [ScreenGui] ReactUniversalHotbar  @0x25705c7f080
+    [Frame] Frame  @0x25643453080
+      [ImageButton] adminPanel  visible=1 text=""  @0x2564b71e080
+        [UICorner] Corner  @0x256327f0700
+        [UIScale] uiScale  @0x25632d3e6a0
+        [UIStroke] Stroke  @0x256327f0800
+        [ImageLabel] Icon  visible=1 text=""  @0x256391ac080
+        [Frame] Keybind  @0x25637a03080
+          [TextLabel] text  visible=1 text="C"  @0x2563919d080
+            [UIStroke] uiStroke  @0x256327f0900
+          [UICorner] corner  @0x256327f0a00
+          [ImageLabel] bindImage  visible=1 text=""  @0x256391ad880
+      [ImageButton] communicationSwitcher  visible=0 text=""  @0x2564b713080
+        [UICorner] Corner  @0x256327f0c00
+        [UIScale] uiScale  @0x25632d3e860
+        [UIStroke] Stroke  @0x256327f0d00
+        [ImageLabel] Icon  visible=1 text=""  @0x2564942c080
+        [Frame] Keybind  @0x25649420c80
+          [TextLabel] text  visible=1 text="N"  @0x2564b714080
+            [UIStroke] uiStroke  @0x256327f0e00
+          [UICorner] corner  @0x256327f0f00
+          [ImageLabel] bindImage  visible=1 text=""  @0x25649420080
+      [Frame] values  @0x25649424880
+        [UIScale] uiScale  @0x25632d3ea20
+        [Frame] placement  @0x25649422480
+          [UICorner] corner  @0x256327f1100
+          [TextLabel] amount  visible=1 text="7 / 41"  @0x2564b715080
+            [UIStroke] stroke  @0x256327f1200
+            [UIPadding] padding  @0x25632d3eb00
+          [UIGradient] gradient  @0x25638e9f200
+          [ImageLabel] icon  visible=1 text=""  @0x25649421880
+        [UIListLayout] list  @0x25632d54a00
+        [Frame] cash  @0x25649423c80
+          [UICorner] corner  @0x256327f1300
+          [TextLabel] amount  visible=1 text="âˆž"  @0x2564b716080
+            [UIStroke] stroke  @0x256327f1400
+            [UIPadding] padding  @0x25632d3e4e0
+          [UIGradient] gradient  @0x25638e9f680
+          [ImageLabel] icon  visible=1 text=""  @0x25649423080
+      [Frame] troops  @0x256433f4880
+        [UIListLayout] uIListLayout  @0x25632d54d80
+        [Frame] 1  @0x2564942a880
+          [UIScale] Scale  @0x25632d3eda0
+          [Frame] content  @0x25649429c80
+            [TextLabel] Cost  visible=1 text="$850"  @0x2564b717080
+            [UIScale] Scale  @0x25632d3f040
+            [UIStroke] Stroke  @0x256327f1d00
+            [ImageLabel] Lock  visible=0 text=""  @0x25649425480
+            [TextButton] Button  visible=1 text=""  @0x25637a5b480
+            [TextLabel] Level  visible=0 text="Lv. "  @0x2564b718080
+            [Frame] Icon  @0x25649427880
+            [] Aspect  @0x25632d3f3c0
+            [Frame] E5D2BE7D-1135-4887-93E0-2B6F8CA46192  @0x25649428480
+            [TextLabel] Timeleft  visible=0 text="0"  @0x2564b719080
+            [Frame] Cooldown  @0x25649429080
+            [UIGradient] Gradient  @0x25638e9fc80
+            [TextLabel] Hotkey  visible=1 text="1"  @0x2564b71a080
+            [UICorner] Corner  @0x256327f2300
+        [Frame] 3  @0x2565bf18480
+          [UIScale] Scale  @0x25632d3f740
+          [Frame] content  @0x2565bf17880
+            [TextLabel] Cost  visible=1 text="$3,000"  @0x2564b71b080
+            [UIScale] Scale  @0x25632d3f9e0
+            [UIStroke] Stroke  @0x256327f2500
+            [ImageLabel] Lock  visible=0 text=""  @0x2564942b480
+            [TextButton] Button  visible=1 text=""  @0x25637a50080
+            [TextLabel] Level  visible=0 text="Lv. "  @0x2564b71c080
+            [Frame] Icon  @0x2565bf1cc80
+            [] Aspect  @0x25632d3fc80
+            [Frame] BE52DB24-4E8F-4746-86C4-AB7A3AA62EC9  @0x2565bf1a880
+            [TextLabel] Timeleft  visible=0 text="0"  @0x2564b71d080
+            [Frame] Cooldown  @0x2565bf16c80
+            [UIGradient] Gradient  @0x2570393d700
+            [TextLabel] Hotkey  visible=1 text="3"  @0x25632800080
+            [UICorner] Corner  @0x256327f3000
+        [Frame] 2  @0x25635c93c80
+          [UIScale] Scale  @0x25651bd8120
+          [Frame] content  @0x25635c94880
+            [TextLabel] Cost  visible=1 text="$650"  @0x2565b774080
+            [UIScale] Scale  @0x25651bd83c0
+            [UIStroke] Stroke  @0x25624b0a700
+            [ImageLabel] Lock  visible=0 text=""  @0x25635c96080
+            [TextButton] Button  visible=1 text=""  @0x2565345b480
+            [TextLabel] Level  visible=0 text="Lv. "  @0x2565b777080
+            [Frame] Icon  @0x25635c91880
+            [] Aspect  @0x25651bd21c0
+            [Frame] 3ABD2D8C-A6AA-4F5D-8D0C-C3D74B819E23  @0x25635c9c080
+            [TextLabel] Timeleft  visible=0 text="0"  @0x2565b779080
+            [Frame] Cooldown  @0x25635c99c80
+            [UIGradient] Gradient  @0x2565bdbf500
+            [TextLabel] Hotkey  visible=1 text="2"  @0x2565b77a080
+            [UICorner] Corner  @0x25624b08400
+        [Frame] 5  @0x2565ca3e480
+          [UIScale] Scale  @0x25651bd3340
+          [Frame] content  @0x25635c9e480
+            [TextLabel] Cost  visible=1 text="$400"  @0x2565b77b080
+            [UIScale] Scale  @0x25651bd5020
+            [UIStroke] Stroke  @0x25624b06200
+            [ImageLabel] Lock  visible=0 text=""  @0x25635c9cc80
+            [TextButton] Button  visible=1 text=""  @0x25653453c80
+            [TextLabel] Level  visible=0 text="Lv. "  @0x2565b77c080
+            [Frame] Icon  @0x25635c96c80
+            [] Aspect  @0x25651bd67c0
+            [Frame] 79879737-A3E7-4420-918F-EA2518EF2D56  @0x25635c99080
+            [TextLabel] Timeleft  visible=0 text="0"  @0x2565b77d080
+            [Frame] Cooldown  @0x25635c95480
+            [UIGradient] Gradient  @0x2565bdbd700
+            [TextLabel] Hotkey  visible=1 text="5"  @0x2565b77e080
+            [UICorner] Corner  @0x25624b02300
+        [Frame] 4  @0x256433f3c80
+          [UIScale] Scale  @0x25651bd7a20
+          [Frame] content  @0x256433f3080
+            [TextLabel] Cost  visible=1 text="$525"  @0x256433d0080
+            [UIScale] Scale  @0x25651bde080
+            [UIStroke] Stroke  @0x25624b01b00
+            [ImageLabel] Lock  visible=0 text=""  @0x2565ca3cc80
+            [TextButton] Button  visible=1 text=""  @0x2565345c880
+            [TextLabel] Level  visible=0 text="Lv. "  @0x256433d1080
+            [Frame] Icon  @0x256433f0c80
+            [] Aspect  @0x25651bdcaa0
+            [Frame] F626557B-6720-42E0-86BC-D4C6BCE5F7E8  @0x256433f1880
+            [TextLabel] Timeleft  visible=0 text="0"  @0x256433d2080
+            [Frame] Cooldown  @0x256433f2480
+            [UIGradient] Gradient  @0x2565bdbd280
+            [TextLabel] Hotkey  visible=1 text="4"  @0x256433d3080
+            [UICorner] Corner  @0x25624b06d00
+        [UIScale] uiScale  @0x25651bdb140
+      [ImageButton] zombiesSwitcher  visible=0 text=""  @0x256433d5080
+        [UICorner] Corner  @0x25624b0a200
+        [UIScale] uiScale  @0x25651bde240
+        [UIStroke] Stroke  @0x25624b02600
+        [ImageLabel] Icon  visible=1 text=""  @0x256433f5480
+        [Frame] Keybind  @0x256433f6c80
+          [TextLabel] text  visible=1 text="T"  @0x256433d4080
+            [UIStroke] uiStroke  @0x25624b02100
+          [UICorner] corner  @0x25624b03100
+          [ImageLabel] bindImage  visible=1 text=""  @0x256433f6080
+      [Frame] consumables  @0x25643450080
+        [UIListLayout] uIListLayout  @0x2564baa1200
+        [Frame] 1  @0x256433fcc80
+          [UIScale] Scale  @0x25651bd2fc0
+          [Frame] content  @0x256433fc080
+            [UIScale] Scale  @0x25651bd0240
+            [UIStroke] Stroke  @0x25624b09900
+            [ImageLabel] Lock  visible=0 text=""  @0x256433f7880
+            [TextButton] Button  visible=1 text=""  @0x2565345dc80
+            [TextLabel] Level  visible=0 text="Lv. "  @0x256433d6080
+            [Frame] Icon  @0x256433f9c80
+            [] Aspect  @0x25651bd8f20
+            [Frame] 574B6E4B-44CE-4B83-8972-4769D3E7637A  @0x256433fa880
+            [TextLabel] Timeleft  visible=0 text="0"  @0x256433d8080
+            [Frame] Cooldown  @0x256433fb480
+            [UIGradient] Gradient  @0x2565bdbc980
+            [TextLabel] Hotkey  visible=1 text="1"  @0x256433d9080
+            [UICorner] Corner  @0x25624b02500
+        [Frame] 4  @0x25643423080
+          [UIScale] Scale  @0x25651bd91c0
+          [Frame] content  @0x25643422480
+            [UIScale] Scale  @0x25651bda0a0
+            [UIStroke] Stroke  @0x25624b05d00
+            [ImageLabel] Lock  visible=0 text=""  @0x256433fd880
+            [TextButton] Button  visible=1 text=""  @0x2565dd37880
+            [TextLabel] Level  visible=0 text="Lv. "  @0x256433da080
+            [Frame] Icon  @0x25643420080
+            [] Aspect  @0x25651bda6c0
+            [Frame] 4B88090E-ECE2-43AE-B50B-37EB2FF8A9D4  @0x25643420c80
+            [TextLabel] Timeleft  visible=0 text="0"  @0x256433dc080
+            [Frame] Cooldown  @0x25643421880
+            [UIGradient] Gradient  @0x2565bdb5a80
+            [TextLabel] Hotkey  visible=1 text="4"  @0x256433dd080
+            [UICorner] Corner  @0x25624b05f00
+        [Frame] 3  @0x25643429080
+          [UIScale] Scale  @0x25651bdcc60
+          [Frame] content  @0x25643428480
+            [UIScale] Scale  @0x25651bdce20
+            [UIStroke] Stroke  @0x25624b04400
+            [ImageLabel] Lock  visible=0 text=""  @0x25643423c80
+            [TextButton] Button  visible=1 text=""  @0x2565dd36480
+            [TextLabel] Level  visible=0 text="Lv. "  @0x256433de080
+            [Frame] Icon  @0x25643426080
+            [] Aspect  @0x25651bdd280
+            [Frame] 56481E8C-EB41-43C2-8C63-DA587DA8F998  @0x25643426c80
+            [TextLabel] Timeleft  visible=0 text="0"  @0x25643431080
+            [Frame] Cooldown  @0x25643427880
+            [UIGradient] Gradient  @0x2565bdbf800
+            [TextLabel] Hotkey  visible=1 text="3"  @0x25643432080
+            [UICorner] Corner  @0x25624b07f00
+        [Frame] 2  @0x2564342f080
+          [UIScale] Scale  @0x25651bddde0
+          [Frame] content  @0x2564342e480
+            [UIScale] Scale  @0x25651bddfa0
+            [UIStroke] Stroke  @0x25624b00c00
+            [ImageLabel] Lock  visible=0 text=""  @0x25643429c80
+            [TextButton] Button  visible=1 text=""  @0x2565dd35080
+            [TextLabel] Level  visible=0 text="Lv. "  @0x25643433080
+            [Frame] Icon  @0x2564342c080
+            [] Aspect  @0x25651bdeb00
+            [Frame] 6A27713C-AF7A-43E2-9C94-C6C5F6A7FAB2  @0x2564342cc80
+            [TextLabel] Timeleft  visible=0 text="0"  @0x25643435080
+            [Frame] Cooldown  @0x2564342d880
+            [UIGradient] Gradient  @0x2565bdb9200
+            [TextLabel] Hotkey  visible=1 text="2"  @0x25643436080
+            [UICorner] Corner  @0x25624b07300
+        [UIScale] uiScale  @0x25651bd53a0
+      [ImageButton] consumableSwitcher  visible=1 text=""  @0x25643438080
+        [UICorner] Corner  @0x25624b02400
+        [UIScale] uiScale  @0x25651bd2ee0
+        [UIStroke] Stroke  @0x25624b00800
+        [ImageLabel] Icon  visible=1 text=""  @0x25643450c80
+        [Frame] Keybind  @0x25643452480
+          [TextLabel] text  visible=1 text="T"  @0x25643437080
+            [UIStroke] uiStroke  @0x25624b01900
+          [UICorner] corner  @0x25624b0bf00
+          [ImageLabel] bindImage  visible=1 text=""  @0x25643451880
+  [ScreenGui] ReactUniversalInventoryView  @0x25635230a80
+    [Frame] Navigation  @0x2564345f080
+      [Frame] buttons  @0x2564345d880
+        [UIListLayout] uIListLayout  @0x2564baa3340
+        [TextButton] TowersButton  visible=1 text=""  @0x2564348b480
+          [Frame] content  @0x25643456080
+            [] aspectRatio  @0x25651bd6520
+            [TextLabel] title  visible=1 text="Towers"  @0x25643439080
+            [UIScale] uIScale  @0x25651bd6360
+            [ImageLabel] highlight  visible=1 text=""  @0x25643454880
+            [ImageLabel] icon  visible=1 text=""  @0x25643455480
+            [UICorner] cornerRadius  @0x25624b07000
+        [TextButton] CosmeticsButton  visible=1 text=""  @0x2564348c880
+          [Frame] content  @0x25643458480
+            [] aspectRatio  @0x25651bd5f00
+            [TextLabel] title  visible=1 text="Cosmetics"  @0x2564343a080
+            [UIScale] uIScale  @0x25651bd5c60
+            [ImageLabel] highlight  visible=1 text=""  @0x25643456c80
+            [ImageLabel] icon  visible=1 text=""  @0x25643457880
+            [UICorner] cornerRadius  @0x25624b09800
+        [TextButton] ConsumablesButton  visible=1 text=""  @0x2564348dc80
+          [Frame] content  @0x2564345a880
+            [] aspectRatio  @0x25651bd5800
+            [TextLabel] title  visible=1 text="Items"  @0x2564343b080
+            [UIScale] uIScale  @0x25651bd5560
+            [ImageLabel] highlight  visible=1 text=""  @0x25643459080
+            [ImageLabel] icon  visible=1 text=""  @0x25643459c80
+            [UICorner] cornerRadius  @0x25624b03f00
+        [Frame] CloseButton  @0x2564345cc80
+          [] aspectRatio  @0x25651bd5100
+          [TextButton] content  visible=1 text=""  @0x25643490080
+            [UIScale] scale  @0x25651bd4f40
+            [Frame] content  @0x2564345c080
+        [UIScale] uiScale  @0x25651bd4920
+      [Frame] background  @0x2564345e480
+        [UICorner] uICorner  @0x25624b01300
+        [UIStroke] uIStroke  @0x25624b09400
+        [UIGradient] uIGradient  @0x2565bdb6980
+    [ImageButton] filterInventory  visible=0 text=""  @0x25643505080
+      [UIScale] uIScale  @0x25651bd4840
+      [UICorner] uICorner  @0x25624b0a100
+      [UIStroke] uIStroke  @0x25624b08d00
+      [UIListLayout] uIListLayout  @0x2564baa3500
+      [Frame] 1  @0x256434b1880
+        [Frame] checkbox  @0x256434b0c80
+          [UICorner] uICorner  @0x25624b0cf00
+          [UIStroke] uIStroke  @0x25624b07b00
+          [TextButton] Button  visible=1 text=""  @0x25643491480
+          [ImageLabel] imageLabel  visible=0 text=""  @0x256434b0080
+        [TextLabel] textLabel  visible=1 text="Owned"  @0x2564343c080
+        [UIPadding] uIPadding  @0x25651bd45a0
+      [Frame] 2  @0x256434b3c80
+        [Frame] checkbox  @0x256434b3080
+          [UICorner] uICorner  @0x25624b0b700
+          [UIStroke] uIStroke  @0x25624b0b500
+          [TextButton] Button  visible=1 text=""  @0x25643492880
+          [ImageLabel] imageLabel  visible=0 text=""  @0x256434b2480
+        [TextLabel] textLabel  visible=1 text="Equipped"  @0x2564343d080
+        [UIPadding] uIPadding  @0x25651bd4060
+      [Frame] 3  @0x256434b4880
+      [Frame] 4  @0x256434b6c80
+        [Frame] checkbox  @0x256434b6080
+          [UICorner] uICorner  @0x25624b05400
+          [UIStroke] uIStroke  @0x25624b0c200
+          [TextButton] Button  visible=1 text=""  @0x25643493c80
+          [ImageLabel] imageLabel  visible=0 text=""  @0x256434b5480
+        [TextLabel] textLabel  visible=1 text="Starter"  @0x2564343e080
+        [UIPadding] uIPadding  @0x25651bd3c00
+      [Frame] 5  @0x256434b9080
+        [Frame] checkbox  @0x256434b8480
+          [UICorner] uICorner  @0x25624b0d100
+          [UIStroke] uIStroke  @0x25624b0d200
+          [TextButton] Button  visible=1 text=""  @0x25643495080
+          [ImageLabel] imageLabel  visible=0 text=""  @0x256434b7880
+        [TextLabel] textLabel  visible=1 text="Intermediate"  @0x25643500080
+        [UIPadding] uIPadding  @0x25651bd37a0
+      [Frame] 6  @0x256434bb480
+        [Frame] checkbox  @0x256434ba880
+          [UICorner] uICorner  @0x25624b0d400
+          [UIStroke] uIStroke  @0x25624b0d500
+          [TextButton] Button  visible=1 text=""  @0x25643496480
+          [ImageLabel] imageLabel  visible=0 text=""  @0x256434b9c80
+        [TextLabel] textLabel  visible=1 text="Advanced"  @0x25643501080
+        [UIPadding] uIPadding  @0x25651bd3420
+      [Frame] 7  @0x256434bd880
+        [Frame] checkbox  @0x256434bcc80
+          [UICorner] uICorner  @0x25624b0d700
+          [UIStroke] uIStroke  @0x25624b0d800
+          [TextButton] Button  visible=1 text=""  @0x25643497880
+          [ImageLabel] imageLabel  visible=0 text=""  @0x256434bc080
+        [TextLabel] textLabel  visible=1 text="Hardcore"  @0x25643502080
+        [UIPadding] uIPadding  @0x25651bd30a0
+      [Frame] 8  @0x25643520080
+        [Frame] checkbox  @0x256434bf080
+          [UICorner] uICorner  @0x25624b0da00
+          [UIStroke] uIStroke  @0x25624b0db00
+          [TextButton] Button  visible=1 text=""  @0x25643498c80
+          [ImageLabel] imageLabel  visible=0 text=""  @0x256434be480
+        [TextLabel] textLabel  visible=1 text="Evolved"  @0x25643503080
+        [UIPadding] uIPadding  @0x25651bd2b60
+      [Frame] 9  @0x25643522480
+        [Frame] checkbox  @0x25643521880
+          [UICorner] uICorner  @0x25624b0dd00
+          [UIStroke] uIStroke  @0x25624b0de00
+          [TextButton] Button  visible=1 text=""  @0x2564349a080
+          [ImageLabel] imageLabel  visible=0 text=""  @0x25643520c80
+        [TextLabel] textLabel  visible=1 text="Exclusive"  @0x25643504080
+        [UIPadding] uIPadding  @0x25651bd2700
+      [UIPadding] uIPadding  @0x25651bd2620
+    [Frame] Holder  @0x25632879c80
+      [Frame] selectedCosmeticsFrame  @0x25643524880
+        [TextLabel] ArcheTitle  visible=1 text="Common"  @0x25643506080
+          [UIStroke] uIStroke  @0x25624b0e200
+        [Frame] itemViewport  @0x25643523c80
+          [ViewportFrame] viewport  @0x25643523080
+            [WorldModel] player  @0x256244f5080
+            [] uIAspectRatioConstraint  @0x25651bd74e0
+            [Part] shadow  @0x25654c8aa00
+          [Camera] camera  @0x2570fe8e780
+        [TextLabel] Title  visible=1 text="Garry's Dance"  @0x25643508080
+          [UIStroke] uIStroke  @0x25624b0ec00
+      [UIScale] uiScale  @0x25651bda5e0
+      [Frame] windowFrame  @0x2563804d880
+        [ImageLabel] dropShadow2  visible=1 text=""  @0x25643525480
+        [Frame] filter  @0x2564352b480
+          [UICorner] uICorner  @0x25624b0ed00
+          [UIStroke] uIStroke  @0x25624b0ee00
+          [UIGradient] uIGradient  @0x2565bdbbf00
+          [Frame] PVPSwithButton  @0x25643527880
+            [UIScale] uIScale  @0x25651bd9fc0
+            [UICorner] uICorner  @0x25624b0ef00
+            [UIStroke] uIStroke  @0x25624b0f000
+            [Frame] holder  @0x25643526c80
+            [TextButton] textButton  visible=1 text=""  @0x2564349b480
+          [TextButton] Loadouts  visible=1 text=""  @0x2564349c880
+            [TextLabel] textLabel  visible=1 text="Loadouts"  @0x2564350a080
+            [UICorner] uICorner  @0x25624b0f500
+            [UIStroke] uIStroke  @0x25624b0f600
+            [UIListLayout] uIListLayout  @0x2564baa2e00
+            [ImageLabel] imageLabel  visible=1 text=""  @0x25643528480
+          [Frame] searchBar  @0x25643529c80
+            [UIPadding] uIPadding  @0x25651bd0400
+            [TextBox] textBox  visible=1 text="ÀG‘ü÷"  @0x2564349dc80
+            [UIStroke] uIStroke  @0x25624b0f800
+            [UICorner] uICorner  @0x25624b0f900
+            [ImageLabel] imageLabel  visible=1 text=""  @0x25643529080
+          [TextButton] filter  visible=1 text=""  @0x25643530080
+            [] aspectRatioConstraint  @0x25651bd19e0
+            [UIScale] uIScale  @0x25651bd1d60
+            [UICorner] uICorner  @0x25624b0fa00
+            [UIStroke] uIStroke  @0x25624b0fb00
+            [ImageLabel] imageLabel  visible=1 text=""  @0x2564352a880
+        [UICorner] uICorner  @0x25624af1300
+        [ScrollingFrame] towersInventoryFrame  @0x2563801a080
+          [Frame] towerContainer  @0x2563804c080
+            [UIListLayout] uIListLayout  @0x2564baa28c0
+            [UIPadding] uIPadding  @0x25651bd7940
+            [Frame] 1  @0x2564352cc80
+            [Frame] 2  @0x2564352e480
+            [Frame] 3  @0x256435f0080
+            [Frame] 4  @0x2565bf10c80
+            [Frame] 7  @0x2565bf13c80
+            [Frame] 7scrolling  @0x25636d38480
+            [Frame] 4scrolling  @0x2563874a880
+            [Frame] 3scrolling  @0x2563a6f6080
+            [Frame] 2scrolling  @0x25637fe5480
+            [Frame] 1scrolling  @0x2563804b480
+          [UIPadding] padding  @0x256381ebd80
+        [ImageLabel] dropShadow  visible=1 text=""  @0x2563804cc80
+      [Frame] selectedCrateFrame  @0x2563804f080
+        [TextLabel] Title  visible=1 text=""  @0x2563801b080
+          [UIStroke] uIStroke  @0x25638032700
+        [Frame] RemainingAmount  @0x2563804e480
+          [UIPadding] uIPadding  @0x256381ec020
+          [UIScale] uIScale  @0x256381ec100
+          [UICorner] uICorner  @0x25638032800
+          [UIStroke] uIStroke  @0x25638032900
+          [TextLabel] archetype  visible=1 text="0 Remaining"  @0x2563801c080
+            [UIStroke] uIStroke  @0x25638032a00
+      [Frame] selectedCrateItemsScrollingFrame  @0x25638053080
+        [Frame] holder  @0x25638052480
+          [TextLabel] disclaimer  visible=1 text="Open and receive one of the following"  @0x2563801d080
+            [Frame] frame  @0x25638050080
+            [UIStroke] uIStroke  @0x25638032b00
+          [UIGradient] uIGradient  @0x25636d49080
+          [Frame] buttons  @0x25638050c80
+            [UIListLayout] uIListLayout  @0x25632d5b840
+            [ImageButton] returnButton  visible=1 text=""  @0x25638060080
+          [UIStroke] uIStroke  @0x25638033300
+            [UIGradient] uIGradient  @0x25636d49680
+          [ScrollingFrame] scrollingFrame  @0x25638061080
+            [Frame] towerContainer  @0x25638051880
+            [UIPadding] padding  @0x256381ec2c0
+      [Frame] selectedTicketFrame  @0x25638054880
+        [TextLabel] ArcheTitle  visible=1 text="Ticket"  @0x25638062080
+          [UIStroke] uIStroke  @0x25638033400
+        [TextLabel] Title  visible=1 text=""  @0x25638063080
+          [UIStroke] uIStroke  @0x25638033500
+        [Frame] RemainingAmount  @0x25638053c80
+          [UIPadding] uIPadding  @0x256381ecc60
+          [UIScale] uIScale  @0x256381ecd40
+          [UICorner] uICorner  @0x25638033600
+          [UIStroke] uIStroke  @0x25638033700
+          [TextLabel] archetype  visible=1 text="0 Remaining"  @0x25638064080
+            [UIStroke] uIStroke  @0x25638033800
+      [] aspectRatio  @0x256381ecf00
+      [Frame] selectedConsumableFrame  @0x25638056080
+        [TextLabel] ArcheTitle  visible=1 text=""  @0x25638065080
+          [UIStroke] uIStroke  @0x25638033900
+        [TextLabel] Title  visible=1 text=""  @0x25638066080
+          [UIStroke] uIStroke  @0x25638033a00
+        [Frame] RemainingAmount  @0x25638055480
+          [UIPadding] uIPadding  @0x256381ed360
+          [UIScale] uIScale  @0x256381ed520
+          [UICorner] uICorner  @0x25638033b00
+          [UIStroke] uIStroke  @0x25638033c00
+          [TextLabel] archetype  visible=1 text="0 Remaining"  @0x25638067080
+            [UIStroke] uIStroke  @0x25638033d00
+      [Frame] TowersDisplay  @0x25638057880
+        [Frame] towerStats  @0x25638056c80
+          [] uIAspectRatio  @0x256381eda60
+          [UIListLayout] uIListLayout  @0x25632d5b680
+          [UIScale] uIScale  @0x256381edb40
+        [TextLabel] ArcheTitle  visible=1 text=""  @0x25638068080
+          [UIStroke] uIStroke  @0x25638033e00
+        [TextLabel] towerTitle  visible=1 text=""  @0x25638069080
+          [UIStroke] uIStroke  @0x25638033f00
+        [TextLabel] PreviewText  visible=1 text=""  @0x2563806a080
+          [UIStroke] uIStroke  @0x25638034000
+      [Frame] SkinsDisplay  @0x25638058480
+        [TextLabel] ArcheTitle  visible=1 text=""  @0x2563806b080
+          [UIStroke] uIStroke  @0x25638034100
+        [TextLabel] towerTitle  visible=1 text=""  @0x2563806c080
+          [UIStroke] uIStroke  @0x25638034200
+      [Frame] Buttons  @0x25638059c80
+        [ImageButton] skinButton  visible=1 text=""  @0x2563806e080
+          [] AspectRatioConstraint  @0x256381e0780
+          [TextLabel] textLabel  visible=1 text="Skins"  @0x2563806d080
+            [UIStroke] uIStroke  @0x25638034300
+          [UIScale] uIScale  @0x256381e0cc0
+          [UICorner] uICorner  @0x25638034400
+          [UIStroke] uIStroke  @0x25638034500
+          [UIGradient] uIGradient  @0x25636d49b00
+          [ImageLabel] imageLabel  visible=1 text=""  @0x25638059080
+      [Frame] hotbar  @0x25632879080
+        [Frame] tower1  @0x25632860080
+          [Frame] button  @0x2563805f080
+            [UIScale] Scale  @0x256381e0e80
+            [Frame] content  @0x2563805e480
+        [Frame] tower2  @0x25632866080
+          [Frame] button  @0x25632865480
+            [UIScale] Scale  @0x256381e1f20
+            [Frame] content  @0x25632864880
+        [Frame] tower3  @0x2563286c080
+          [Frame] button  @0x2563286b480
+            [UIScale] Scale  @0x256381e2fc0
+            [Frame] content  @0x2563286a880
+        [Frame] tower5  @0x25632872480
+          [Frame] button  @0x25632871880
+            [UIScale] Scale  @0x256381e3b20
+            [Frame] content  @0x25632870c80
+        [Frame] tower4  @0x25632878480
+          [Frame] button  @0x25632877880
+            [UIScale] Scale  @0x256381e44c0
+            [Frame] content  @0x25632876c80
+        [UIListLayout] uILayout  @0x25632d5b4c0
+    [Frame] frameConfetti  @0x2563287a880
+      [Frame] ConfettiEmitter  @0x25643453c80
+  [ScreenGui] ReactUniversalMainObjective  @0x25635231480
+    [Frame] Frame  @0x25660a8cc80
+      [Frame] miniObjective  @0x25660a86c80
+        [] uIAspectRatioConstraint1  @0x256549dfac0
+        [Frame] content  @0x25660a85480
+          [UIStroke] uIStroke1  @0x25643474e00
+            [UIGradient] uIGradient1  @0x256549bce00
+          [UIGradient] uIGradient  @0x256549bc380
+          [Frame] contents  @0x25660a83c80
+            [UIListLayout] uIListLayout  @0x2565498eb00
+            [TextLabel] textLabel  visible=1 text="Label"  @0x2565fd41080
+      [Frame] objective  @0x25660a8c080
+        [ImageLabel] circle  visible=1 text=""  @0x25660a87880
+          [UICorner] corner  @0x25643475e00
+        [Frame] frame1  @0x25660a89080
+          [UIGradient] uIGradient  @0x256549b3200
+        [Frame] contentContainer  @0x25660a89c80
+          [TextLabel] text  visible=1 text="Label"  @0x2565fd42080
+            [] uITextSizeConstraint1  @0x256549df9e0
+        [Frame] titleContainer  @0x25660a8b480
+          [Frame] title  @0x25660a8a880
+            [UIListLayout] uIListLayout  @0x2565498e940
+            [TextLabel] textLabel  visible=1 text="NEW OBJECTIVE"  @0x2565fd43080
+        [] uIAspectRatioConstraint1  @0x256549df4a0
+  [ScreenGui] ReactUniversalMatchmaking  @0x25637a64680
+    [Frame] found  @0x2563ab54880
+      [Frame] Confetti  @0x2563ab53080
+        [Frame] ConfettiEmitter  @0x2563ab52480
+      [Frame] Match  @0x2563ab53c80
+        [UIGridLayout] UIGridLayout  @0x2563a5f8280
+        [] UIAspectRatioConstraint  @0x25633eef580
+    [Frame] queue  @0x2563ab56c80
+      [TextLabel] playerCount  visible=1 text="0/1 Players"  @0x2563abc0080
+        [UIStroke] uiStroke  @0x2563ab37c00
+      [TextLabel] elaspedTime  visible=0 text="29848048:24"  @0x2563abc1080
+        [UIStroke] uiStroke  @0x2563ab37b00
+      [TextLabel] status  visible=1 text="Searching for players"  @0x2563abc2080
+        [UIStroke] uiStroke  @0x2563ab37a00
+      [UICorner] corner  @0x2563ab37500
+      [] aspectRadio  @0x25633eeef60
+      [] sizeConstraint  @0x25633eee6a0
+      [UIGradient] gradient  @0x25636d4e300
+      [ImageLabel] dropShadow  visible=1 text=""  @0x2563ab55480
+      [ImageLabel] icon  visible=1 text=""  @0x2563ab56080
+  [ScreenGui] ReactUniversalMobile  @0x25637a65080
+  [ScreenGui] ReactUniversalObjectives  @0x25637a67880
+  [ScreenGui] ReactUniversalPVPLeaderboards  @0x25637a68280
+  [ScreenGui] ReactUniversalPVPStats  @0x25637a68c80
+  [ScreenGui] ReactUniversalPlayerList  @0x25637a6b480
+    [Frame] Frame  @0x2565edcb480
+      [Frame] profile  @0x2565ec8d880
+        [Frame] switchProfile  @0x2565ebecc80
+          [ImageButton] button  visible=1 text=""  @0x25649438080
+            [UIScale] scale  @0x25649ce6280
+            [ImageLabel] bG  visible=1 text=""  @0x2565ebeb480
+            [Frame] content  @0x2565ebec080
+        [Frame] pveProfile  @0x2565ec8cc80
+          [Frame] background  @0x2565ebed880
+            [UICorner] uICorner5  @0x2564ba74200
+          [Frame] content  @0x2565ec8b480
+            [Frame] stats  @0x2565ebee480
+            [UIPadding] uIPadding  @0x25649ce0860
+            [Frame] medals  @0x2565ec83080
+            [UIListLayout] uIListLayout2  @0x2564bb41900
+            [Frame] loadout  @0x2565ec89080
+            [ImageLabel] banner  visible=1 text=""  @0x2565ec8a880
+          [ImageLabel] dropShadow  visible=0 text=""  @0x2565ec8c080
+        [UIListLayout] list  @0x2564bb41ac0
+      [ScrollingFrame] content  @0x2565ed65080
+        [UIListLayout] uIListLayout  @0x2564bb41c80
+        [Frame] 986798794  @0x2565edc6080
+          [Frame] wrapper  @0x2565edc5480
+            [TextButton] frame  visible=1 text=""  @0x25657d27880
+            [Frame] buttons  @0x2565edc4880
+      [Frame] header  @0x2565edca880
+        [Frame] wrapper  @0x2565edc9c80
+          [TextLabel] value  visible=1 text="PLAYERS (1/6)"  @0x2565ed66080
+          [Frame] stats  @0x2565edc9080
+            [UIListLayout] uIListLayout  @0x2564bb421c0
+            [Frame] Cash  @0x2565edc8480
+          [UICorner] uICorner  @0x2564ba76700
+      [UIScale] uIScale  @0x25649ce6440
+  [ScreenGui] ReactUniversalProfiler  @0x25637a6be80
+  [ScreenGui] ReactUniversalQAWatermark  @0x25637a6c880
+  [ScreenGui] ReactUniversalRightClickMenu  @0x25637a6e680
+    [Frame] Frame  @0x2565ee30080
+      [UICorner] uiCorner  @0x2565c527600
+      [UIStroke] uiStroke  @0x2565c527500
+      [UIScale] scale  @0x256549d9b60
+      [UIPadding] padding  @0x256549da960
+      [UIListLayout] list  @0x2565498bbc0
+  [ScreenGui] ReactUniversalSelectionList  @0x25637a6f080
+    [TextButton] TextButton  visible=0 text=""  @0x256547fc880
+      [Frame] menu  @0x2565ee30c80
+        [UIPadding] uIPadding  @0x256549daa40
+        [UIScale] uiScale  @0x256549dab20
+        [UIListLayout] uIListLayout  @0x2565498b680
+        [UIStroke] uIStroke  @0x2565c527700
+        [TextLabel] title  visible=1 text=""  @0x2565ee80080
+  [ScreenGui] ReactUniversalSettings  @0x25637ac0080
+    [Frame] window  @0x2565f143c80
+      [UIScale] uiScale  @0x256549da340
+      [UICorner] uICorner  @0x2565c527900
+      [ScrollingFrame] scrollingFrame  @0x2565f07c080
+        [UIListLayout] uIListLayout1  @0x2565498b4c0
+        [UIPadding] uIPadding  @0x256549dace0
+        [Frame] Unknown  @0x2565ee3e480
+          [UIGridLayout] layout  @0x25654bd5d00
+          [Frame] Hide suggestions  @0x2565ee33080
+            [TextLabel] title  visible=1 text="Hide suggestions"  @0x2565ee81080
+            [UICorner] uICorner  @0x2565c527c00
+            [TextButton] button  visible=1 text=""  @0x256547fdc80
+            [TextLabel] description  visible=1 text="Hide suggestions made by other players"  @0x2565ee84080
+            [ImageLabel] imageLabel  visible=1 text=""  @0x2565ee32480
+          [Frame] Camera Shake  @0x2565ee35480
+            [TextLabel] title  visible=1 text="Camera Shake"  @0x2565ee85080
+            [UICorner] uICorner  @0x2565c528300
+            [TextButton] button  visible=1 text=""  @0x2565ee90080
+            [TextLabel] description  visible=1 text="Shake camera to environment"  @0x2565ee88080
+            [ImageLabel] imageLabel  visible=1 text=""  @0x2565ee34880
+          [Frame] Auto Skip  @0x2565ee38480
+            [TextLabel] title  visible=1 text="Auto Skip"  @0x2565ee89080
+            [UICorner] uICorner  @0x2565c528a00
+            [Frame] button  @0x2565ee36c80
+            [TextLabel] description  visible=1 text="Automatically skip waves"  @0x2565ee8c080
+            [ImageLabel] imageLabel  visible=1 text=""  @0x2565ee37880
+          [Frame] Skills Enabled  @0x2565ee3b480
+            [TextLabel] title  visible=1 text="Skills Enabled"  @0x2565ee8d080
+            [UICorner] uICorner  @0x2565c529200
+            [Frame] button  @0x2565ee39c80
+            [TextLabel] description  visible=1 text="Turn off/on all of your skills"  @0x2565f071080
+            [ImageLabel] imageLabel  visible=1 text=""  @0x2565ee3a880
+          [Frame] Dialog  @0x2565ee3d880
+            [TextLabel] title  visible=1 text="Dialog"  @0x2565f072080
+            [UICorner] uICorner  @0x2565c529a00
+            [TextButton] button  visible=1 text=""  @0x2565ee93c80
+            [TextLabel] description  visible=1 text="In-game dialog and tips"  @0x2565f075080
+            [ImageLabel] imageLabel  visible=1 text=""  @0x2565ee3cc80
+        [Frame] Scales  @0x2565f085480
+          [UIListLayout] layout  @0x2565498b300
+          [TextLabel] title  visible=1 text="Scales"  @0x2565f076080
+            [Frame] divider  @0x2565ee3f080
+          [Frame] Character Scale  @0x2565f084880
+            [TextLabel] title  visible=1 text="Character Scale"  @0x2565f077080
+            [UICorner] uICorner  @0x2565c52a100
+            [Frame] button  @0x2565f083080
+            [TextLabel] description  visible=1 text="Change your character's size."  @0x2565f078080
+            [ImageLabel] imageLabel  visible=1 text=""  @0x2565f083c80
+        [Frame] Graphics  @0x2565f08b480
+          [UIListLayout] layout  @0x2565498af80
+          [TextLabel] title  visible=1 text="Graphics"  @0x2565f079080
+            [Frame] divider  @0x2565f086080
+          [Frame] Health Bar Color  @0x2565f08a880
+            [TextLabel] title  visible=1 text="Health Bar Color"  @0x2565f07a080
+            [UICorner] uICorner  @0x2565c52b000
+            [Frame] button  @0x2565f089080
+            [TextLabel] description  visible=1 text="Adjust the base health color"  @0x2565f07b080
+            [ImageLabel] imageLabel  visible=1 text=""  @0x2565f089c80
+      [ImageLabel] dropShadow  visible=1 text=""  @0x2565f08c080
+      [Frame] navigation  @0x2565f143080
+        [UIListLayout] uIListLayout  @0x2565498bf40
+        [Frame] buttons  @0x2565f142480
+          [UIListLayout] uIListLayout  @0x2565498c100
+          [Frame] Keybinds  @0x2565f08cc80
+            [ImageButton] content  visible=1 text=""  @0x2565f07e080
+          [Frame] Gameplay  @0x2565f08d880
+            [ImageButton] content  visible=1 text=""  @0x2565f121080
+          [Frame] Sound  @0x2565f08e480
+            [ImageButton] content  visible=1 text=""  @0x2565f123080
+          [Frame] Graphics  @0x2565f08f080
+            [ImageButton] content  visible=1 text=""  @0x2565f125080
+          [Frame] leave  @0x2565f141880
+            [TextButton] content  visible=1 text=""  @0x2565ee9c880
+    [Frame] prompt  @0x2565f149c80
+      [Frame] background  @0x2565f144880
+        [UICorner] uICorner  @0x2565c52d700
+      [ImageLabel] dropShadow  visible=1 text=""  @0x2565f145480
+      [Frame] content  @0x2565f149080
+        [UIPadding] uIPadding  @0x256549dd8a0
+        [Frame] buttons  @0x2565f147880
+          [UIListLayout] uIListLayout1  @0x2565498c9c0
+          [Frame] yes  @0x2565f146080
+            [ImageButton] content  visible=1 text=""  @0x2565f127080
+          [Frame] no  @0x2565f146c80
+            [ImageButton] content  visible=1 text=""  @0x2565f129080
+          [UIPadding] uIPadding2  @0x256549ddd00
+        [UIListLayout] uIListLayout  @0x2565498cf00
+        [TextLabel] description  visible=1 text="Would you like to reset all keybinds to their default values?"  @0x2565f12a080
+        [ImageLabel] icon  visible=1 text=""  @0x2565f148480
+          [UIPadding] uIPadding1  @0x256549ddfa0
+        [TextLabel] title  visible=1 text="Reset Keybinds"  @0x2565f12b080
+          [UIPadding] uIPadding3  @0x256549de080
+          [UIStroke] uIStroke  @0x2565c52e200
+  [ScreenGui] ReactUniversalToasts  @0x25637ac1480
+    [Frame] Frame  @0x25643464880
+      [UIListLayout] list  @0x2565498d0c0
+  [ScreenGui] ReactUniversalToolTipKeybind  @0x25637ac1e80
+  [ScreenGui] DebugGui  @0x25722d47880
+    [Frame] Frame  @0x2562918f080
+      [] UIAspectRatioConstraint  @0x256354874e0
+      [UIListLayout] UIListLayout  @0x25630643880
+      [TextButton] Stats  visible=1 text=""  @0x256311fb480
+      [Frame] ZZZZZZ  @0x25635278480
+        [Frame] Frame  @0x25634181880
+        [Frame] Frame  @0x25634182480
+        [] UIAspectRatioConstraint  @0x25635487b00
+        [TextLabel] Title  visible=1 text="Server heartbeat"  @0x25633dbe080
+        [Frame] Frame  @0x25634183080
+        [Frame] Frame  @0x25634183c80
+        [Frame] Frame  @0x25634184880
+        [Frame] Frame  @0x25634185480
+        [Frame] Frame  @0x25634186080
+        [Frame] Frame  @0x25634186c80
+        [Frame] Frame  @0x25634187880
+        [Frame] Frame  @0x25634188480
+        [Frame] Frame  @0x25634189080
+        [Frame] Frame  @0x25634189c80
+        [Frame] Frame  @0x2563418a880
+        [Frame] Frame  @0x2563418b480
+        [Frame] Frame  @0x2563418c080
+        [Frame] Frame  @0x2563418cc80
+        [Frame] Frame  @0x2563418d880
+        [Frame] Frame  @0x2563418e480
+        [Frame] Frame  @0x2563418f080
+        [Frame] Frame  @0x256615a2480
+        [Frame] Frame  @0x256615a3c80
+        [Frame] Frame  @0x2565e173c80
+        [TextLabel] Stats  visible=1 text="8ms"  @0x25633db7080
+        [Frame] Frame  @0x2565e176080
+        [TextLabel] Stats  visible=1 text="16ms"  @0x25633dbd080
+        [Frame] Frame  @0x2565e175480
+        [TextLabel] Stats  visible=1 text="24ms"  @0x256296cd080
+        [Frame] Frame  @0x2565e176c80
+        [TextLabel] Stats  visible=1 text="32ms"  @0x256296cb080
+        [Frame] Frame  @0x2565e174880
+        [TextLabel] Stats  visible=1 text="40ms"  @0x256296cc080
+        [Frame] Frame  @0x2565e177880
+      [TextButton] Stats  visible=1 text="%"  @0x257034bdc80
+      [Frame] ZZZZZZ  @0x256601dcc80
+        [Frame] Frame  @0x2565d818480
+        [Frame] Frame  @0x2565d81f080
+        [] UIAspectRatioConstraint  @0x25635488040
+        [TextLabel] Title  visible=1 text="Average enemy update time"  @0x2563563c080
+        [Frame] Frame  @0x2565d81d880
+        [Frame] Frame  @0x2565d81b480
+        [Frame] Frame  @0x2565d819c80
+        [Frame] Frame  @0x2565d81a880
+        [Frame] Frame  @0x2565d81cc80
+        [Frame] Frame  @0x2565d81e480
+        [Frame] Frame  @0x2565d81c080
+        [Frame] Frame  @0x2565d819080
+        [Frame] Frame  @0x256371a0080
+        [Frame] Frame  @0x256371a0c80
+        [Frame] Frame  @0x256371a1880
+        [Frame] Frame  @0x256371a2480
+        [Frame] Frame  @0x256371a3080
+        [Frame] Frame  @0x256371a3c80
+        [Frame] Frame  @0x256371a4880
+        [Frame] Frame  @0x256371a5480
+        [Frame] Frame  @0x256371a6080
+        [Frame] Frame  @0x256371a6c80
+        [Frame] Frame  @0x256371a7880
+        [Frame] Frame  @0x256371a8480
+        [TextLabel] Stats  visible=1 text="8ms"  @0x25634714080
+        [Frame] Frame  @0x256371a9080
+        [TextLabel] Stats  visible=1 text="16ms"  @0x2563583e080
+        [Frame] Frame  @0x256371a9c80
+        [TextLabel] Stats  visible=1 text="24ms"  @0x25635838080
+        [Frame] Frame  @0x256371aa880
+        [TextLabel] Stats  visible=1 text="32ms"  @0x25635839080
+        [Frame] Frame  @0x256371ab480
+        [TextLabel] Stats  visible=1 text="40ms"  @0x2563583a080
+        [Frame] Frame  @0x256371ac080
+      [TextButton] Stats  visible=1 text=""  @0x2565f256480
+      [Frame] ZZZZZZ  @0x256371acc80
+        [Frame] Frame  @0x256371ad880
+        [Frame] Frame  @0x256371ae480
+        [] UIAspectRatioConstraint  @0x25635488660
+        [TextLabel] Title  visible=1 text="Server physics step"  @0x2563583c080
+        [Frame] Frame  @0x256371af080
+        [Frame] Frame  @0x25637490080
+        [Frame] Frame  @0x25637490c80
+        [Frame] Frame  @0x25637491880
+        [Frame] Frame  @0x25637492480
+        [Frame] Frame  @0x25637493080
+        [Frame] Frame  @0x25637493c80
+        [Frame] Frame  @0x25637494880
+        [Frame] Frame  @0x25637495480
+        [Frame] Frame  @0x25637496080
+        [Frame] Frame  @0x25637496c80
+        [Frame] Frame  @0x25637497880
+        [Frame] Frame  @0x25637498480
+        [Frame] Frame  @0x25637499080
+        [Frame] Frame  @0x25637499c80
+        [Frame] Frame  @0x2563749a880
+        [Frame] Frame  @0x2563749b480
+        [Frame] Frame  @0x2563749c080
+        [Frame] Frame  @0x2563749cc80
+        [Frame] Frame  @0x2563749d880
+        [TextLabel] Stats  visible=1 text="8ms"  @0x2563583b080
+        [Frame] Frame  @0x2563749e480
+        [TextLabel] Stats  visible=1 text="16ms"  @0x2563583d080
+        [Frame] Frame  @0x2563749f080
+        [TextLabel] Stats  visible=1 text="24ms"  @0x25637580080
+        [Frame] Frame  @0x25637620080
+        [TextLabel] Stats  visible=1 text="32ms"  @0x25637581080
+        [Frame] Frame  @0x25637620c80
+        [TextLabel] Stats  visible=1 text="40ms"  @0x25637582080
+        [Frame] Frame  @0x25637621880
+      [TextButton] Stats  visible=1 text=""  @0x2563d296480
+      [Frame] ZZZZZZ  @0x25637622480
+        [Frame] Frame  @0x25637623080
+        [Frame] Frame  @0x25637623c80
+        [] UIAspectRatioConstraint  @0x25635488e40
+        [TextLabel] Title  visible=1 text="Average tower update time"  @0x25637583080
+        [Frame] Frame  @0x25637624880
+        [Frame] Frame  @0x25637625480
+        [Frame] Frame  @0x25637626080
+        [Frame] Frame  @0x25637626c80
+        [Frame] Frame  @0x25637627880
+        [Frame] Frame  @0x25637628480
+        [Frame] Frame  @0x25637629080
+        [Frame] Frame  @0x25637629c80
+        [Frame] Frame  @0x2563762a880
+        [Frame] Frame  @0x2563762b480
+        [Frame] Frame  @0x2563762c080
+        [Frame] Frame  @0x2563762cc80
+        [Frame] Frame  @0x2563762d880
+        [Frame] Frame  @0x2563762e480
+        [Frame] Frame  @0x2563762f080
+        [Frame] Frame  @0x25637730080
+        [Frame] Frame  @0x25637730c80
+        [Frame] Frame  @0x25637731880
+        [Frame] Frame  @0x25637732480
+        [Frame] Frame  @0x25637733080
+        [TextLabel] Stats  visible=1 text="8ms"  @0x25637584080
+        [Frame] Frame  @0x25637733c80
+        [TextLabel] Stats  visible=1 text="16ms"  @0x25637585080
+        [Frame] Frame  @0x25637734880
+        [TextLabel] Stats  visible=1 text="24ms"  @0x25637586080
+        [Frame] Frame  @0x25637735480
+        [TextLabel] Stats  visible=1 text="32ms"  @0x25637587080
+        [Frame] Frame  @0x25637736080
+        [TextLabel] Stats  visible=1 text="40ms"  @0x25637588080
+        [Frame] Frame  @0x25637736c80
+  [ScreenGui] DebugGui  @0x25722d4a080
+    [Frame] Frame  @0x2563773b480
+      [UIPadding] UIPadding  @0x256354890e0
+      [UIListLayout] UIListLayout  @0x25630643f80
+      [Frame] Frame  @0x2563773c080
+        [Frame] DotContainer  @0x2563773cc80
+          [Frame] Frame  @0x2563773d880
+          [TextLabel] Mid  visible=1 text=""  @0x25637751080
+          [Frame] Frame  @0x25637760080
+          [TextLabel] Mid  visible=1 text=""  @0x25637752080
+          [Frame] Frame  @0x25637760c80
+          [TextLabel] Mid  visible=1 text=""  @0x25637753080
+          [Frame] Frame  @0x25637761880
+        [Frame] Frame  @0x2563773e480
+        [Frame] Frame  @0x2563773f080
+        [] UIAspectRatioConstraint  @0x25635488ba0
+        [TextLabel] Title  visible=1 text="Enemy cash"  @0x2563758d080
+        [TextLabel] Min  visible=1 text=""  @0x2563758e080
+        [TextLabel] Max  visible=1 text=""  @0x25637750080
+      [TextButton] Enemy cash:   visible=1 text=""  @0x2563453c880
+      [Frame] Frame  @0x25637762480
+        [Frame] DotContainer  @0x25637763080
+          [Frame] Frame  @0x25637763c80
+          [TextLabel] Mid  visible=1 text=""  @0x25637757080
+          [Frame] Frame  @0x25637766080
+          [TextLabel] Mid  visible=1 text=""  @0x25637758080
+          [Frame] Frame  @0x25637766c80
+          [TextLabel] Mid  visible=1 text=""  @0x25637759080
+          [Frame] Frame  @0x25637767880
+        [Frame] Frame  @0x25637764880
+        [Frame] Frame  @0x25637765480
+        [] UIAspectRatioConstraint  @0x2563548a6c0
+        [TextLabel] Title  visible=1 text="Combined rewards"  @0x25637754080
+        [TextLabel] Min  visible=1 text=""  @0x25637755080
+        [TextLabel] Max  visible=1 text=""  @0x25637756080
+      [Frame] Frame  @0x25637768480
+      [Frame] Frame  @0x25637769080
+        [Frame] DotContainer  @0x25637769c80
+          [Frame] Frame  @0x2563776a880
+          [TextLabel] Mid  visible=1 text=""  @0x2563775d080
+          [Frame] Frame  @0x2563776cc80
+          [TextLabel] Mid  visible=1 text=""  @0x2563775e080
+          [Frame] Frame  @0x2563776d880
+          [TextLabel] Mid  visible=1 text=""  @0x25637770080
+          [Frame] Frame  @0x2563776e480
+        [Frame] Frame  @0x2563776b480
+        [Frame] Frame  @0x2563776c080
+        [] UIAspectRatioConstraint  @0x2563548a420
+        [TextLabel] Title  visible=1 text="Enemy health"  @0x2563775a080
+        [TextLabel] Min  visible=1 text=""  @0x2563775b080
+        [TextLabel] Max  visible=1 text=""  @0x2563775c080
+      [Frame] Frame  @0x2563776f080
+        [Frame] DotContainer  @0x25637890080
+          [Frame] Frame  @0x25637890c80
+          [TextLabel] Mid  visible=1 text=""  @0x25637774080
+          [Frame] Frame  @0x25637893080
+          [TextLabel] Mid  visible=1 text=""  @0x25637775080
+          [Frame] Frame  @0x25637893c80
+          [TextLabel] Mid  visible=1 text=""  @0x25637776080
+          [Frame] Frame  @0x25637894880
+        [Frame] Frame  @0x25637891880
+        [Frame] Frame  @0x25637892480
+        [] UIAspectRatioConstraint  @0x2563548b060
+        [TextLabel] Title  visible=1 text="Wave rewards"  @0x25637771080
+        [TextLabel] Min  visible=1 text=""  @0x25637772080
+        [TextLabel] Max  visible=1 text=""  @0x25637773080
+      [TextButton] Enemy HP:   visible=1 text="i3ÿÿÿÿ"  @0x25634538c80
+  [ScreenGui] ReactGameCrosshair  @0x2565e0da080
+  [ScreenGui] ReactUpgrades  @0x2565e0dc880
+    [Frame] towerInformation  @0x256391a5480
+      [Frame] main  @0x256391a4880
+        [UIScale] uIScale  @0x25637f90da0
+        [ImageLabel] shadow  visible=1 text=""  @0x25639136080
+        [Frame] otherOptions  @0x25639138480
+          [UIPadding] uIPadding  @0x25637f90b00
+          [UICorner] uICorner  @0x25637e6f500
+          [UIStroke] uIStroke  @0x25637e6f200
+            [UIGradient] uIGradient  @0x2563817c980
+          [Frame] emptyState  @0x25662900080
+            [TextLabel] message  visible=1 text="No Other Stats to show!"  @0x25662942080
+            [ImageLabel] thinking  visible=1 text=""  @0x256401df080
+        [Frame] filter  @0x2563913b480
+          [Frame] closeButton  @0x2563913a880
+            [TextButton] content  visible=1 text=""  @0x2565e2cc880
+          [UIGradient] uIGradient  @0x2563817cb00
+          [UICorner] uICorner  @0x25639180400
+          [UIStroke] uIStroke  @0x25639180500
+          [TextLabel] informationLabel  visible=1 text="Tower Information"  @0x25638fee080
+            [UIStroke] uIStroke  @0x25639180600
+        [UICorner] uICorner  @0x25639180700
+        [UIStroke] uIStroke  @0x25639180800
+        [Frame] statInformation  @0x256391a0c80
+          [UICorner] uICorner  @0x25639180900
+          [UIStroke] uIStroke  @0x25639180a00
+            [UIGradient] uIGradient  @0x2563817cc80
+          [ScrollingFrame] scrollingFrame  @0x25639196080
+            [UIListLayout] uIListLayout  @0x256381aac00
+            [Frame] Range  @0x2563913e480
+            [Frame] Cooldown  @0x2565ba00c80
+            [Frame] Damage  @0x2565ba04880
+          [UIPadding] uIPadding  @0x25637f922a0
+        [Frame] towerName  @0x256391a3c80
+          [TextLabel] role  visible=1 text="Offense"  @0x25639197080
+            [UIStroke] uIStroke  @0x25639180b00
+          [ImageLabel] towerIconShadow  visible=1 text=""  @0x256391a1880
+            [UIGradient] uIGradient  @0x2563817cf80
+          [ImageLabel] towerIcon  visible=1 text=""  @0x256391a2480
+            [UIGradient] uIGradient  @0x2563817d100
+          [Frame] title  @0x256391a3080
+            [TextLabel] refLabel  visible=1 text="Scout"  @0x25639198080
+            [UIPadding] padding  @0x25637f92fc0
+            [TextLabel] marqueeLabel  visible=0 text="Scout"  @0x25639199080
+      [] uIAspectRatioConstraint  @0x25637f93180
+    [TextLabel] mobile  visible=0 text="Double Tap to Place"  @0x2563919a080

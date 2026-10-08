@@ -1,0 +1,19 @@
+[   0.02] baseline: 738 tower nodes, 79 bar nodes, 4 ui nodes
+[   6.55]   ~ bar Bar/Frame(Frame): vis=1 -> vis=0
+[   6.55]   ~ bar Bar/Frame/1/1(Frame): vis=1 -> vis=0
+[   6.55]   ~ bar Bar/Frame/1/1/content/binding(TextLabel): "F" vis=1 -> "F" vis=0
+[   6.56]   ~ bar Bar/Frame/2/1(Frame): vis=1 -> vis=0
+[   6.56]   ~ bar Bar/Frame/2/1/content/binding(TextLabel): "B" vis=1 -> "B" vis=0
+[  11.29]   ~ bar Bar/Frame(Frame): vis=0 -> vis=1
+[  11.29]   ~ bar Bar/Frame/1/1(Frame): vis=0 -> vis=1
+[  11.29]   ~ bar Bar/Frame/1/1/content/binding(TextLabel): "F" vis=0 -> "F" vis=1
+[  11.30]   ~ bar Bar/Frame/2/1(Frame): vis=0 -> vis=1
+[  11.30]   ~ bar Bar/Frame/2/1/content/binding(TextLabel): "B" vis=0 -> "B" vis=1
+[  19.71]   ~ towers Towers/Default/Display/Cooldown(NumberValue): 15.000000 -> 25.000000
+[  19.72]   ~ towers Towers/Default/HumanoidRootPart/allBuffs/content/1/text(TextLabel): "15%" vis=1 -> "25%" vis=1
+[  19.72]   ~ towers Towers/Default/RootPart/allBuffs/content/2/text(TextLabel): "15%" vis=1 -> "25%" vis=1
+[  19.72]   ~ bar Bar/Frame/1/1/content/AmmoLabel(TextLabel): "3" vis=1 -> "2" vis=1
+[  29.63]   ~ towers Towers/Default/Display/Cooldown(NumberValue): 25.000000 -> 15.000000
+[  29.63]   ~ towers Towers/Default/HumanoidRootPart/allBuffs/content/1/text(TextLabel): "25%" vis=1 -> "15%" vis=1
+[  29.63]   ~ towers Towers/Default/RootPart/allBuffs/content/2/text(TextLabel): "25%" vis=1 -> "15%" vis=1
+[  48.16]   ~ bar Bar/Frame/1/1/content/AmmoLabel(TextLabel): "2" vis=1 -> "3" vis=1

@@ -1,0 +1,1121 @@
+// language: C++17, file: tds_plus.cpp, runtime: MinGW/MSVC, target: Windows 11
+// build: g++ -O2 -std=c++17 -static -mwindows tds_plus.cpp -o tds_plus_native.exe -lpsapi -lgdi32 -lws2_32
+// tds+ external — auto-ability: reads PlayerGui.ReactGameAbilities from memory,
+// presses each ability's own hotkey (binding label) the moment its cooldown
+// (timeLeftAbility) clears; re-resolves the GUI as it rebuilds during play.
+// control surface: Win32/GDI or Qt Quick, F6 = toggle, END = exit,
+// log -> tds_plus.log
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <windows.h>
+#include <psapi.h>
+
+#include <chrono>
+#include <atomic>
+#include <algorithm>
+#include <cstdarg>
+#include <cctype>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <fstream>
+#include <mutex>
+#include <string>
+#include <unordered_map>
+#include <vector>
+#include "backend_api.hpp"
+
+static std::atomic<bool> g_exit_requested{false};
+
+namespace off {
+    constexpr uintptr_t VE_POINTER     = 0x858d208;
+    constexpr uintptr_t VE_FAKE_DM     = 0xaf0;
+    constexpr uintptr_t FAKE_REAL_DM   = 0x1f8;
+    constexpr uintptr_t DM_PLACE_ID    = 0x188;
+    constexpr uintptr_t DM_WORKSPACE   = 0x150;
+    constexpr uintptr_t INST_NAME      = 0x70;
+    constexpr uintptr_t INST_CHILDREN  = 0x78;
+    constexpr uintptr_t INST_CLASS_DESC= 0x18;
+    constexpr uintptr_t INST_PARENT    = 0x68;
+    constexpr uintptr_t PLAYERS_LOCAL  = 0x120;
+    constexpr uintptr_t SCREEN_GUI_ENABLED = 0x4b4;
+    constexpr uintptr_t GUI_VISIBLE    = 0x59d;
+    constexpr uintptr_t GUI_TEXT       = 0xdf0;   // inline std::string: len@+0x10, cap@+0x18
+    constexpr uintptr_t GUI_IMAGE      = 0xc10;   // GuiObject::Image on ImageButton (live-verified)
+}
+
+struct GroupRule {
+    int duration;                                // buff length in seconds
+    std::chrono::steady_clock::time_point window_end{};   // current buff expires here
+    std::chrono::steady_clock::time_point confirm_until{}; // press confirm deadline
+    bool fired_once = false;
+    bool confirming = false;                     // pressed, waiting for ammo to drop
+    int confirm_votes = 0;
+    int pre_press_ammo = -1;
+    int last_ammo = -1;
+};
+
+static HANDLE g_proc = nullptr;
+
+template <typename T>
+static T read(uintptr_t addr) {
+    T v{};
+    SIZE_T got = 0;
+    ReadProcessMemory(g_proc, (LPCVOID)addr, &v, sizeof(T), &got);
+    return v;
+}
+
+static bool valid_ptr(uintptr_t p) { return p >= 0x10000 && p < 0x7FFFFFFFFFFF; }
+
+// plain std::string member (GUI properties): len@+0x10, inline or ptr@+0x00
+static std::string read_string(uintptr_t addr) {
+    if (!valid_ptr(addr)) return "";
+    uint32_t len = read<uint32_t>(addr + 0x10);
+    if (len == 0 || len > 1024) return "";
+    uintptr_t at = addr;
+    if (len > 15) {
+        at = read<uintptr_t>(addr);
+        if (!valid_ptr(at)) return "";
+    }
+    std::string out(len, '\0');
+    SIZE_T got = 0;
+    if (!ReadProcessMemory(g_proc, (LPCVOID)at, out.data(), len, &got) || got == 0) return "";
+    out.resize(got);
+    auto nul = out.find('\0');
+    if (nul != std::string::npos) out.resize(nul);
+    return out;
+}
+
+// Instance+0x70 -> struct{ header, std::string @+0x08 }: size@+0x18, cap@+0x20
+static std::string get_name(uintptr_t inst) {
+    uintptr_t np = read<uintptr_t>(inst + off::INST_NAME);
+    if (!valid_ptr(np)) return "";
+    uint64_t len = read<uint64_t>(np + 0x18);
+    if (len == 0 || len > 1024) return "";
+    uintptr_t at = np + 0x08;
+    if (len > 15) {
+        at = read<uintptr_t>(np + 0x08);
+        if (!valid_ptr(at)) return "";
+    }
+    std::string out((size_t)len, '\0');
+    SIZE_T got = 0;
+    if (!ReadProcessMemory(g_proc, (LPCVOID)at, out.data(), (SIZE_T)len, &got) || got == 0) return "";
+    out.resize(got);
+    auto nul = out.find('\0');
+    if (nul != std::string::npos) out.resize(nul);
+    return out;
+}
+
+static std::string get_class_name(uintptr_t inst) {
+    uintptr_t desc = read<uintptr_t>(inst + off::INST_CLASS_DESC);
+    if (!valid_ptr(desc)) return "";
+    uintptr_t str = read<uintptr_t>(desc + 0x8);
+    if (!valid_ptr(str)) return "";
+    if (read<uintptr_t>(str + 0x18) == 0x1F) str = read<uintptr_t>(str);
+    return read_string(str);
+}
+
+static std::vector<uintptr_t> get_children(uintptr_t inst) {
+    std::vector<uintptr_t> out;
+    uintptr_t holder = read<uintptr_t>(inst + off::INST_CHILDREN);
+    if (!valid_ptr(holder)) return out;
+    uintptr_t cur = read<uintptr_t>(holder);
+    uintptr_t end = read<uintptr_t>(holder + 0x8);
+    if (!valid_ptr(cur) || !valid_ptr(end) || end < cur) return out;
+    if ((end - cur) / 0x10 > 20000) return out;
+    for (; cur != end; cur += 0x10) {
+        uintptr_t child = read<uintptr_t>(cur);
+        if (valid_ptr(child)) out.push_back(child);
+    }
+    return out;
+}
+
+static uintptr_t find_child(uintptr_t inst, const std::string& name) {
+    for (uintptr_t c : get_children(inst))
+        if (get_name(c) == name) return c;
+    return 0;
+}
+
+static uintptr_t find_child_of_class(uintptr_t inst, const std::string& cls) {
+    for (uintptr_t c : get_children(inst))
+        if (get_class_name(c) == cls) return c;
+    return 0;
+}
+
+static uintptr_t g_player_gui = 0;
+static uintptr_t g_bar_frame = 0;
+static uintptr_t g_banner_label = 0;  // hidden rewards retain their last banner text
+
+// ---- serialized state stream (TDS custom serializer, len8 format) ----
+// AbilityState record: 04 04 "name" 02 <len> <chars>  03 "uid" 02 36 <uuid>
+//                      0b "cooldownEnd" 0c <double>     04 10 "cooldownDuration" 0c <double>
+// ServerTime record:   0a "ServerTime" 09 06 <double>
+struct StreamAbility { std::string name, uid; double cd_end = 0, cd_dur = 0; };
+
+struct StreamState {
+    double server_time = 0;
+    std::unordered_map<std::string, StreamAbility> by_uid;
+    std::vector<std::pair<uintptr_t, size_t>> regions;
+    bool discovered = false;
+};
+
+static const uint8_t CDEND_TAG[] = {0x0b,'c','o','o','l','d','o','w','n','E','n','d'};
+static const uint8_t ST_TAG[] = {0x0a,'S','e','r','v','e','r','T','i','m','e',0x09,0x06};
+
+static bool abl_string(const uint8_t* w, size_t n, const char* key, std::string& out) {
+    size_t kl = strlen(key);
+    for (size_t i = 0; i + kl + 2 < n; i++) {
+        if (memcmp(w + i, key, kl)) continue;
+        size_t v = i + kl;
+        if (w[v] != 0x02 || v + 2 > n) continue;
+        uint8_t sl = w[v + 1];
+        if (!sl || v + 2 + sl > n) continue;
+        out.assign((const char*)(w + v + 2), sl);
+        return true;
+    }
+    return false;
+}
+
+static void stream_discover(StreamState& st) {
+    st.regions.clear();
+    uintptr_t addr = 0;
+    std::vector<uint8_t> buf(1 << 20);
+    while (addr < 0x7FFFFFFFFFFFULL && !g_exit_requested.load()) {
+        MEMORY_BASIC_INFORMATION mbi{};
+        if (!VirtualQueryEx(g_proc, (LPCVOID)addr, &mbi, sizeof(mbi))) break;
+        uintptr_t next = (uintptr_t)mbi.BaseAddress + mbi.RegionSize;
+        if (next <= addr) break;
+        addr = next;
+        if (mbi.State != MEM_COMMIT || mbi.Type == MEM_IMAGE) continue;
+        if (mbi.Protect & (PAGE_NOACCESS | PAGE_GUARD)) continue;
+        if (!(mbi.Protect & (PAGE_READWRITE | PAGE_READONLY | PAGE_WRITECOPY |
+                             PAGE_EXECUTE_READ | PAGE_EXECUTE_READWRITE))) continue;
+        if (mbi.RegionSize > 512 * 1024 * 1024) continue;
+        bool hit = false;
+        for (size_t off = 0; off < mbi.RegionSize && !hit && !g_exit_requested.load(); off += buf.size()) {
+            size_t want = std::min(buf.size(), (size_t)mbi.RegionSize - off);
+            SIZE_T got = 0;
+            if (!ReadProcessMemory(g_proc, (LPCVOID)((uintptr_t)mbi.BaseAddress + off),
+                                   buf.data(), want, &got) || !got) continue;
+            for (size_t i = 0; i + sizeof(CDEND_TAG) <= got; i++)
+                if (!memcmp(buf.data() + i, CDEND_TAG, sizeof(CDEND_TAG))) { hit = true; break; }
+        }
+        if (hit) st.regions.push_back({(uintptr_t)mbi.BaseAddress, (size_t)mbi.RegionSize});
+    }
+    st.discovered = true;
+}
+
+static void stream_scan(StreamState& st) {
+    std::vector<uint8_t> buf;
+    for (auto& [base, size] : st.regions) {
+        buf.resize(size);
+        SIZE_T got = 0;
+        if (!ReadProcessMemory(g_proc, (LPCVOID)base, buf.data(), size, &got) || !got) continue;
+        for (size_t i = 0; i + sizeof(ST_TAG) + 8 <= got; i++)
+            if (!memcmp(buf.data() + i, ST_TAG, sizeof(ST_TAG))) {
+                double v;
+                memcpy(&v, buf.data() + i + sizeof(ST_TAG), 8);
+                if (v > st.server_time && v < 1e7) st.server_time = v;  // monotonic per match
+            }
+        for (size_t i = 0; i + sizeof(CDEND_TAG) + 9 <= got; i++) {
+            if (memcmp(buf.data() + i, CDEND_TAG, sizeof(CDEND_TAG))) continue;
+            size_t ws = i > 120 ? i - 120 : 0;
+            size_t we = std::min((size_t)got, i + 64);
+            const uint8_t* w = buf.data() + ws;
+            size_t n = we - ws;
+            StreamAbility a;
+            abl_string(w, n, "name", a.name);
+            abl_string(w, n, "uid", a.uid);
+            memcpy(&a.cd_end, buf.data() + i + sizeof(CDEND_TAG) + 1, 8);
+            for (size_t j = 0; j + 26 <= n; j++)
+                if (!memcmp(w + j, "cooldownDuration", 16) && w[j + 16] == 0x0c) {
+                    memcpy(&a.cd_dur, w + j + 17, 8);
+                    break;
+                }
+            if (a.name.empty() || a.uid.empty()) continue;
+            st.by_uid[a.uid] = a;   // same address re-scanned: latest copy wins by buffer freshness
+            i += sizeof(CDEND_TAG);
+        }
+    }
+}
+
+// ready count per ability name: uids whose cooldown has expired (0 = never used)
+static std::unordered_map<std::string, int> stream_ready_counts(const StreamState& st) {
+    std::unordered_map<std::string, int> out;
+    for (auto& [uid, a] : st.by_uid) {
+        bool ready = a.cd_end == 0 || a.cd_end <= st.server_time;
+        if (ready) out[a.name]++;
+    }
+    return out;
+}
+
+struct AbilityBtn {
+    uintptr_t content;      // TextButton "content"
+    uintptr_t time_left;    // TextLabel "timeLeftAbility"
+    uintptr_t binding;      // TextLabel "binding"
+    uintptr_t locked;       // Frame "Locked"
+    uintptr_t ammo;         // TextLabel "AmmoLabel"
+    uintptr_t price;        // TextLabel "priceLabel"
+    uintptr_t image;        // ImageButton "imageButton"
+};
+
+static std::string btn_image_id(const AbilityBtn& b) {
+    if (!b.image) return "";
+    std::string s = read_string(b.image + off::GUI_IMAGE);
+    const std::string pfx = "rbxassetid://";
+    if (s.rfind(pfx, 0) == 0) s = s.substr(pfx.size());
+    return s;
+}
+
+// ReactGameAbilities/Frame/<col>/<slot>/content
+static std::vector<AbilityBtn> collect_buttons(uintptr_t gui) {
+    std::vector<AbilityBtn> out;
+    uintptr_t root = find_child(gui, "ReactGameAbilities");
+    if (!root) return out;
+    uintptr_t frame = find_child(root, "Frame");
+    if (!frame) return out;
+    for (uintptr_t col : get_children(frame)) {
+        if (get_class_name(col) != "Frame") continue;
+        for (uintptr_t slot : get_children(col)) {
+            if (get_class_name(slot) != "Frame") continue;
+            uintptr_t content = find_child(slot, "content");
+            if (!content || get_class_name(content) != "TextButton") continue;
+            AbilityBtn b{};
+            b.content    = content;
+            b.time_left  = find_child(content, "timeLeftAbility");
+            b.binding    = find_child(content, "binding");
+            b.locked     = find_child(content, "Locked");
+            b.ammo       = find_child(content, "AmmoLabel");
+            b.price      = find_child(content, "priceLabel");
+            b.image      = find_child(content, "imageButton");
+            if (b.time_left && b.binding) out.push_back(b);
+        }
+    }
+    return out;
+}
+
+static bool gui_visible(uintptr_t inst) {
+    return inst && read<uint8_t>(inst + off::GUI_VISIBLE) != 0;
+}
+
+static bool gui_effectively_visible(uintptr_t inst, uintptr_t player_gui) {
+    if (!valid_ptr(player_gui)) return false;
+    bool screen_gui_seen = false;
+    for (int depth = 0; valid_ptr(inst) && depth < 32; ++depth) {
+        if (inst == player_gui) return screen_gui_seen;
+        const auto cls = get_class_name(inst);
+        if (cls.empty()) return false;
+        if (cls == "ScreenGui") {
+            if (read<uint8_t>(inst + off::SCREEN_GUI_ENABLED) != 1) return false;
+            screen_gui_seen = true;
+        } else if (cls == "Frame" || cls == "ScrollingFrame" || cls == "CanvasGroup"
+                   || cls == "TextLabel" || cls == "TextButton" || cls == "TextBox"
+                   || cls == "ImageLabel" || cls == "ImageButton" || cls == "ViewportFrame"
+                   || cls == "VideoFrame") {
+            if (read<uint8_t>(inst + off::GUI_VISIBLE) != 1) return false;
+        }
+        inst = read<uintptr_t>(inst + off::INST_PARENT);
+    }
+    return false;
+}
+
+static bool match_has_ended(uintptr_t banner_label, uintptr_t player_gui) {
+    if (!gui_effectively_visible(banner_label, player_gui)) return false;
+    const auto text = read_string(banner_label + off::GUI_TEXT);
+    return text == "YOU LOST" || text == "YOU WON";
+}
+
+static bool btn_ready(const AbilityBtn& b, char* key_out) {
+    if (gui_visible(b.locked)) return false;                       // locked slot
+    std::string tl = read_string(b.time_left + off::GUI_TEXT);
+    if (!tl.empty()) return false;                                 // counting down = on cooldown
+    if (gui_visible(b.price)) {
+        std::string p = read_string(b.price + off::GUI_TEXT);
+        if (!p.empty()) return false;                              // costs money right now
+    }
+    if (b.ammo) {
+        std::string a = read_string(b.ammo + off::GUI_TEXT);
+        if (a == "0") return false;                                // no tower ready
+    }
+    std::string key = read_string(b.binding + off::GUI_TEXT);
+    if (key.empty()) return false;
+    *key_out = key[0];
+    return true;
+}
+
+static void debug_btn(const AbilityBtn& b) {
+    std::string key = read_string(b.binding + off::GUI_TEXT);
+    std::string tl = read_string(b.time_left + off::GUI_TEXT);
+    std::string ammo = b.ammo ? read_string(b.ammo + off::GUI_TEXT) : "(none)";
+    std::string price = b.price ? read_string(b.price + off::GUI_TEXT) : "(none)";
+    printf("  slot[%s] id=%s locked_vis=%d timeLeft=\"%s\" ammo=\"%s\" price=\"%s\" price_vis=%d\n",
+           key.c_str(), btn_image_id(b).c_str(), (int)gui_visible(b.locked), tl.c_str(),
+           ammo.c_str(), price.c_str(), b.price ? (int)gui_visible(b.price) : -1);
+}
+
+static HWND g_game_wnd = nullptr;
+
+static BOOL CALLBACK enum_wnd_cb(HWND hwnd, LPARAM lp) {
+    DWORD pid = 0;
+    GetWindowThreadProcessId(hwnd, &pid);
+    if (pid == (DWORD)lp && IsWindowVisible(hwnd) && GetWindowTextLengthA(hwnd) > 0) {
+        g_game_wnd = hwnd;
+        return FALSE;
+    }
+    return TRUE;
+}
+
+// returns false when the game window could not be brought forward — caller must not press
+static bool focus_game() {
+    DWORD game_pid = 0;
+    if (g_game_wnd) GetWindowThreadProcessId(g_game_wnd, &game_pid);
+    DWORD fg_pid = 0;
+    GetWindowThreadProcessId(GetForegroundWindow(), &fg_pid);
+    if (fg_pid != game_pid || game_pid == 0) {
+        HWND fg = GetForegroundWindow();
+        DWORD fg_tid = GetWindowThreadProcessId(fg, nullptr);
+        DWORD my_tid = GetCurrentThreadId();
+        AttachThreadInput(my_tid, fg_tid, TRUE);
+        SetForegroundWindow(g_game_wnd);
+        BringWindowToTop(g_game_wnd);
+        AttachThreadInput(my_tid, fg_tid, FALSE);
+        Sleep(120);
+        GetWindowThreadProcessId(GetForegroundWindow(), &fg_pid);
+    }
+    return game_pid != 0 && fg_pid == game_pid;
+}
+
+// roblox reads scancodes — vk-only synthetic keys are ignored, KEYEVENTF_SCANCODE lands.
+// never VkKeyScanA here: it resolves through the thread's keyboard layout and returns
+// -1 for latin letters when the layout is cyrillic — letters map to vks directly
+static void press_key(char k) {
+    WORD vk = 0;
+    if (k >= 'A' && k <= 'Z') vk = (WORD)k;
+    else if (k >= 'a' && k <= 'z') vk = (WORD)(k - 'a' + 'A');
+    else if (k >= '0' && k <= '9') vk = (WORD)k;
+    else return;
+    WORD scan = (WORD)MapVirtualKeyA(vk, MAPVK_VK_TO_VSC);
+    INPUT in[2]{};
+    in[0].type = INPUT_KEYBOARD;
+    in[0].ki.wVk = vk;
+    in[0].ki.wScan = scan;
+    in[0].ki.dwFlags = KEYEVENTF_SCANCODE;
+    in[1] = in[0];
+    in[1].ki.dwFlags = KEYEVENTF_SCANCODE | KEYEVENTF_KEYUP;
+    SendInput(1, in, sizeof(INPUT));
+    Sleep(30 + rand() % 25);
+    SendInput(1, in + 1, sizeof(INPUT));
+}
+
+static DWORD find_pid(const char* name) {
+    DWORD pids[4096], bytes = 0;
+    if (!EnumProcesses(pids, sizeof(pids), &bytes)) return 0;
+    for (DWORD i = 0; i < bytes / sizeof(DWORD); i++) {
+        HANDLE h = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pids[i]);
+        if (!h) continue;
+        char exe[MAX_PATH]{};
+        DWORD n = MAX_PATH;
+        QueryFullProcessImageNameA(h, 0, exe, &n);
+        CloseHandle(h);
+        const char* base = strrchr(exe, '\\');
+        if (_stricmp(base ? base + 1 : exe, name) == 0) return pids[i];
+    }
+    return 0;
+}
+
+struct AbilityConfig {
+    std::unordered_map<std::string, GroupRule> rules;        // asset id -> rule (digits keys)
+    std::unordered_map<std::string, GroupRule> name_rules;   // ability name (lowercase) -> rule
+    std::unordered_map<std::string, std::string> names;      // asset id -> display name (fallback)
+};
+
+// canonical ability key: lowercase, ability part only ("Commander/Call to Arms" -> "call to arms")
+static std::string canon_key(std::string s) {
+    auto slash = s.find('/');
+    if (slash != std::string::npos) s = s.substr(slash + 1);
+    for (auto& c : s) c = static_cast<char>(tolower(static_cast<unsigned char>(c)));
+    // in-game names drift from wiki names; aliases keep them the same rule
+    static const std::pair<const char*, const char*> ALIASES[] = {
+        {"call of arms", "call to arms"},
+        {"drop the beat", "drop the beat"},
+    };
+    for (auto& [from, to] : ALIASES)
+        if (s == from) return to;
+    return s;
+}
+
+static bool is_digits(const std::string& s) {
+    return !s.empty() && s.find_first_not_of("0123456789") == std::string::npos;
+}
+
+// tds_abilities.ini:  "Tower/Ability = spam|chain N|off"  or  "asset_id = <same>"
+// id-table lines ("digits = free text") feed the name map; everything else is a rule
+static AbilityConfig load_ability_config(const std::string& path) {
+    AbilityConfig cfg;
+    std::ifstream in(path);
+    std::string line;
+    auto trim = [](std::string& s) {
+        const char* ws = " \t\r\n";
+        auto b = s.find_first_not_of(ws), e = s.find_last_not_of(ws);
+        s = b == std::string::npos ? "" : s.substr(b, e - b + 1);
+    };
+    auto is_digits = [](const std::string& s) {
+        return s.find_first_not_of("0123456789") == std::string::npos;
+    };
+    std::vector<std::pair<std::string, std::string>> pending_rules;
+    while (std::getline(in, line)) {
+        // strip trailing comment (but keep ';' out of names)
+        auto semi = line.find(';');
+        if (semi != std::string::npos) line = line.substr(0, semi);
+        auto first = line.find_first_not_of(" \t\r\n");
+        if (first == std::string::npos || line[first] == '#') continue;
+        auto eq = line.find('=');
+        if (eq == std::string::npos) continue;
+        std::string key = line.substr(0, eq), val = line.substr(eq + 1);
+        trim(key); trim(val);
+        if (key.empty() || val.empty()) continue;
+        const std::string pfx = "rbxassetid://";
+        if (key.rfind(pfx, 0) == 0) key = key.substr(pfx.size());
+        std::string val_low = val;
+        for (auto& c : val_low) c = static_cast<char>(tolower(static_cast<unsigned char>(c)));
+        bool is_mode = val_low.rfind("spam", 0) == 0 || val_low.rfind("chain", 0) == 0 ||
+                       val_low.rfind("off", 0) == 0 || is_digits(val_low);
+        if (is_digits(key) && !is_mode) {
+            cfg.names[key] = val;                    // id-table entry
+        } else if (is_mode) {
+            pending_rules.push_back({key, val_low}); // name or id + mode
+        }
+    }
+    // name -> id resolution pass (needs the full id table first)
+    std::unordered_map<std::string, std::string> name_to_id;
+    for (auto& [id, nm] : cfg.names) {
+        std::string low = nm;
+        for (auto& c : low) c = static_cast<char>(tolower(static_cast<unsigned char>(c)));
+        name_to_id[low] = id;
+    }
+    // name rules stay keyed by name — the state stream links buttons to names at runtime
+    for (auto& [key, mode] : pending_rules) {
+        if (mode.rfind("spam", 0) == 0) continue;   // spam is the default — no rule needed
+        int dur = 0;
+        if (mode.rfind("chain", 0) == 0) {
+            dur = atoi(mode.c_str() + 5);
+            if (dur <= 0) dur = 10;
+        }
+        if (is_digits(key)) {
+            cfg.rules[key] = GroupRule{dur};
+        } else {
+            cfg.name_rules[canon_key(key)] = GroupRule{dur};
+        }
+    }
+    return cfg;
+}
+
+// tds_ui_rules.ini: written by the UI — one "name = spam|chain N|off" per line,
+// overlaid on top of tds_abilities.ini (wins on conflict)
+static void load_ui_rules(AbilityConfig& cfg, const std::string& path) {
+    std::ifstream in(path);
+    std::string line;
+    auto trim = [](std::string& s) {
+        const char* ws = " \t\r\n";
+        auto b = s.find_first_not_of(ws), e = s.find_last_not_of(ws);
+        s = b == std::string::npos ? "" : s.substr(b, e - b + 1);
+    };
+    while (std::getline(in, line)) {
+        auto semi = line.find(';');
+        if (semi != std::string::npos) line = line.substr(0, semi);
+        auto eq = line.find('=');
+        if (eq == std::string::npos) continue;
+        std::string key = line.substr(0, eq), val = line.substr(eq + 1);
+        trim(key); trim(val);
+        if (key.empty() || val.empty()) continue;
+        std::string low = canon_key(key);
+        for (auto& c : val) c = static_cast<char>(tolower(static_cast<unsigned char>(c)));
+        if (val.rfind("spam", 0) == 0) {
+            cfg.name_rules.erase(low);
+            cfg.rules.erase(key);
+        } else if (val.rfind("off", 0) == 0) {
+            if (is_digits(key)) cfg.rules[key] = GroupRule{0};
+            else cfg.name_rules[low] = GroupRule{0};
+        } else if (val.rfind("chain", 0) == 0) {
+            int dur = atoi(val.c_str() + 5);
+            if (dur <= 0) dur = 10;
+            if (is_digits(key)) cfg.rules[key] = GroupRule{dur};
+            else cfg.name_rules[low] = GroupRule{dur};
+        }
+    }
+}
+
+// Shared control state; both desktop interfaces use the same engine.
+struct UiEntry {
+    std::string name;   // display name (ability part)
+    std::string tower;  // owner tower if known
+    double cd = 0;      // wiki cooldown, seconds
+    int mode = 0;       // 0 = spam, 1 = chain, 2 = off
+    int seconds = 10;
+    bool live = false;
+};
+
+// tds_wiki_db.ini: "Tower/Ability = cooldown_seconds" — the full available-ability list
+struct WikiAbility { std::string tower, ability; double cd; };
+static std::vector<WikiAbility> load_wiki_db(const std::string& path) {
+    std::vector<WikiAbility> out;
+    std::ifstream in(path);
+    std::string line;
+    while (std::getline(in, line)) {
+        auto first = line.find_first_not_of(" \t\r\n");
+        if (first == std::string::npos || line[first] == ';' || line[first] == '#') continue;
+        auto eq = line.find('=');
+        if (eq == std::string::npos) continue;
+        std::string key = line.substr(0, eq), val = line.substr(eq + 1);
+        auto slash = key.find('/');
+        if (slash == std::string::npos) continue;
+        WikiAbility w;
+        w.tower = key.substr(0, slash);
+        w.ability = key.substr(slash + 1);
+        auto trim = [](std::string& s) {
+            const char* ws = " \t\r\n";
+            auto b = s.find_first_not_of(ws), e = s.find_last_not_of(ws);
+            s = b == std::string::npos ? "" : s.substr(b, e - b + 1);
+        };
+        trim(w.tower); trim(w.ability); trim(val);
+        w.cd = atof(val.c_str());
+        if (!w.tower.empty() && !w.ability.empty()) out.push_back(w);
+    }
+    return out;
+}
+
+struct UiShared {
+    std::mutex mtx;
+    bool running = false;
+    std::vector<UiEntry> entries;
+    std::unordered_map<std::string, double> fired_at;  // canon name -> seconds marker
+    std::string phase = "boot";
+    int slots = 0;
+    std::vector<std::string> log;
+    std::unordered_map<std::string, std::pair<int, int>> rule_overrides;
+};
+
+static UiShared g_ui;
+static std::atomic<bool> g_ui_dirty{false};
+static std::chrono::steady_clock::time_point g_t0;
+
+static void logf(const char* fmt, ...) {
+    char buf[512];
+    va_list ap;
+    va_start(ap, fmt);
+    vsnprintf(buf, sizeof(buf), fmt, ap);
+    va_end(ap);
+    printf("%s\n", buf);
+    fflush(stdout);
+    std::lock_guard<std::mutex> lock(g_ui.mtx);
+    g_ui.log.push_back(buf);
+    if (g_ui.log.size() > 40) g_ui.log.erase(g_ui.log.begin());
+}
+
+static bool ui_write_rules() {
+    std::ofstream out("tds_ui_rules.ini.tmp", std::ios::trunc);
+    if (!out) return false;
+    out << "; written by tds+ ui — overlaid on tds_abilities.ini\n";
+    std::lock_guard<std::mutex> lock(g_ui.mtx);
+    std::unordered_map<std::string, bool> seen;
+    for (auto& e : g_ui.entries) {
+        std::string ck = canon_key(e.name);
+        if (seen[ck]) continue;
+        seen[ck] = true;
+        const char* mode = e.mode == 0 ? "spam" : e.mode == 1 ? "chain" : "off";
+        out << e.name << " = " << mode;
+        if (e.mode == 1) out << " " << e.seconds;
+        out << "\n";
+    }
+    out.close();
+    if (!out || !MoveFileExA("tds_ui_rules.ini.tmp", "tds_ui_rules.ini",
+                            MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH)) return false;
+    g_ui_dirty = true;
+    return true;
+}
+
+static void ui_seed_entries(const AbilityConfig& config, const std::vector<WikiAbility>& wiki) {
+    std::lock_guard<std::mutex> lock(g_ui.mtx);
+    g_ui.entries.clear();
+    auto append = [&](const std::string& name, const std::string& tower, double cooldown) {
+        const auto key = canon_key(name);
+        for (auto& existing : g_ui.entries) {
+            if (canon_key(existing.name) != key) continue;
+            if (existing.tower.empty()) existing.tower = tower;
+            return;
+        }
+        UiEntry entry;
+        entry.name = name;
+        entry.tower = tower;
+        entry.cd = cooldown;
+        if (auto it = config.name_rules.find(canon_key(entry.name)); it != config.name_rules.end()) {
+            entry.mode = it->second.duration <= 0 ? 2 : 1;
+            entry.seconds = it->second.duration <= 0 ? 10 : it->second.duration;
+        }
+        g_ui.entries.push_back(entry);
+    };
+    for (const auto& ability : wiki) append(ability.ability, ability.tower, ability.cd);
+    for (const auto& [id, name] : config.names) {
+        const auto slash = name.find('/');
+        append(slash == std::string::npos ? name : name.substr(slash + 1),
+               slash == std::string::npos || name.substr(0, slash) == "?" ? "" : name.substr(0, slash), 0);
+    }
+    for (const auto& [name, rule] : config.name_rules) append(name, "", 0);
+    g_ui.phase = "waiting for Roblox";
+}
+
+#ifndef TDS_PLUS_QT
+#include "simple_ui.inc"
+#endif
+
+TdsSnapshot tds_snapshot() {
+    std::lock_guard<std::mutex> lock(g_ui.mtx);
+    TdsSnapshot snapshot;
+    snapshot.running = g_ui.running;
+    snapshot.exit_requested = g_exit_requested.load();
+    snapshot.phase = g_ui.phase;
+    snapshot.slots = g_ui.slots;
+    snapshot.log = g_ui.log;
+    for (const auto& entry : g_ui.entries)
+        snapshot.abilities.push_back({canon_key(entry.name), entry.name, entry.tower,
+                                      entry.cd, entry.mode, entry.seconds, entry.live});
+    return snapshot;
+}
+
+void tds_set_running(bool running) {
+    std::lock_guard<std::mutex> lock(g_ui.mtx);
+    g_ui.running = running;
+}
+
+bool tds_set_rule(const std::string& key, int mode, int seconds) {
+    if (mode < 0 || mode > 2 || seconds < 1 || seconds > 600) return false;
+    int old_mode = 0, old_seconds = 10;
+    bool found = false;
+    {
+        std::lock_guard<std::mutex> lock(g_ui.mtx);
+        for (auto& entry : g_ui.entries) {
+            if (canon_key(entry.name) != key) continue;
+            old_mode = entry.mode;
+            old_seconds = entry.seconds;
+            entry.mode = mode;
+            entry.seconds = seconds;
+            g_ui.rule_overrides[key] = {mode, seconds};
+            found = true;
+            break;
+        }
+    }
+    if (!found) return false;
+    if (ui_write_rules()) return true;
+    std::lock_guard<std::mutex> lock(g_ui.mtx);
+    for (auto& entry : g_ui.entries) {
+        if (canon_key(entry.name) != key) continue;
+        entry.mode = old_mode;
+        entry.seconds = old_seconds;
+    }
+    g_ui.rule_overrides[key] = {old_mode, old_seconds};
+    return false;
+}
+
+void tds_request_exit() { g_exit_requested.store(true); }
+
+// legacy tds_chain.ini: one "asset_id=duration_seconds" per line
+static std::unordered_map<std::string, GroupRule> load_chain_rules(const std::string& path) {
+    std::unordered_map<std::string, GroupRule> rules;
+    std::ifstream in(path);
+    std::string line;
+    while (std::getline(in, line)) {
+        auto first = line.find_first_not_of(" \t\r\n");
+        if (first == std::string::npos || line[first] == ';' || line[first] == '#') continue;
+        auto eq = line.find('=');
+        if (eq == std::string::npos) continue;
+        std::string id = line.substr(0, eq), dur = line.substr(eq + 1);
+        auto trim = [](std::string& s) {
+            const char* ws = " \t\r\n";
+            auto b = s.find_first_not_of(ws), e = s.find_last_not_of(ws);
+            s = b == std::string::npos ? "" : s.substr(b, e - b + 1);
+        };
+        trim(id); trim(dur);
+        const std::string pfx = "rbxassetid://";
+        if (id.rfind(pfx, 0) == 0) id = id.substr(pfx.size());
+        if (id.empty() || dur.empty()) continue;
+        rules[id] = GroupRule{atoi(dur.c_str())};
+    }
+    return rules;
+}
+
+static LONG WINAPI crash_filter(EXCEPTION_POINTERS* ep) {
+    // a dying thread must not take the process down silently — log the code
+    FILE* f = fopen("tds_plus_crash.log", "a");
+    if (f) {
+        fprintf(f, "exception 0x%lx at %p\n", ep->ExceptionRecord->ExceptionCode,
+                ep->ExceptionRecord->ExceptionAddress);
+        fclose(f);
+    }
+    return EXCEPTION_CONTINUE_SEARCH;
+}
+
+int tds_run_engine(bool offline) {
+    setvbuf(stdout, nullptr, _IONBF, 0);
+    SetUnhandledExceptionFilter(crash_filter);
+#ifndef TDS_PLUS_QT
+    char executable_path[MAX_PATH]{};
+    if (GetModuleFileNameA(nullptr, executable_path, MAX_PATH)) {
+        if (char* separator = strrchr(executable_path, '\\')) {
+            *separator = '\0';
+            SetCurrentDirectoryA(executable_path);
+        }
+    }
+#endif
+    freopen("tds_plus.log", "w", stdout);
+    g_t0 = std::chrono::steady_clock::now();
+    AbilityConfig acfg = load_ability_config("tds_abilities.ini");
+    if (acfg.rules.empty() && acfg.names.empty()) {
+        auto legacy = load_chain_rules("tds_chain.ini");
+        if (!legacy.empty()) {
+            acfg.rules = std::move(legacy);
+            logf("legacy tds_chain.ini loaded (%zu)", acfg.rules.size());
+        }
+    }
+    auto& chain_rules = acfg.rules;
+    load_ui_rules(acfg, "tds_ui_rules.ini");
+    if (!chain_rules.empty() || !acfg.name_rules.empty())
+        logf("ability rules: %zu by id, %zu by name", chain_rules.size(), acfg.name_rules.size());
+
+    auto wiki_db = load_wiki_db("tds_wiki_db.ini");
+    if (!wiki_db.empty()) logf("wiki db: %zu abilities", wiki_db.size());
+    ui_seed_entries(acfg, wiki_db);
+
+#ifndef TDS_PLUS_QT
+    HANDLE ui_handle = CreateThread(nullptr, 0, ui_thread, nullptr, 0, nullptr);
+    if (!ui_handle) { logf("CreateThread failed: %lu", GetLastError()); return 1; }
+    CloseHandle(ui_handle);
+#endif
+
+    if (offline) {
+        { std::lock_guard<std::mutex> lock(g_ui.mtx); g_ui.phase = "offline preview"; }
+        while (!g_exit_requested.load()) Sleep(60);
+        return 0;
+    }
+
+    while (!g_exit_requested.load()) {
+
+        DWORD pid = 0;
+        uintptr_t base = 0;
+        while (!g_exit_requested.load()) {
+            if (GetAsyncKeyState(VK_END) & 0x8000) { g_exit_requested.store(true); break; }
+            pid = find_pid("RobloxPlayerBeta.exe");
+            if (pid) {
+                g_proc = OpenProcess(PROCESS_VM_READ | PROCESS_QUERY_INFORMATION, FALSE, pid);
+                if (g_proc) {
+                    HMODULE mods[8]{};
+                    DWORD bytes = 0;
+                    if (EnumProcessModules(g_proc, mods, sizeof(mods), &bytes) && bytes >= sizeof(HMODULE)) {
+                        base = reinterpret_cast<uintptr_t>(mods[0]);
+                        break;
+                    }
+                    CloseHandle(g_proc);
+                    g_proc = nullptr;
+                }
+                std::lock_guard<std::mutex> lock(g_ui.mtx);
+                g_ui.phase = "access denied";
+            } else {
+                std::lock_guard<std::mutex> lock(g_ui.mtx);
+                g_ui.phase = "waiting for Roblox";
+            }
+            Sleep(500);
+        }
+        if (!g_proc || g_exit_requested.load()) {
+            if (g_proc) { CloseHandle(g_proc); g_proc = nullptr; }
+            return 0;
+        }
+        acfg = load_ability_config("tds_abilities.ini");
+        load_ui_rules(acfg, "tds_ui_rules.ini");
+        EnumWindows(enum_wnd_cb, (LPARAM)pid);
+        logf("tds+ attached: pid=%lu base=0x%llx window=0x%llx", pid,
+             (unsigned long long)base, (unsigned long long)(uintptr_t)g_game_wnd);
+
+        StreamState stream;
+        logf("scanning state stream regions...\n");
+        stream_discover(stream);
+        size_t stream_mb = 0;
+        for (auto& [b, s] : stream.regions) stream_mb += s;
+        logf("%zu stream regions (%.1f MB)\n", stream.regions.size(), stream_mb / 1048576.0);
+
+        bool running = false, t_held = false, d_held = false;
+        std::vector<AbilityBtn> buttons;
+        std::unordered_map<std::string, std::string> link;   // button asset id -> ability name (from stream)
+        std::string last_phase;
+        auto last_resolve = std::chrono::steady_clock::now() - std::chrono::seconds(10);
+        logf("F6 = toggle auto-ability | F7 = debug slots | END = exit\n");
+
+        while (!g_exit_requested.load()) {
+            if (WaitForSingleObject(g_proc, 0) == WAIT_OBJECT_0) {
+                logf("Roblox closed");
+                break;
+            }
+            // UI and F6 share the same flag — UI wins when it changes
+            bool flipped = false;
+            {
+                std::lock_guard<std::mutex> lock(g_ui.mtx);
+                if (g_ui.running != running) { running = g_ui.running; flipped = true; }
+            }
+            if (flipped) logf("[%s]", running ? "on" : "off");   // never logf inside the lock
+            if (g_ui_dirty.exchange(false)) {
+                acfg = load_ability_config("tds_abilities.ini");
+                load_ui_rules(acfg, "tds_ui_rules.ini");
+                chain_rules = acfg.rules;
+                logf("config reloaded: %zu by id, %zu by name\n", chain_rules.size(), acfg.name_rules.size());
+            }
+            bool t = (GetAsyncKeyState(VK_F6) & 0x8000) != 0;
+            if (t && !t_held) {
+                running = !running;
+                { std::lock_guard<std::mutex> lock(g_ui.mtx); g_ui.running = running; }
+                logf("[%s]\n", running ? "on" : "off");
+            }
+            t_held = t;
+            bool d = (GetAsyncKeyState(VK_F7) & 0x8000) != 0;
+            if (d && !d_held) {
+                logf("slot debug (%zu):\n", buttons.size());
+                for (const auto& b : buttons) debug_btn(b);
+            }
+            d_held = d;
+            if (GetAsyncKeyState(VK_END) & 0x8000) { g_exit_requested.store(true); break; }
+
+            auto now = std::chrono::steady_clock::now();
+            if (now - last_resolve > std::chrono::seconds(2)) {   // GUI rebuilds as towers change
+                last_resolve = now;
+                uintptr_t ve = read<uintptr_t>(base + off::VE_POINTER);
+                uintptr_t fdm = valid_ptr(ve) ? read<uintptr_t>(ve + off::VE_FAKE_DM) : 0;
+                uintptr_t dm = valid_ptr(fdm) ? read<uintptr_t>(fdm + off::FAKE_REAL_DM) : 0;
+                uintptr_t players = valid_ptr(dm) ? find_child_of_class(dm, "Players") : 0;
+                uintptr_t lp = players ? read<uintptr_t>(players + off::PLAYERS_LOCAL) : 0;
+                uintptr_t gui = valid_ptr(lp) ? find_child(lp, "PlayerGui") : 0;
+                g_player_gui = gui;
+                buttons = gui ? collect_buttons(gui) : std::vector<AbilityBtn>{};
+                uintptr_t rga = gui ? find_child(gui, "ReactGameAbilities") : 0;
+                g_bar_frame = rga ? find_child(rga, "Frame") : 0;
+                uintptr_t rnr = gui ? find_child(gui, "ReactGameNewRewards") : 0;
+                uintptr_t rnr_frame = rnr ? find_child(rnr, "Frame") : 0;
+                uintptr_t gameover = rnr_frame ? find_child(rnr_frame, "gameOver") : 0;
+                uintptr_t rs = gameover ? find_child(gameover, "RewardsScreen") : 0;
+                uintptr_t rb = rs ? find_child(rs, "RewardBanner") : 0;
+                g_banner_label = rb ? find_child(rb, "textLabel") : 0;
+
+                // state stream: fresh ability cooldowns -> link buttons to ability names
+                if (stream.discovered) {
+                    stream_scan(stream);
+                    auto ready = stream_ready_counts(stream);
+                    // constraint elimination: a name group with ready count N matches
+                    // the single unlinked button whose ready-tower count is also N
+                    std::unordered_map<std::string, std::vector<std::string>> cand;
+                    for (const auto& b : buttons) {
+                        std::string id = btn_image_id(b);
+                        if (id.empty() || link.count(id)) continue;
+                        int ammo = b.ammo ? atoi(read_string(b.ammo + off::GUI_TEXT).c_str()) : -1;
+                        if (ammo >= 0) cand[std::to_string(ammo)].push_back(id);
+                    }
+                    for (auto& [nm, n] : ready) {
+                        if (n <= 0) continue;
+                        auto it = cand.find(std::to_string(n));
+                        if (it == cand.end() || it->second.size() != 1) continue;
+                        std::string id = it->second.front();
+                        // don't let two different names claim one button
+                        bool taken = false;
+                        for (auto& [i2, nm2] : link) if (i2 == id) taken = true;
+                        if (!taken) {
+                            link[id] = nm;
+                            logf("linked: id=%s -> \"%s\"\n", id.c_str(), nm.c_str());
+                        }
+                    }
+                }
+
+                static size_t last_n = SIZE_MAX;
+                if (buttons.size() != last_n) {
+                    std::string banner_now = g_banner_label ? read_string(g_banner_label + off::GUI_TEXT) : "";
+                    logf("ability slots: %zu | end-screen: %s \"%s\"\n", buttons.size(),
+                         gui_effectively_visible(g_banner_label, g_player_gui) ? "visible" : "hidden",
+                         banner_now.c_str());
+                    for (const auto& b : buttons) {
+                        std::string id = btn_image_id(b);
+                        std::string key = read_string(b.binding + off::GUI_TEXT);
+                        std::string nm;
+                        if (link.count(id)) nm = link[id];
+                        else if (acfg.names.count(id)) nm = acfg.names[id];
+                        std::string disp = nm.empty() ? "" : " \"" + nm + "\"";
+                        const GroupRule* rule = nullptr;
+                        if (auto it = chain_rules.find(id); it != chain_rules.end()) rule = &it->second;
+                        else if (!nm.empty()) {
+                            if (auto name_rule = acfg.name_rules.find(canon_key(nm)); name_rule != acfg.name_rules.end()) rule = &name_rule->second;
+                        }
+                        const char* mode = !rule ? "(spam)" : rule->duration <= 0 ? "(off)" : "(chain)";
+                        logf("  slot[%s] id=%s%s %s\n", key.c_str(), id.c_str(), disp.c_str(), mode);
+                    }
+                    last_n = buttons.size();
+                }
+
+                // sync the UI entry list with what's live + what's configured + the full wiki list
+                {
+                    std::lock_guard<std::mutex> lock(g_ui.mtx);
+                    g_ui.running = running;
+                    g_ui.entries.clear();
+                    auto push_entry = [&](const std::string& name, const std::string& tower = "",
+                                          double cd = 0, bool live = false) {
+                        std::string ck = canon_key(name);
+                        for (auto& e : g_ui.entries) {
+                            if (canon_key(e.name) != ck) continue;
+                            if (!tower.empty()) { e.tower = tower; e.cd = cd; }   // enrich existing
+                            e.live = e.live || live;
+                            return;
+                        }
+                        UiEntry e;
+                        e.name = name;
+                        e.tower = tower;
+                        e.cd = cd;
+                        e.live = live;
+                        if (auto it = acfg.name_rules.find(ck); it != acfg.name_rules.end()) {
+                            e.mode = it->second.duration <= 0 ? 2 : 1;
+                            e.seconds = it->second.duration <= 0 ? 10 : it->second.duration;
+                        }
+                        if (auto it = g_ui.rule_overrides.find(ck); it != g_ui.rule_overrides.end()) {
+                            e.mode = it->second.first;
+                            e.seconds = it->second.second;
+                        }
+                        g_ui.entries.push_back(e);
+                    };
+                    for (const auto& w : wiki_db)
+                        push_entry(w.ability, w.tower, w.cd);   // everything available, wiki-first
+                    for (const auto& b : buttons) {
+                        std::string id = btn_image_id(b);
+                        std::string nm;
+                        if (link.count(id)) nm = link[id];
+                        else if (acfg.names.count(id)) nm = acfg.names[id];
+                        if (!nm.empty()) {
+                            auto slash = nm.find('/');
+                            push_entry(slash != std::string::npos ? nm.substr(slash + 1) : nm,
+                                       "", 0, true);
+                        }
+                    }
+                    for (auto& [low, r] : acfg.name_rules)
+                        push_entry(low);   // configured but not currently slotted
+                    for (auto& [id, nm] : acfg.names) {
+                        auto slash = nm.find('/');
+                        push_entry(slash != std::string::npos ? nm.substr(slash + 1) : nm);
+                    }
+                }
+            }
+
+            const bool menu_open = !gui_effectively_visible(g_bar_frame, g_player_gui);
+            const bool game_over = match_has_ended(g_banner_label, g_player_gui);
+            const std::string phase = game_over ? "match over" : !buttons.empty() ? "in match" : "lobby / intermission";
+            if (phase != last_phase) {
+                logf("phase: %s", phase.c_str());
+                last_phase = phase;
+            }
+
+            // page status: phase + live slot count
+            {
+                std::lock_guard<std::mutex> lock(g_ui.mtx);
+                g_ui.slots = (int)buttons.size();
+                g_ui.phase = phase;
+            }
+
+            if (running && !buttons.empty() && !menu_open && !game_over && focus_game()) {
+                std::unordered_map<std::string, bool> group_fired;  // one press per group per pass
+                for (const auto& b : buttons) {
+                    std::string id = btn_image_id(b);
+                    // rule lookup: by asset id first, then by ability name (stream link or id-table)
+                    GroupRule* rule = nullptr;
+                    std::string rname;
+                    if (auto it = chain_rules.find(id); it != chain_rules.end()) {
+                        rule = &it->second;
+                        rname = id;
+                    } else {
+                        std::string nm;
+                        if (link.count(id)) nm = link[id];
+                        else if (acfg.names.count(id)) nm = acfg.names[id];
+                        if (!nm.empty()) {
+                            if (auto name_rule = acfg.name_rules.find(canon_key(nm)); name_rule != acfg.name_rules.end()) {
+                                rule = &name_rule->second;
+                                rname = nm;
+                            }
+                        }
+                    }
+                    char key = 0;
+                    if (rule) {
+                        auto& r = *rule;
+                        if (r.duration <= 0) continue;                 // off -> never auto-press
+                        int ammo_n = b.ammo ? atoi(read_string(b.ammo + off::GUI_TEXT).c_str()) : -1;
+
+                        if (r.confirming) {
+                            // require two consecutive lower reads — one flaky read proves nothing
+                            if (ammo_n >= 0 && ammo_n < r.pre_press_ammo) {
+                                if (++r.confirm_votes >= 2) {
+                                    r.confirming = false;
+                                    r.confirm_votes = 0;
+                                    r.fired_once = true;
+                                    r.window_end = now + std::chrono::seconds(r.duration);
+                                    logf("chain confirmed %s, buff until +%ds\n", rname.c_str(), r.duration);
+                                }
+                            } else {
+                                r.confirm_votes = 0;
+                            }
+                            if (r.confirming && now > r.confirm_until) {
+                                r.confirming = false;   // press never landed (lag/menu) — retry
+                                r.confirm_votes = 0;
+                                logf("chain press lost %s, retrying\n", rname.c_str());
+                            }
+                        } else if (r.last_ammo > 0 && ammo_n >= 0 && ammo_n < r.last_ammo) {
+                            // ammo dropped without us pressing -> the player fired manually
+                            r.fired_once = true;
+                            r.window_end = now + std::chrono::seconds(r.duration);
+                            logf("manual fire adopted %s, buff until +%ds\n", rname.c_str(), r.duration);
+                        }
+                        if (ammo_n >= 0) r.last_ammo = ammo_n;
+
+                        if (r.confirming) continue;                    // press in flight
+                        if (r.fired_once && now < r.window_end) continue;  // buff still running
+                        if (!btn_ready(b, &key)) continue;
+                        if (group_fired[id]) continue;
+                        r.confirming = true;
+                        r.confirm_votes = 0;
+                        r.pre_press_ammo = ammo_n;
+                        r.confirm_until = now + std::chrono::milliseconds(800);
+                        group_fired[id] = true;
+                    } else {
+                        if (!btn_ready(b, &key)) continue;
+                        if (link.count(id)) rname = link[id];
+                        else if (acfg.names.count(id)) rname = acfg.names[id];
+                    }
+                    press_key(key);
+                    logf("fired ability [%c] %s", key, rname.empty() ? id.c_str() : rname.c_str());
+                    {
+                        std::lock_guard<std::mutex> lock(g_ui.mtx);
+                        double now_s = std::chrono::duration<double>(
+                            std::chrono::steady_clock::now() - g_t0).count();
+                        g_ui.fired_at[canon_key(rname.empty() ? id : rname)] = now_s;
+                    }
+                    Sleep(150 + rand() % 100);
+                }
+            }
+            Sleep(60);
+        }
+        CloseHandle(g_proc);
+        g_proc = nullptr;
+        g_player_gui = g_bar_frame = g_banner_label = 0;
+        {
+            std::lock_guard<std::mutex> lock(g_ui.mtx);
+            g_ui.running = false;
+            g_ui.slots = 0;
+            g_ui.phase = "waiting for Roblox";
+            for (auto& entry : g_ui.entries) entry.live = false;
+        }
+        if (GetAsyncKeyState(VK_END) & 0x8000) g_exit_requested.store(true);
+    }
+    logf("tds+ stopped\n");
+    return 0;
+}
+
+#ifndef TDS_PLUS_QT
+int main() { return tds_run_engine(); }
+#endif

@@ -1,0 +1,25 @@
+Ace Pilot | Toggle Reverse | cd=8s | unlock=Level 0+ | cost= | OK | wikiability=True | icons=17847640091,17847639896,17847640366,17847640366,17847640211
+Brawler | Reposition | cd=20s | unlock=Level 3+ | cost= | OK | wikiability=True | icons=17522564142,17522564142,17522564023,17522564307,17522563932
+Combatant | Warrior's Call | cd=30s | unlock=Level 3+ | cost= | OK | wikiability=False | icons=3356186535,141745478,4118882122,16620737,16868189
+Commander | Call to Arms | cd=30s | unlock=Level 2+ | cost= | OK | wikiability=True | icons=5525000768,4594880289,5525002879,17512145719
+Commander | Support Caravan | cd=60s | unlock=Level 4 | cost={{Money | OK | wikiability=True | icons=5525000768,4594880289,5525002879,17512145719
+Commando | Missile | cd=20s  (Level 3) • 10s  (Level 4) | unlock=Level 3+ | cost= | SKIP(removed) | wikiability=True | icons=119448063654848,72540829223100,111526844050563,113494545335861
+DJ Booth | Drop the Beat | cd=30s | unlock=Level 3+ | cost= | OK | wikiability=True | icons=95144637961093,113548130163293,101877307760287,123117801948681,113854542319656
+Elementalist | Heatwave | cd=40s | unlock=Level 2+ | cost= | OK | wikiability=True | icons=136223791844063,124219033045691,77890912829468,90889171304008
+Elementalist | Ice Turret | cd=50s | unlock=Level 2+ | cost= | OK | wikiability=True | icons=136223791844063,124219033045691,77890912829468,90889171304008
+Enforcer | SWAT Van | cd=45s | unlock=Level 5B+ | cost= | OK | wikiability=False | icons=136369346813725,107404064476607,82782455075877,76520357411079,75300201894000,90582348502485,83679968823067,93191574637363,79398593824767,79055341194840
+Freezer | Frost Grenade | cd=15s | unlock=Level 4 | cost= | OK | wikiability=True | icons=15686418975,15686418835,15686418748,15686418571
+Gatling Gun | FPS | cd=0.5s | unlock=Level 0+ | cost= | OK | wikiability=True | icons=70569444235865,104227180979769,71764582498505,128136625170591,125372339735512
+Gladiator | War Cry | cd=30s | unlock=Level 2+ | cost= | SKIP(removed) | wikiability=True | icons=3356186535,141745478,4118882122,16620737,16868189
+Hacker | Hologram Tower | cd=60s | unlock=Level 3+ | cost= | OK | wikiability=True | icons=116572141213630,84772480553742,73779458293742,71327152036764,78547724037844,105579078081734
+Harvester | Thorns | cd=40s | unlock=Level 0+ | cost= | OK | wikiability=True | icons=84794687219284,128833693887182,140040939003373,83141210249578,117691212648454
+Jester | Equip Bombs | cd=0s | unlock=Level 0+ | cost= | SKIP(removed) | wikiability=True | icons=15332518871,15332518503,15332518237,15332519184
+Kingpin | Bounty | cd=120s | unlock=Level 4A | cost= | OK | wikiability=False | icons=115111916696325,128115489998324,72861050225989,114668237754966,132421103594393,104949216258591,95999047723463,105993154736785,119447258450364
+Medic | Ubercharge | cd=60s | unlock=Level 3 | cost= | OK | wikiability=True | icons=117008581932706,71546954858462,130592941614779,112504548905627,112504548905627
+Mercenary Base | Air-Drop | cd=75s | unlock=Level 5+ | cost={{Money | OK | wikiability=True | icons=17196819847,17196820389,17196819964,13019520315,17196820108,17196820275
+Military Base | Airstrike | cd=45s | unlock=Level 4+ | cost={{Money | OK | wikiability=True | icons=3877874591,3877875003,3877873543,3444568329,3444568580
+Necromancer | Raise the Dead | cd=5s | unlock=Level 0+ | cost= | OK | wikiability=True | icons=15332519996,15332520691,15332520335,15332519505
+Pulse Trooper | Sweeper | cd=60s | unlock=Level 4+ | cost= | OK | wikiability=False | icons=135644027404170,111802725289728,134734546148883,135194593575463,107722623424761
+Pursuit | Patrol | cd=20s | unlock=Level 0+ | cost= | OK | wikiability=True | icons=117186100008439,117186100008439,98101516586169,
+Swarmer | Bee Swarm Grenade | cd=15s | unlock=Level 3+ | cost= | SKIP(removed) | wikiability=True | icons=125107182964673,119703739718324,111277904554322,115125540733937,115125540733937
+War Machine | Convoy | cd= | unlock=Level 4 | cost={{Money | SKIP(exclusive) | wikiability=False | icons=4989372339,4989372568,3584258139,4989373124,4989373460

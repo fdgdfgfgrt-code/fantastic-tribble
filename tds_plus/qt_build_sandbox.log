@@ -1,0 +1,17 @@
+[0/1] Re-running CMake...
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+shaders/ambient.frag -> ambient.frag.qsb exposed as :/shaders/ambient.frag.qsb
+shaders/ambient.frag -> ambient.frag.qsb exposed as :/shaders/ambient.frag.qsb
+-- Configuring done (3.7s)
+-- Generating done (0.3s)
+-- Build files have been written to: C:/Users/Noesis/Desktop/www/tds_plus/.qt-build
+[1/12] Automatic MOC for target tds_plus_qt
+[2/11] Automatic MOC for target tds_plus_ui_test
+[3/10] Building CXX object CMakeFiles\tds_plus_game_state_test.dir\tests\game_state_test.cpp.obj
+[4/10] Linking CXX executable tds_plus_game_state_test.exe
+[5/10] Building CXX object CMakeFiles\tds_plus_qt.dir\tds_plus.cpp.obj
+[6/10] Building CXX object CMakeFiles\tds_plus_ui_test.dir\tds_plus.cpp.obj
+[7/10] Linking CXX executable tds_plus_qt.exe
+[8/10] Building CXX object CMakeFiles\tds_plus_ui_test.dir\qt\main.cpp.obj
+[9/10] Linking CXX executable tds_plus_ui_test.exe

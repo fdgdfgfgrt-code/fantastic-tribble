@@ -1,0 +1,8 @@
+[1/9] Running rcc for resource ui_resources
+[2/9] Automatic MOC for target tds_plus_ui_test
+[3/8] Running rcc for resource test_ui_resources
+[4/8] Building CXX object CMakeFiles\tds_plus_qt.dir\.qt\rcc\qrc_ui_resources.cpp.obj
+[5/8] Building CXX object CMakeFiles\tds_plus_ui_test.dir\.qt\rcc\qrc_test_ui_resources.cpp.obj
+[6/8] Linking CXX executable tds_plus_qt.exe
+[7/8] Building CXX object CMakeFiles\tds_plus_ui_test.dir\qt\main.cpp.obj
+[8/8] Linking CXX executable tds_plus_ui_test.exe

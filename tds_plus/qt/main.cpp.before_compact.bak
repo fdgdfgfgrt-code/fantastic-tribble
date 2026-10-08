@@ -1,0 +1,104 @@
+// language: C++17, file: main.cpp, runtime: Qt 6.10/MSVC, target: Windows 11 GUI subsystem
+#include <windows.h>
+#include <dwmapi.h>
+#include "control_model.hpp"
+#include <QCommandLineParser>
+#include <QDir>
+#include <QFileInfo>
+#include <QFontDatabase>
+#include <QGuiApplication>
+#include <QIcon>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
+#include <QQuickStyle>
+#include <QQuickWindow>
+#include <QSettings>
+#include <cstdio>
+#include <thread>
+#ifdef TDS_UI_SMOKE
+#include "smoke_test.hpp"
+#endif
+
+int main(int argc, char* argv[]) {
+    QGuiApplication app(argc, argv);
+    app.setApplicationName("tds+");
+    app.setOrganizationName("tds-plus");
+    app.setWindowIcon(QIcon("qrc:/qt/tds_plus.ico"));
+    for (const auto* font_path : {":/assets/fonts/GeistMono-Medium.ttf",
+                                 ":/assets/fonts/GeistMono-SemiBold.ttf"}) {
+        if (QFontDatabase::addApplicationFont(font_path) < 0) {
+            MessageBoxW(nullptr, L"The bundled interface font could not be loaded.",
+                        L"tds+", MB_OK | MB_ICONERROR);
+            return 2;
+        }
+    }
+    QFont ui_font("Geist Mono");
+    ui_font.setPixelSize(14);
+    ui_font.setWeight(QFont::Medium);
+    ui_font.setHintingPreference(QFont::PreferVerticalHinting);
+    app.setFont(ui_font);
+    QQuickStyle::setStyle("Basic");
+    QCommandLineParser parser;
+    parser.addHelpOption();
+    parser.addOption({"offline", "Open the UI without attaching to Roblox."});
+    parser.addOption({"config-dir", "Directory containing the existing tds+ INI files.", "path"});
+    parser.process(app);
+
+    QString config_dir = parser.value("config-dir");
+    if (config_dir.isEmpty()) {
+        config_dir = QCoreApplication::applicationDirPath();
+        if (!QFileInfo::exists(config_dir + "/tds_wiki_db.ini"))
+            config_dir = QDir(config_dir).absoluteFilePath("..");
+    }
+    if (!QDir::setCurrent(config_dir)) return 2;
+    if (!QFileInfo::exists("tds_wiki_db.ini")) {
+        MessageBoxW(nullptr, L"tds_wiki_db.ini was not found. Open the app from the tds_plus folder.",
+                    L"tds+", MB_OK | MB_ICONERROR);
+        return 2;
+    }
+    qInstallMessageHandler([](QtMsgType, const QMessageLogContext&, const QString& message) {
+        if (FILE* file = fopen("tds_qt.log", "a")) {
+            fprintf(file, "%s\n", message.toUtf8().constData());
+            fclose(file);
+        }
+    });
+
+    const bool offline = parser.isSet("offline");
+    std::thread engine_thread([offline] { tds_run_engine(offline); });
+    ControlModel control_model(offline);
+    QQmlApplicationEngine qml_engine;
+    BOOL motion_enabled = TRUE;
+    SystemParametersInfoW(SPI_GETCLIENTAREAANIMATION, 0, &motion_enabled, 0);
+    qml_engine.rootContext()->setContextProperty("systemMotionEnabled", motion_enabled != FALSE);
+    qml_engine.rootContext()->setContextProperty("controlModel", &control_model);
+    QObject::connect(&control_model, &ControlModel::exitRequested, &app, &QCoreApplication::quit);
+    qml_engine.load(QUrl("qrc:/qml/Main.qml"));
+    if (qml_engine.rootObjects().isEmpty()) {
+        tds_request_exit();
+        engine_thread.join();
+        return 3;
+    }
+    auto* window = qobject_cast<QQuickWindow*>(qml_engine.rootObjects().front());
+    if (window) {
+        const BOOL dark = TRUE;
+        DwmSetWindowAttribute(reinterpret_cast<HWND>(window->winId()), 20, &dark, sizeof(dark));
+#ifndef TDS_UI_SMOKE
+        QSettings settings;
+        const QSize size = settings.value("window/size", QSize(860, 700)).toSize();
+        window->resize(size.expandedTo(QSize(800, 620)));
+        QObject::connect(&app, &QCoreApplication::aboutToQuit, window, [window] {
+            if (window->visibility() == QWindow::Windowed)
+                QSettings().setValue("window/size", window->size());
+        });
+#else
+        QTimer::singleShot(650, &app, [&app, window, &control_model, config_dir] {
+            app.exit(control_model.offline() ? run_smoke_test(window, control_model, config_dir)
+                                            : run_attach_test(window, control_model, config_dir));
+        });
+#endif
+    }
+    const int result = app.exec();
+    tds_request_exit();
+    engine_thread.join();
+    return result;
+}

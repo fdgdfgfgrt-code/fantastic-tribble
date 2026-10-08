@@ -1,0 +1,558 @@
+// language: QML, file: Main.qml, runtime: Qt Quick 6.10, target: Windows 11 desktop
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+
+ApplicationWindow {
+    id: window
+    objectName: "mainWindow"
+    visible: true
+    width: 940
+    height: 760
+    minimumWidth: 800
+    minimumHeight: 620
+    title: "tds+"
+    color: "#0a0a0c"
+    font.family: "Segoe UI"
+    font.pixelSize: 14
+
+    readonly property color ink: "#ededf0"
+    readonly property color muted: "#a1a1aa"
+    readonly property color dim: "#777780"
+    readonly property color accent: "#e2e2e7"
+    readonly property color borderColor: "#323238"
+    readonly property bool motionEnabled: systemMotionEnabled && visible && visibility !== Window.Minimized
+    palette.window: "#202025"
+    palette.windowText: ink
+    palette.button: "#29292f"
+    palette.buttonText: ink
+    palette.base: "#17171b"
+    palette.text: ink
+    palette.highlight: "#585863"
+    palette.highlightedText: ink
+
+    AmbientBackground {
+        anchors.fill: parent
+        animating: window.motionEnabled
+    }
+
+    component SoftButton: Button {
+        id: button
+        property bool selected: false
+        property bool primary: false
+        property bool flatSelection: false
+        property string hint: ""
+        implicitHeight: 36
+        leftPadding: 14
+        rightPadding: 14
+        hoverEnabled: true
+        contentItem: Text {
+            text: button.text
+            color: button.primary ? "#151518" : button.selected || button.hovered ? window.ink : window.muted
+            font.family: window.font.family
+            font.pixelSize: 12
+            font.weight: button.primary || button.selected ? Font.DemiBold : Font.Normal
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            elide: Text.ElideRight
+            opacity: button.enabled ? 1 : 0.5
+        }
+        background: Rectangle {
+            radius: 7
+            color: button.primary ? (button.down ? "#bcbcc4" : button.hovered ? "#fafafa" : window.accent)
+                   : button.selected && !button.flatSelection ? "#34343a"
+                   : (button.down ? "#343439" : button.hovered ? "#25252a" : "transparent")
+            border.width: button.activeFocus && !button.selected && !button.primary ? 1 : 0
+            border.color: window.accent
+            opacity: button.enabled ? 1 : 0.5
+            Behavior on color { ColorAnimation { duration: 200 } }
+        }
+        scale: button.down ? 0.97 : button.hovered ? 1.015 : 1
+        Behavior on scale { NumberAnimation { duration: 190; easing.type: Easing.OutCubic } }
+        ToolTip.visible: hovered && hint.length > 0
+        ToolTip.text: hint
+        ToolTip.delay: 650
+    }
+
+    component PixelMark: Canvas {
+        property color pixelColor: window.accent
+        property string seed: "+"
+        onPixelColorChanged: requestPaint()
+        onSeedChanged: requestPaint()
+        onPaint: {
+            const context = getContext("2d")
+            context.clearRect(0, 0, width, height)
+            context.fillStyle = pixelColor
+            const cell = Math.floor(Math.min(width, height) / 7)
+            const left = Math.floor((width - cell * 5) / 2)
+            const top = Math.floor((height - cell * 5) / 2)
+            let hash = 17
+            for (let i = 0; i < seed.length; ++i) hash = (hash * 31 + seed.charCodeAt(i)) | 0
+            for (let y = 0; y < 5; ++y) {
+                for (let x = 0; x < 5; ++x) {
+                    const bit = y * 3 + Math.min(x, 4 - x)
+                    const lit = seed === "+" ? (x === 2 || y === 2) : ((hash >>> bit) & 1)
+                    if (lit) context.fillRect(left + x * cell, top + y * cell, cell - 1, cell - 1)
+                }
+            }
+        }
+    }
+
+    Shortcut { sequence: "Ctrl+F"; onActivated: search.forceActiveFocus() }
+    Shortcut { sequence: "Escape"; enabled: search.text.length > 0; onActivated: search.clear() }
+
+    ColumnLayout {
+        id: surface
+        anchors.fill: parent
+        anchors.margins: 24
+        spacing: 16
+        property real entranceOffset: 12
+        opacity: 0
+        transform: Translate { y: surface.entranceOffset }
+        ParallelAnimation {
+            running: true
+            NumberAnimation { target: surface; property: "opacity"; to: 1; duration: window.motionEnabled ? 380 : 0; easing.type: Easing.OutCubic }
+            NumberAnimation { target: surface; property: "entranceOffset"; to: 0; duration: window.motionEnabled ? 450 : 0; easing.type: Easing.OutCubic }
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 42
+            spacing: 12
+            Rectangle {
+                width: 38; height: 38; radius: 10
+                color: "#202024"
+                border.color: "#39393f"
+                PixelMark { anchors.fill: parent }
+            }
+            Text {
+                text: "tds+"
+                color: window.ink
+                font.pixelSize: 25
+                font.weight: Font.DemiBold
+                font.letterSpacing: -1
+            }
+            Text {
+                text: "TOWER DEFENSE SIMULATOR"
+                color: window.dim
+                font.pixelSize: 10
+                font.letterSpacing: 1.1
+                Layout.leftMargin: 8
+            }
+            Item { Layout.fillWidth: true }
+            Rectangle {
+                width: 32; height: 26; radius: 5
+                color: "#18181c"; border.color: window.borderColor
+                Text { anchors.centerIn: parent; text: "F6"; color: window.muted; font.pixelSize: 11 }
+            }
+            SoftButton {
+                objectName: "runButton"
+                Layout.preferredWidth: 144
+                Layout.preferredHeight: 40
+                primary: !controlModel.running
+                text: controlModel.running ? "■   Остановить" : "▶   Запустить"
+                enabled: controlModel.ready
+                hint: "Общий переключатель автопрожима"
+                onClicked: controlModel.toggle_running()
+                background: Rectangle {
+                    radius: 8
+                    color: controlModel.running ? (parent.hovered ? "#34343b" : "#25252b") : window.accent
+                    border.color: controlModel.running ? "#4a4a52" : "transparent"
+                    opacity: parent.enabled ? 1 : 0.4
+                    Behavior on color { ColorAnimation { duration: 200 } }
+                }
+            }
+        }
+
+        Item {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 54
+            Column {
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: 8
+                Text { text: "Автопрожим"; color: window.ink; font.pixelSize: 28; font.weight: Font.DemiBold; font.letterSpacing: -0.6 }
+                Text { text: "Режим для каждой абилки. Прожим по готовности."; color: window.muted; font.pixelSize: 13 }
+            }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 48
+            color: "#b018181c"
+            radius: 9
+            border.color: window.borderColor
+            RowLayout {
+                anchors.fill: parent
+                anchors.leftMargin: 16
+                anchors.rightMargin: 16
+                spacing: 10
+                Rectangle {
+                    width: 6; height: 6; radius: 3; color: controlModel.slots > 0 ? window.ink : window.muted
+                    SequentialAnimation on opacity {
+                        running: window.motionEnabled && controlModel.running
+                        loops: Animation.Infinite
+                        NumberAnimation { to: 0.4; duration: 1000; easing.type: Easing.InOutSine }
+                        NumberAnimation { to: 1; duration: 1000; easing.type: Easing.InOutSine }
+                    }
+                }
+                Text { text: controlModel.phase; color: "#d1d1d8"; font.pixelSize: 13 }
+                Rectangle { width: 1; height: 15; color: "#3a3a40"; Layout.leftMargin: 12; Layout.rightMargin: 8 }
+                Text { text: "Слотов в игре: " + controlModel.slots; color: window.muted; font.pixelSize: 12 }
+                Item { Layout.fillWidth: true }
+                Text {
+                    text: controlModel.offline ? "OFFLINE" : controlModel.running ? "АВТОПРОЖИМ ВКЛЮЧЁН" : "НА ПАУЗЕ"
+                    color: controlModel.running ? window.accent : window.dim
+                    font.pixelSize: 10
+                    font.letterSpacing: 0.8
+                }
+            }
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 32
+            spacing: 9
+            Text { text: "Абилки"; color: window.ink; font.pixelSize: 18; font.weight: Font.DemiBold }
+            Text { text: controlModel.total; color: window.dim; font.pixelSize: 13 }
+            Item { Layout.fillWidth: true }
+            Rectangle {
+                id: filterGroup
+                Layout.preferredWidth: 167
+                Layout.preferredHeight: 34
+                color: "#1d1d22"
+                radius: 8
+                Rectangle {
+                    y: 3; height: parent.height - 6
+                    width: (parent.width - 8) / 2
+                    x: 3 + (controlModel.liveOnly ? width + 2 : 0)
+                    radius: 6
+                    color: "#34343a"
+                    border.color: "#494950"
+                    Behavior on x { NumberAnimation { duration: window.motionEnabled ? 260 : 0; easing.type: Easing.OutCubic } }
+                }
+                RowLayout {
+                    anchors.fill: parent; anchors.margins: 3; spacing: 2
+                    SoftButton { Layout.preferredWidth: 78; Layout.fillWidth: true; Layout.fillHeight: true; text: "Все"; flatSelection: true; selected: !controlModel.liveOnly; onClicked: controlModel.liveOnly = false }
+                    SoftButton {
+                        objectName: "liveFilterButton"
+                        Layout.preferredWidth: 78; Layout.fillWidth: true; Layout.fillHeight: true
+                        text: "В игре"
+                        flatSelection: true
+                        selected: controlModel.liveOnly
+                        onClicked: controlModel.liveOnly = true
+                    }
+                }
+            }
+        }
+
+        TextField {
+            id: search
+            objectName: "searchInput"
+            Layout.fillWidth: true
+            Layout.preferredHeight: 42
+            leftPadding: 41
+            rightPadding: text.length > 0 ? 38 : 68
+            placeholderText: "Найти башню или абилку"
+            placeholderTextColor: window.dim
+            color: window.ink
+            selectByMouse: true
+            selectionColor: "#51515f"
+            selectedTextColor: window.ink
+            onTextChanged: controlModel.query = text
+            background: Rectangle {
+                radius: 8
+                color: "#b0141418"
+                border.color: search.activeFocus ? "#73737e" : window.borderColor
+                Behavior on border.color { ColorAnimation { duration: 120 } }
+            }
+            Canvas {
+                width: 17; height: 17
+                x: 14; anchors.verticalCenter: parent.verticalCenter
+                onPaint: {
+                    const context = getContext("2d")
+                    context.strokeStyle = "#a1a1aa"; context.lineWidth = 1.5
+                    context.beginPath(); context.arc(6.5, 6.5, 4.5, 0, Math.PI * 2); context.stroke()
+                    context.beginPath(); context.moveTo(10, 10); context.lineTo(15, 15); context.stroke()
+                }
+            }
+            Text { visible: search.text.length === 0; anchors.right: parent.right; anchors.rightMargin: 14; anchors.verticalCenter: parent.verticalCenter; text: "Ctrl F"; color: window.dim; font.pixelSize: 11 }
+            SoftButton {
+                visible: search.text.length > 0
+                width: 32; height: 32
+                anchors.right: parent.right; anchors.rightMargin: 5; anchors.verticalCenter: parent.verticalCenter
+                leftPadding: 0; rightPadding: 0
+                text: "×"; hint: "Очистить поиск"
+                onClicked: search.clear()
+            }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            Layout.minimumHeight: 155
+            color: "#d917171b"
+            radius: 12
+            border.color: window.borderColor
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 1
+                spacing: 0
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 36
+                    Layout.leftMargin: 18; Layout.rightMargin: 18
+                    Text { text: "БАШНЯ / АБИЛКА"; color: window.dim; font.pixelSize: 10; font.letterSpacing: 0.8; Layout.fillWidth: true }
+                    Text { text: "КД"; color: window.dim; font.pixelSize: 10; Layout.preferredWidth: 58 }
+                    Text { text: "ИНТЕРВАЛ, С"; color: window.dim; font.pixelSize: 10; Layout.preferredWidth: 100 }
+                    Text { text: "РЕЖИМ"; color: window.dim; font.pixelSize: 10; Layout.preferredWidth: 232 }
+                }
+                Rectangle { Layout.fillWidth: true; height: 1; color: window.borderColor }
+                ListView {
+                    id: abilityList
+                    objectName: "abilityList"
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    clip: true
+                    model: controlModel
+                    boundsBehavior: Flickable.StopAtBounds
+                    reuseItems: true
+                    cacheBuffer: 120
+                    ScrollBar.vertical: ScrollBar {
+                        width: 6
+                        policy: ScrollBar.AsNeeded
+                        contentItem: Rectangle { implicitWidth: 4; radius: 2; color: parent.pressed ? "#9999a3" : "#50505a"; opacity: parent.active ? 1 : 0.5 }
+                    }
+                    delegate: Rectangle {
+                        id: abilityRow
+                        required property string abilityKey
+                        required property string abilityName
+                        required property string towerName
+                        required property real cooldown
+                        required property int abilityMode
+                        required property int chainSeconds
+                        required property bool isLive
+                        width: ListView.view.width
+                        height: 72
+                        color: rowHover.hovered ? "#b029292f" : "transparent"
+                        Behavior on color { ColorAnimation { duration: 200 } }
+                        HoverHandler { id: rowHover }
+                        Rectangle { anchors.bottom: parent.bottom; anchors.left: parent.left; anchors.right: parent.right; height: 1; color: "#2e2e34" }
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.leftMargin: 18; anchors.rightMargin: 18
+                            spacing: 8
+                            RowLayout {
+                                Layout.fillWidth: true
+                                spacing: 12
+                                Rectangle {
+                                    width: 34; height: 34; radius: 8
+                                    color: "#25252b"
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: (abilityRow.towerName || abilityRow.abilityName).charAt(0)
+                                        color: abilityRow.isLive ? window.ink : window.muted
+                                        font.pixelSize: 13
+                                        font.weight: Font.Medium
+                                    }
+                                }
+                                ColumnLayout {
+                                    Layout.fillWidth: true
+                                    spacing: 4
+                                    Text { text: abilityRow.abilityName; color: abilityRow.abilityMode === 2 ? window.muted : window.ink; font.pixelSize: 14; font.weight: Font.Medium; elide: Text.ElideRight; Layout.fillWidth: true }
+                                    RowLayout {
+                                        spacing: 7
+                                        Text { text: abilityRow.towerName || "Другие"; color: window.dim; font.pixelSize: 11; elide: Text.ElideRight; Layout.fillWidth: true }
+                                        Rectangle { visible: abilityRow.isLive; width: 5; height: 5; radius: 3; color: window.accent }
+                                    }
+                                }
+                            }
+                            Text {
+                                Layout.preferredWidth: 58
+                                text: abilityRow.cooldown > 0 ? abilityRow.cooldown + " с" : "—"
+                                color: window.muted
+                                font.pixelSize: 12
+                                HoverHandler { id: cooldownHover }
+                                ToolTip.visible: cooldownHover.hovered
+                                ToolTip.text: "Базовое КД из вики"
+                                ToolTip.delay: 600
+                            }
+                            Item {
+                                Layout.preferredWidth: 100
+                                Layout.preferredHeight: 34
+                                Text {
+                                    visible: abilityRow.abilityMode !== 1
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    text: abilityRow.abilityMode === 0 ? "по готовности" : "отключено"
+                                    color: window.dim
+                                    font.pixelSize: 11
+                                }
+                                SpinBox {
+                                    id: interval
+                                    objectName: "interval_" + abilityRow.abilityKey
+                                    visible: abilityRow.abilityMode === 1
+                                    width: 86; height: 34
+                                    from: 1; to: 600
+                                    value: abilityRow.chainSeconds
+                                    editable: true
+                                    onValueModified: controlModel.set_seconds(abilityRow.abilityKey, value)
+                                    textFromValue: function(value, locale) { return value.toString() }
+                                    valueFromText: function(text, locale) { return parseInt(text) || 10 }
+                                    contentItem: TextInput {
+                                        text: interval.textFromValue(interval.value, interval.locale)
+                                        color: window.ink
+                                        font.pixelSize: 12
+                                        horizontalAlignment: Text.AlignHCenter
+                                        verticalAlignment: Text.AlignVCenter
+                                        rightPadding: 21
+                                        selectByMouse: true
+                                        readOnly: !interval.editable
+                                        validator: interval.validator
+                                        inputMethodHints: Qt.ImhDigitsOnly
+                                    }
+                                    background: Rectangle { radius: 6; color: "#25252b"; border.color: interval.activeFocus ? window.accent : "#4a4a54" }
+                                    up.indicator: Rectangle {
+                                        x: interval.width - width; y: 1; width: 22; height: 16
+                                        color: interval.up.pressed ? "#4a4a53" : "transparent"
+                                        Text { anchors.centerIn: parent; text: "+"; color: window.muted; font.pixelSize: 12 }
+                                    }
+                                    down.indicator: Rectangle {
+                                        x: interval.width - width; y: interval.height - height - 1; width: 22; height: 16
+                                        color: interval.down.pressed ? "#4a4a53" : "transparent"
+                                        Text { anchors.centerIn: parent; text: "−"; color: window.muted; font.pixelSize: 12 }
+                                    }
+                                }
+                            }
+                            Rectangle {
+                                id: modeGroup
+                                Layout.preferredWidth: 232
+                                Layout.preferredHeight: 34
+                                color: "#17171b"
+                                border.color: "#36363d"
+                                radius: 8
+                                Rectangle {
+                                    y: 3; height: parent.height - 6
+                                    width: (parent.width - 10) / 3
+                                    x: 3 + abilityRow.abilityMode * (width + 2)
+                                    radius: 5
+                                    color: "#34343b"
+                                    border.color: "#4b4b54"
+                                    Behavior on x { NumberAnimation { duration: window.motionEnabled ? 260 : 0; easing.type: Easing.OutCubic } }
+                                }
+                                RowLayout {
+                                    anchors.fill: parent; anchors.margins: 3; spacing: 2
+                                    SoftButton {
+                                        objectName: "mode_auto_" + abilityRow.abilityKey
+                                        Layout.preferredWidth: 74; Layout.fillWidth: true; Layout.fillHeight: true
+                                        flatSelection: true
+                                        leftPadding: 7; rightPadding: 7
+                                        text: "Авто"; selected: abilityRow.abilityMode === 0
+                                        hint: "Прожимать сразу, когда абилка готова"
+                                        onClicked: controlModel.set_mode(abilityRow.abilityKey, 0)
+                                    }
+                                    SoftButton {
+                                        objectName: "mode_chain_" + abilityRow.abilityKey
+                                        Layout.preferredWidth: 74; Layout.fillWidth: true; Layout.fillHeight: true
+                                        flatSelection: true
+                                        leftPadding: 7; rightPadding: 7
+                                        text: "Цепочка"; selected: abilityRow.abilityMode === 1
+                                        hint: "Держать интервал между прожимами группы"
+                                        onClicked: controlModel.set_mode(abilityRow.abilityKey, 1)
+                                    }
+                                    SoftButton {
+                                        objectName: "mode_off_" + abilityRow.abilityKey
+                                        Layout.preferredWidth: 74; Layout.fillWidth: true; Layout.fillHeight: true
+                                        flatSelection: true
+                                        leftPadding: 7; rightPadding: 7
+                                        text: "Выкл"; selected: abilityRow.abilityMode === 2
+                                        hint: "Не прожимать эту абилку автоматически"
+                                        onClicked: controlModel.set_mode(abilityRow.abilityKey, 2)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    Column {
+                        visible: controlModel.count === 0
+                        anchors.centerIn: parent
+                        spacing: 9
+                        Text { anchors.horizontalCenter: parent.horizontalCenter; text: "· · ·"; color: window.accent; font.pixelSize: 26; font.letterSpacing: 5 }
+                        Text { anchors.horizontalCenter: parent.horizontalCenter; text: search.text.length > 0 ? "Ничего не найдено" : "Нет абилок в игре"; color: window.ink; font.pixelSize: 15 }
+                        Text { anchors.horizontalCenter: parent.horizontalCenter; text: search.text.length > 0 ? "Попробуй другое название." : "Слоты появятся после подключения к матчу."; color: window.dim; font.pixelSize: 12 }
+                    }
+                }
+            }
+        }
+
+        RowLayout {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 22
+            Text { text: "F6  запуск / пауза     ·     End  выход"; color: window.dim; font.pixelSize: 11 }
+            Item { Layout.fillWidth: true }
+            SoftButton {
+                objectName: "logButton"
+                implicitHeight: 26
+                text: "Журнал  ↗"
+                onClicked: logPopup.open()
+            }
+        }
+    }
+
+    Rectangle {
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.rightMargin: 24
+        anchors.bottomMargin: 66
+        width: noticeText.implicitWidth + 28
+        height: 36
+        radius: 8
+        color: controlModel.saveError ? "#342729" : "#292930"
+        border.color: controlModel.saveError ? "#936f75" : "#55555f"
+        opacity: controlModel.saveStatus.length > 0 ? 1 : 0
+        visible: opacity > 0
+        Behavior on opacity { NumberAnimation { duration: 200 } }
+        scale: opacity > 0 ? 1 : 0.96
+        Behavior on scale { NumberAnimation { duration: 230; easing.type: Easing.OutCubic } }
+        Text { id: noticeText; anchors.centerIn: parent; text: controlModel.saveStatus; color: controlModel.saveError ? "#e5b8bf" : window.accent; font.pixelSize: 12 }
+    }
+
+    Popup {
+        id: logPopup
+        x: 24
+        y: window.height - height - 56
+        width: window.width - 48
+        height: Math.min(280, window.height * 0.5)
+        padding: 16
+        modal: false
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+        enter: Transition {
+            ParallelAnimation {
+                NumberAnimation { property: "opacity"; from: 0; to: 1; duration: window.motionEnabled ? 180 : 0 }
+                NumberAnimation { property: "scale"; from: 0.975; to: 1; duration: window.motionEnabled ? 230 : 0; easing.type: Easing.OutCubic }
+            }
+        }
+        exit: Transition { NumberAnimation { property: "opacity"; to: 0; duration: window.motionEnabled ? 130 : 0 } }
+        background: Rectangle { color: "#202025"; border.color: "#55555f"; radius: 12 }
+        ColumnLayout {
+            anchors.fill: parent
+            RowLayout {
+                Layout.fillWidth: true
+                Text { text: "Журнал"; color: window.ink; font.pixelSize: 16; font.weight: Font.DemiBold }
+                Item { Layout.fillWidth: true }
+                SoftButton { text: "Закрыть"; onClicked: logPopup.close() }
+            }
+            ScrollView {
+                Layout.fillWidth: true; Layout.fillHeight: true
+                TextArea {
+                    text: controlModel.logLines.join("\n")
+                    readOnly: true
+                    selectByMouse: true
+                    wrapMode: TextEdit.WrapAnywhere
+                    color: "#b6b6c0"
+                    font.family: "Consolas"
+                    font.pixelSize: 11
+                    background: null
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,44 @@
+-- The CXX compiler identification is MSVC 19.50.35726.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/VC/Tools/MSVC/14.50.35717/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+-- Looking for pthread_create in pthreads
+-- Looking for pthread_create in pthreads - not found
+-- Looking for pthread_create in pthread
+-- Looking for pthread_create in pthread - not found
+-- Found Threads: TRUE
+-- Performing Test HAVE_STDATOMIC
+-- Performing Test HAVE_STDATOMIC - Success
+-- Found WrapAtomic: TRUE
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Configuring done (11.1s)
+-- Generating done (0.3s)
+-- Build files have been written to: C:/Users/Noesis/Desktop/www/tds_plus/.qt-build
+[1/19] Running qmlimportscanner for tds_plus_qt
+[2/19] Running qmlimportscanner for tds_plus_ui_test
+[3/19] Automatic MOC for target tds_plus_qt
+[4/19] Automatic MOC for target tds_plus_ui_test
+[5/19] Running rcc for resource ui_resources
+[6/19] Running rcc for resource test_ui_resources
+[7/19] Building CXX object CMakeFiles\tds_plus_qt.dir\qt\control_model.cpp.obj
+[8/19] Building CXX object CMakeFiles\tds_plus_qt.dir\tds_plus_qt_autogen\mocs_compilation.cpp.obj
+[9/19] Building CXX object CMakeFiles\tds_plus_qt.dir\.qt\rcc\qrc_ui_resources.cpp.obj
+[10/19] Building RC object CMakeFiles\tds_plus_qt.dir\qt\app.rc.res
+[11/19] Building CXX object CMakeFiles\tds_plus_qt.dir\tds_plus.cpp.obj
+[12/19] Building CXX object CMakeFiles\tds_plus_qt.dir\qt\main.cpp.obj
+[13/19] Building CXX object CMakeFiles\tds_plus_ui_test.dir\tds_plus_ui_test_autogen\mocs_compilation.cpp.obj
+[14/19] Building CXX object CMakeFiles\tds_plus_ui_test.dir\.qt\rcc\qrc_test_ui_resources.cpp.obj
+[15/19] Linking CXX executable tds_plus_qt.exe
+[16/19] Building CXX object CMakeFiles\tds_plus_ui_test.dir\qt\control_model.cpp.obj
+[17/19] Building CXX object CMakeFiles\tds_plus_ui_test.dir\tds_plus.cpp.obj
+[18/19] Building CXX object CMakeFiles\tds_plus_ui_test.dir\qt\main.cpp.obj
+[19/19] Linking CXX executable tds_plus_ui_test.exe
+Warning: Translations will not be available due to the following error.
+Cannot open C:/Users/Noesis/Desktop/www/.deps/Qt/6.10.3/msvc2022_64/translations/catalogs.json
+Warning: Cannot find any version of the dxcompiler.dll and dxil.dll.
+Ready: C:\Users\Noesis\Desktop\www\tds_plus\qt_app\tds_plus_qt.exe

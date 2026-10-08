@@ -1,0 +1,13 @@
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+shaders/ambient.frag -> ambient.frag.qsb exposed as :/shaders/ambient.frag.qsb
+shaders/ambient.frag -> ambient.frag.qsb exposed as :/shaders/ambient.frag.qsb
+-- Configuring done (3.1s)
+-- Generating done (0.3s)
+-- Build files have been written to: C:/Users/Noesis/Desktop/www/tds_plus/.qt-build
+[1/6] Automatic MOC for target tds_plus_ui_test
+[2/4] Automatic MOC for target tds_plus_qt
+Warning: Translations will not be available due to the following error.
+Cannot open C:/Users/Noesis/Desktop/www/.deps/Qt/6.10.3/msvc2022_64/translations/catalogs.json
+Warning: Cannot find any version of the dxcompiler.dll and dxil.dll.
+Ready: C:\Users\Noesis\Desktop\www\tds_plus\qt_app\tds_plus_qt.exe
