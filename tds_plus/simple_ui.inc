@@ -61,6 +61,7 @@ static std::wstring ui_phase(const std::string& phase) {
     if (phase == "in match") return L"Матч идёт";
     if (phase == "lobby / intermission") return L"Лобби / перерыв";
     if (phase == "waiting for Roblox") return L"Ожидание Roblox";
+    if (phase == "unknown roblox version") return L"Неизвестная версия Roblox";
     if (phase == "access denied") return L"Нет доступа к Roblox";
     if (phase == "match over") return L"Матч завершён";
     return L"Подключение";

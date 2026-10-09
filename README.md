@@ -47,4 +47,6 @@ g++ -O2 -std=c++17 -static src/rbx_dump.cpp  -o rbx_dump.exe  -lpsapi
   Cooldown/UID`) and ability records (`name/uid/cooldownEnd`) + `ServerTime`.
 
 Input is sent with `SendInput` + real scancodes (Roblox ignores vk-only synthetic keys).
-Offsets change on every Roblox version bump — re-dump with `rbx_dump.exe` when they do.
+Offsets change on every Roblox version bump — re-dump with `rbx_dump.exe` when they do. The Qt app / `tds_plus.cpp`
+picks its offsets by the version of the running client (`tds_plus/rbx_offsets.hpp`: one row per known
+version) and says in the log and the UI when the client is a version it has no row for.
