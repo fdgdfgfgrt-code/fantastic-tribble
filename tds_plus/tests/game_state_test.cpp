@@ -203,6 +203,21 @@ int main() {
         check(rule != cfg.name_rules.end() && slot_action(true, &rule->second) == SlotAction::Off,
               "the name rule 'Bounty = off' applies once the slot is identified");
     }
+#ifdef TDS_SOURCE_DIR
+    {
+        // the config that ships next to the exe: Bounty is named by its icon id AND switched off, so it is
+        // never pressed on a folder that has no tds_ui_rules.ini yet
+        const AbilityConfig shipped = load_ability_config(TDS_SOURCE_DIR "/tds_abilities.ini");
+        const auto bounty_name = shipped.names.find("138164251626688");
+        check(bounty_name != shipped.names.end() && canon_key(bounty_name->second) == "bounty",
+              "shipped id table names the Bounty slot");
+        const auto bounty_rule = shipped.name_rules.find("bounty");
+        check(bounty_rule != shipped.name_rules.end() && slot_action(true, &bounty_rule->second) == SlotAction::Off,
+              "shipped rules switch Bounty off");
+        const auto dj_rule = shipped.name_rules.find(canon_key("DJ Booth/Drop the Beat"));
+        check(dj_rule == shipped.name_rules.end(), "DJ Booth keeps the plain spam default (no rule)");
+    }
+#endif
     CloseHandle(g_proc);
     g_proc = nullptr;
     printf("RESULT %d failures\n", failures);
