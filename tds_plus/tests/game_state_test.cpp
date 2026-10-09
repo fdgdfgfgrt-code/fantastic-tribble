@@ -11,6 +11,7 @@ struct FakeGui {
     std::string class_name;
     std::string object_name;
     std::string text;
+    std::string image_text;
 
     FakeGui(const char* cls, const FakeGui* parent = nullptr) : class_name(cls) {
         put(descriptor, 0x8, reinterpret_cast<uintptr_t>(&class_name));
@@ -35,6 +36,10 @@ struct FakeGui {
     void set_text(const char* value) {
         text = value;
         std::memcpy(object.data() + off::GUI_TEXT, &text, sizeof(text));
+    }
+    void set_image_at(uintptr_t offset, const char* value) {
+        image_text = value;
+        std::memcpy(object.data() + offset, &image_text, sizeof(image_text));
     }
     void set_name(const char* value) {
         object_name = value;
@@ -202,6 +207,35 @@ int main() {
         const auto rule = named == cfg.names.end() ? cfg.name_rules.end() : cfg.name_rules.find(canon_key(named->second));
         check(rule != cfg.name_rules.end() && slot_action(true, &rule->second) == SlotAction::Off,
               "the name rule 'Bounty = off' applies once the slot is identified");
+    }
+    {
+        // btn_image_id finds the icon id even when the image offset is off by one GuiObject field (0x18),
+        // because it is only inferred for newer Roblox clients (rbx_offsets.hpp)
+        const uintptr_t default_image = off::GUI_IMAGE;
+        const intptr_t shifts[] = {0, 0x18, -0x18};
+        const char* shift_names[] = {"icon id is read at the expected offset", "icon id is found 0x18 above the expected offset",
+                                     "icon id is found 0x18 below the expected offset"};
+        const char* offset_names[] = {"the expected image offset is confirmed", "the image offset moves up by 0x18",
+                                      "the image offset moves down by 0x18"};
+        for (int i = 0; i < 3; ++i) {
+            FakeGui image_button("ImageButton");
+            image_button.set_image_at(default_image + shifts[i], "rbxassetid://138164251626688");
+            AbilityBtn icon_button{};
+            icon_button.image = image_button.address();
+            off::GUI_IMAGE = default_image;
+            g_image_offset_ok = false;
+            check(btn_image_id(icon_button) == "138164251626688", shift_names[i]);
+            check(off::GUI_IMAGE == default_image + shifts[i] && g_image_offset_ok, offset_names[i]);
+        }
+        FakeGui blank_button("ImageButton");
+        AbilityBtn blank{};
+        blank.image = blank_button.address();
+        off::GUI_IMAGE = default_image;
+        g_image_offset_ok = false;
+        check(btn_image_id(blank).empty() && off::GUI_IMAGE == default_image && !g_image_offset_ok,
+              "no icon anywhere: empty id, offset untouched, probing continues");
+        off::GUI_IMAGE = default_image;
+        g_image_offset_ok = false;
     }
 #ifdef TDS_SOURCE_DIR
     {
