@@ -1125,11 +1125,17 @@ int tds_run_engine(bool offline) {
                             rule = &name_rule->second;
                     }
                     if (slot_action(!name.empty(), rule) == SlotAction::Skip) {
-                        if (unidentified_logged.insert(id).second)
-                            logf("slot [%s] id=%s is not identified yet, not pressing it "
-                                 "(to enable it add \"%s = Tower/Ability\" to the id table in tds_abilities.ini)",
-                                 read_string(b.binding + off::GUI_TEXT).c_str(), id.c_str(),
-                                 id.empty() ? "<id>" : id.c_str());
+                        const std::string hotkey = read_string(b.binding + off::GUI_TEXT);
+                        // slots without an icon share the empty id, so tell them apart by hotkey
+                        if (unidentified_logged.insert(id.empty() ? "no-icon:" + hotkey : id).second) {
+                            if (id.empty())
+                                logf("slot [%s] has no icon id, so its ability cannot be identified; not pressing it",
+                                     hotkey.c_str());
+                            else
+                                logf("slot [%s] id=%s is not identified yet, not pressing it "
+                                     "(to enable it add \"%s = Tower/Ability\" to the id table in tds_abilities.ini)",
+                                     hotkey.c_str(), id.c_str(), id.c_str());
+                        }
                         continue;
                     }
                     char key = 0;
