@@ -275,6 +275,16 @@ inline int run_smoke_test(QQuickWindow* window, ControlModel& model, const QStri
         QTest::qWait(400);
         check(window->isVisible() && window->visibility() != QWindow::Minimized, "the tray brings the window back");
         settings.setMinimizeToTray(false);
+        settings.setCloseToTray(true);
+        QTest::qWait(100);
+        const bool closed = window->close();
+        QTest::qWait(300);
+        check(!closed && !window->isVisible() && tray.shown() && !window_control.quitting(),
+              "close to tray hides the window instead of exiting");
+        window_control.showFromTray();
+        QTest::qWait(400);
+        check(window->isVisible(), "the tray brings the closed window back");
+        settings.setCloseToTray(false);
         QTest::qWait(100);
         check(!tray.shown(), "the tray icon goes away when no tray option is on and the window is shown");
     } else {

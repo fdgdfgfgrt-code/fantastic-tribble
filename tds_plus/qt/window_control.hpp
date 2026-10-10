@@ -1,6 +1,9 @@
 // language: C++17, file: window_control.hpp, runtime: Qt 6.10, target: tds+ desktop window behaviour
 // Window behaviour that depends on the settings: hiding to and restoring from the tray, the tray
 // icon's visibility, "always on top", and a real exit when closing only hides the window.
+//
+// Every real exit must go through quit()/beginQuit(): Qt 6 cancels QCoreApplication::quit() when a
+// window refuses to close, and with "close to tray" the window refuses unless `quitting` is set.
 #pragma once
 
 #include <QObject>
@@ -13,7 +16,7 @@ class TrayIcon;
 
 class WindowControl final : public QObject {
     Q_OBJECT
-    Q_PROPERTY(bool quitting READ quitting CONSTANT)
+    Q_PROPERTY(bool quitting READ quitting NOTIFY quittingChanged)
 
 public:
     WindowControl(AppSettings* settings, TrayIcon* tray, bool custom_frame, QObject* parent = nullptr);
@@ -25,7 +28,11 @@ public:
     Q_INVOKABLE void showFromTray();
     Q_INVOKABLE void toggleFromTray();
     Q_INVOKABLE void activateFromTray();
-    Q_INVOKABLE void quit();
+    Q_INVOKABLE void quit();        // beginQuit() + QCoreApplication::quit()
+    Q_INVOKABLE void beginQuit();   // the app is about to exit: closing the window must not hide it
+
+Q_SIGNALS:
+    void quittingChanged();
 
 private:
     void syncTray();

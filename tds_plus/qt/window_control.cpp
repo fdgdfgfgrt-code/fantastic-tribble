@@ -74,8 +74,14 @@ void WindowControl::activateFromTray() {
     else showFromTray();
 }
 
-void WindowControl::quit() {
+void WindowControl::beginQuit() {
+    if (quitting_) return;
     quitting_ = true;
+    Q_EMIT quittingChanged();
+}
+
+void WindowControl::quit() {
+    beginQuit();
     QCoreApplication::quit();
 }
 

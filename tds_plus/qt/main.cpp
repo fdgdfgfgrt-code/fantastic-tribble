@@ -17,6 +17,7 @@
 #include <QQmlContext>
 #include <QQuickStyle>
 #include <QQuickWindow>
+#include <QSessionManager>
 #include <QSettings>
 #include <QStandardPaths>
 #include <cstdio>
@@ -106,7 +107,14 @@ int main(int argc, char* argv[]) {
     qml_engine.rootContext()->setContextProperty("appSettings", &app_settings);
     qml_engine.rootContext()->setContextProperty("trayIcon", &tray_icon);
     qml_engine.rootContext()->setContextProperty("windowControl", &window_control);
-    QObject::connect(&control_model, &ControlModel::exitRequested, &app, &QCoreApplication::quit);
+    // End (the engine stops) is a real exit; going straight to QCoreApplication::quit() would be
+    // cancelled by "close to tray" and leave a window without an engine in the tray
+    QObject::connect(&control_model, &ControlModel::exitRequested, &window_control, &WindowControl::quit);
+#ifndef QT_NO_SESSIONMANAGER
+    // Windows logoff / shutdown: do not let "close to tray" refuse to close (stays set if logoff is cancelled)
+    QObject::connect(&app, &QGuiApplication::commitDataRequest, &window_control,
+                     [&window_control](QSessionManager&) { window_control.beginQuit(); });
+#endif
     qml_engine.load(QUrl("qrc:/qml/Main.qml"));
     if (qml_engine.rootObjects().isEmpty()) {
         tds_request_exit();
