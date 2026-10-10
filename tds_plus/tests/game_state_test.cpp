@@ -11,6 +11,7 @@ struct FakeGui {
     std::string class_name;
     std::string object_name;
     std::string text;
+    std::string image_text;
 
     FakeGui(const char* cls, const FakeGui* parent = nullptr) : class_name(cls) {
         put(descriptor, 0x8, reinterpret_cast<uintptr_t>(&class_name));
@@ -35,6 +36,10 @@ struct FakeGui {
     void set_text(const char* value) {
         text = value;
         std::memcpy(object.data() + off::GUI_TEXT, &text, sizeof(text));
+    }
+    void set_image_at(uintptr_t offset, const char* value) {
+        image_text = value;
+        std::memcpy(object.data() + offset, &image_text, sizeof(image_text));
     }
     void set_name(const char* value) {
         object_name = value;
@@ -179,6 +184,74 @@ int main() {
     check(btn_ready(slot_button, &slot_key, &why), "slot is ready again once every blocker is gone");
     timer.set_text("1");
     check(!btn_ready(slot_button, &slot_key), "refusal works without a reason out-parameter");
+
+    // slot_action: a slot of unknown ability is never pressed; id rules and names keep working
+    const GroupRule chain_rule{10}, off_rule{0};
+    check(slot_action(false, nullptr) == SlotAction::Skip, "a slot with no id rule and no name is not pressed");
+    check(slot_action(true, nullptr) == SlotAction::Spam, "an identified slot without a rule keeps the spam default");
+    check(slot_action(true, &off_rule) == SlotAction::Off && slot_action(false, &off_rule) == SlotAction::Off,
+          "off rules stop a slot, by name or by id");
+    check(slot_action(true, &chain_rule) == SlotAction::Chain && slot_action(false, &chain_rule) == SlotAction::Chain,
+          "chain rules apply by name or by id");
+    {
+        const char* ini_path = "game_state_test_abilities.ini";
+        FILE* ini = fopen(ini_path, "w");
+        if (ini) {
+            fputs("Bounty = off\nDJ Booth/Drop the Beat = spam\n138164251626688 = Kingpin/Bounty\n", ini);
+            fclose(ini);
+        }
+        const AbilityConfig cfg = load_ability_config(ini_path);
+        remove(ini_path);
+        const auto named = cfg.names.find("138164251626688");
+        check(named != cfg.names.end() && named->second == "Kingpin/Bounty", "the id table names the Bounty slot");
+        const auto rule = named == cfg.names.end() ? cfg.name_rules.end() : cfg.name_rules.find(canon_key(named->second));
+        check(rule != cfg.name_rules.end() && slot_action(true, &rule->second) == SlotAction::Off,
+              "the name rule 'Bounty = off' applies once the slot is identified");
+    }
+    {
+        // btn_image_id finds the icon id even when the image offset is off by one GuiObject field (0x18),
+        // because it is only inferred for newer Roblox clients (rbx_offsets.hpp)
+        const uintptr_t default_image = off::GUI_IMAGE;
+        const intptr_t shifts[] = {0, 0x18, -0x18};
+        const char* shift_names[] = {"icon id is read at the expected offset", "icon id is found 0x18 above the expected offset",
+                                     "icon id is found 0x18 below the expected offset"};
+        const char* offset_names[] = {"the expected image offset is confirmed", "the image offset moves up by 0x18",
+                                      "the image offset moves down by 0x18"};
+        for (int i = 0; i < 3; ++i) {
+            FakeGui image_button("ImageButton");
+            image_button.set_image_at(default_image + shifts[i], "rbxassetid://138164251626688");
+            AbilityBtn icon_button{};
+            icon_button.image = image_button.address();
+            off::GUI_IMAGE = default_image;
+            g_image_offset_ok = false;
+            check(btn_image_id(icon_button) == "138164251626688", shift_names[i]);
+            check(off::GUI_IMAGE == default_image + shifts[i] && g_image_offset_ok, offset_names[i]);
+        }
+        FakeGui blank_button("ImageButton");
+        AbilityBtn blank{};
+        blank.image = blank_button.address();
+        off::GUI_IMAGE = default_image;
+        g_image_offset_ok = false;
+        check(btn_image_id(blank).empty() && off::GUI_IMAGE == default_image && !g_image_offset_ok,
+              "no icon anywhere: empty id, offset untouched, probing continues");
+        off::GUI_IMAGE = default_image;
+        g_image_offset_ok = false;
+    }
+#ifdef TDS_SOURCE_DIR
+    {
+        // the config that ships next to the exe: Bounty is named by its icon id AND switched off, so it is
+        // never pressed on a folder that has no tds_ui_rules.ini yet
+        const AbilityConfig shipped = load_ability_config(TDS_SOURCE_DIR "/tds_abilities.ini");
+        const auto bounty_name = shipped.names.find("138164251626688");
+        check(bounty_name != shipped.names.end() && canon_key(bounty_name->second) == "bounty",
+              "shipped id table names the Bounty slot");
+        const auto bounty_rule = shipped.name_rules.find("bounty");
+        check(bounty_rule != shipped.name_rules.end() && slot_action(true, &bounty_rule->second) == SlotAction::Off,
+              "shipped rules switch Bounty off");
+        const auto dj_rule = shipped.name_rules.find(canon_key("DJ Booth/Drop the Beat"));
+        check(dj_rule == shipped.name_rules.end(), "DJ Booth keeps the plain spam default (no rule)");
+    }
+#endif
     CloseHandle(g_proc);
     g_proc = nullptr;
     printf("RESULT %d failures\n", failures);

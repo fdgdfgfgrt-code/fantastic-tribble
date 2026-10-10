@@ -23,28 +23,14 @@
 #include <mutex>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 #include "backend_api.hpp"
 #include "chain_state.hpp"
 
 static std::atomic<bool> g_exit_requested{false};
 
-namespace off {
-    constexpr uintptr_t VE_POINTER     = 0x858d208;
-    constexpr uintptr_t VE_FAKE_DM     = 0xaf0;
-    constexpr uintptr_t FAKE_REAL_DM   = 0x1f8;
-    constexpr uintptr_t DM_PLACE_ID    = 0x188;
-    constexpr uintptr_t DM_WORKSPACE   = 0x150;
-    constexpr uintptr_t INST_NAME      = 0x70;
-    constexpr uintptr_t INST_CHILDREN  = 0x78;
-    constexpr uintptr_t INST_CLASS_DESC= 0x18;
-    constexpr uintptr_t INST_PARENT    = 0x68;
-    constexpr uintptr_t PLAYERS_LOCAL  = 0x120;
-    constexpr uintptr_t SCREEN_GUI_ENABLED = 0x4b4;
-    constexpr uintptr_t GUI_VISIBLE    = 0x59d;
-    constexpr uintptr_t GUI_TEXT       = 0xdf0;   // inline std::string: len@+0x10, cap@+0x18
-    constexpr uintptr_t GUI_IMAGE      = 0xc10;   // GuiObject::Image on ImageButton (live-verified)
-}
+#include "rbx_offsets.hpp"
 
 struct GroupRule {
     int duration;
@@ -271,9 +257,36 @@ struct AbilityBtn {
     uintptr_t image;        // ImageButton "imageButton"
 };
 
+static void logf(const char* fmt, ...);
+
+// GUI_IMAGE is only inferred for newer clients (see rbx_offsets.hpp), so until it has produced a real
+// asset id the neighbouring offsets are tried and the first one that works becomes the offset.
+static bool g_image_offset_ok = false;
+
+static bool looks_like_asset(const std::string& s) {
+    return s.rfind("rbxassetid://", 0) == 0 || s.rfind("http", 0) == 0;
+}
+
 static std::string btn_image_id(const AbilityBtn& b) {
     if (!b.image) return "";
     std::string s = read_string(b.image + off::GUI_IMAGE);
+    if (!g_image_offset_ok) {
+        if (looks_like_asset(s)) {
+            g_image_offset_ok = true;
+        } else {
+            for (const intptr_t delta : {intptr_t{0x18}, intptr_t{-0x18}}) {
+                const uintptr_t candidate = off::GUI_IMAGE + delta;
+                const std::string probe = read_string(b.image + candidate);
+                if (!looks_like_asset(probe)) continue;
+                logf("image offset 0x%llx gave no asset id, 0x%llx did: using it",
+                     (unsigned long long)off::GUI_IMAGE, (unsigned long long)candidate);
+                off::GUI_IMAGE = candidate;
+                g_image_offset_ok = true;
+                s = probe;
+                break;
+            }
+        }
+    }
     const std::string pfx = "rbxassetid://";
     if (s.rfind(pfx, 0) == 0) s = s.substr(pfx.size());
     return s;
@@ -342,6 +355,16 @@ static std::optional<int> btn_ready_count(const AbilityBtn& button) {
     if (!label || get_class_name(label) != "TextLabel"
         || read<uintptr_t>(label + off::INST_PARENT) != button.content) return std::nullopt;
     return parse_ready_count(read_string(label + off::GUI_TEXT));
+}
+
+// What the engine does with a slot. A slot whose ability is unknown (no id rule, and no name from the
+// id table or the stream link) is never pressed: every per-ability choice is keyed by name, so pressing
+// it would ignore them. It used to fall into the spam default, which is how Bounty got pressed before
+// it was linked.
+enum class SlotAction { Skip, Off, Chain, Spam };
+static SlotAction slot_action(bool has_name, const GroupRule* rule) {
+    if (rule) return rule->duration <= 0 ? SlotAction::Off : SlotAction::Chain;
+    return has_name ? SlotAction::Spam : SlotAction::Skip;
 }
 
 // why (optional) receives a short reason when the slot cannot be pressed;
@@ -876,6 +899,20 @@ int tds_run_engine(bool offline) {
         refresh_game_window(pid);
         logf("tds+ attached: pid=%lu base=0x%llx window=0x%llx", pid,
              (unsigned long long)base, (unsigned long long)(uintptr_t)g_game_wnd);
+        // Offsets differ between Roblox versions: pick the row for the running client and say so
+        // when it is a version this build has no offsets for (then nothing will be found).
+        char image_path[MAX_PATH]{};
+        DWORD image_len = MAX_PATH;
+        const std::string client_version = QueryFullProcessImageNameA(g_proc, 0, image_path, &image_len)
+            ? off::roblox_version_from_path(image_path) : std::string();
+        const bool version_known = off::use_version(client_version);
+        g_image_offset_ok = false;
+        if (version_known)
+            logf("Roblox client %s: offsets known", client_version.c_str());
+        else
+            logf("Roblox client %s is a version this build has no offsets for: using the newest set, "
+                 "which is probably wrong. Update tds+ (or re-dump and add the offsets to rbx_offsets.hpp)",
+                 client_version.empty() ? "(version not found in the process path)" : client_version.c_str());
 
         StreamState stream;
         logf("scanning state stream regions...\n");
@@ -888,6 +925,7 @@ int tds_run_engine(bool offline) {
         std::vector<AbilityBtn> buttons;
         bool needs_link = false;
         std::unordered_map<std::string, std::string> link;   // button asset id -> ability name (from stream)
+        std::unordered_set<std::string> unidentified_logged;  // slot ids already reported as unidentified
         std::unordered_map<std::string, ChainState> chain_states;
         std::string last_phase;
         struct PressBlock { std::string key; std::chrono::steady_clock::time_point since; bool logged = false; };
@@ -981,7 +1019,8 @@ int tds_run_engine(bool offline) {
                         else if (!nm.empty()) {
                             if (auto name_rule = acfg.name_rules.find(canon_key(nm)); name_rule != acfg.name_rules.end()) rule = &name_rule->second;
                         }
-                        const char* mode = !rule ? "(spam)" : rule->duration <= 0 ? "(off)" : "(chain)";
+                        const char* mode = !rule ? (nm.empty() ? "(not identified, not pressed)" : "(spam)")
+                                                 : rule->duration <= 0 ? "(off)" : "(chain)";
                         logf("  slot[%s] id=%s%s %s\n", key.c_str(), id.c_str(), disp.c_str(), mode);
                     }
                     last_n = buttons.size();
@@ -1064,7 +1103,8 @@ int tds_run_engine(bool offline) {
 
             const bool menu_open = !gui_effectively_visible(g_bar_frame, g_player_gui);
             const bool game_over = match_has_ended(g_banner_label, g_player_gui);
-            const std::string phase = game_over ? "match over" : !buttons.empty() ? "in match" : "lobby / intermission";
+            const std::string phase = game_over ? "match over" : !buttons.empty() ? "in match"
+                : (!version_known && !g_player_gui) ? "unknown roblox version" : "lobby / intermission";
             if (phase != last_phase) {
                 logf("phase: %s", phase.c_str());
                 last_phase = phase;
@@ -1110,6 +1150,20 @@ int tds_run_engine(bool offline) {
                     } else if (!name.empty()) {
                         if (auto name_rule = acfg.name_rules.find(group_key); name_rule != acfg.name_rules.end())
                             rule = &name_rule->second;
+                    }
+                    if (slot_action(!name.empty(), rule) == SlotAction::Skip) {
+                        const std::string hotkey = read_string(b.binding + off::GUI_TEXT);
+                        // slots without an icon share the empty id, so tell them apart by hotkey
+                        if (unidentified_logged.insert(id.empty() ? "no-icon:" + hotkey : id).second) {
+                            if (id.empty())
+                                logf("slot [%s] has no icon id, so its ability cannot be identified; not pressing it",
+                                     hotkey.c_str());
+                            else
+                                logf("slot [%s] id=%s is not identified yet, not pressing it "
+                                     "(to enable it add \"%s = Tower/Ability\" to the id table in tds_abilities.ini)",
+                                     hotkey.c_str(), id.c_str(), id.c_str());
+                        }
+                        continue;
                     }
                     char key = 0;
                     ChainState* chain = nullptr;

@@ -42,6 +42,7 @@ QHash<int, QByteArray> ControlModel::roleNames() const {
 QString ControlModel::phase() const {
     const auto& phase = snapshot_.phase;
     if (phase == "waiting for Roblox") return QStringLiteral("Waiting for Roblox");
+    if (phase == "unknown roblox version") return QStringLiteral("Unknown Roblox version");
     if (phase == "access denied") return QStringLiteral("Access denied");
     if (phase == "in match") return QStringLiteral("In match");
     if (phase == "match over") return QStringLiteral("Match ended");
