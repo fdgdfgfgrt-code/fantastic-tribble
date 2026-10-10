@@ -147,7 +147,7 @@ int main(int argc, char** argv) {
     check(!QFileInfo(first_copy).exists(), "the previous copy is deleted");
 
     QFile gif(temp.filePath("loop.gif"));
-    gif.open(QIODevice::WriteOnly);
+    check(gif.open(QIODevice::WriteOnly), "test GIF written");
     gif.write(reinterpret_cast<const char*>(kTwoFrameGif), sizeof(kTwoFrameGif));
     gif.close();
     check(s.importBackground(QUrl::fromLocalFile(gif.fileName())), "an animated GIF is imported");
@@ -157,7 +157,7 @@ int main(int argc, char** argv) {
 
     const QString gif_copy = s.backgroundPath();
     QFile text(temp.filePath("notes.png"));
-    text.open(QIODevice::WriteOnly);
+    check(text.open(QIODevice::WriteOnly), "test text file written");
     text.write("this is not a picture");
     text.close();
     check(!s.importBackground(QUrl::fromLocalFile(text.fileName())) && !s.lastError().isEmpty(),
@@ -166,7 +166,7 @@ int main(int argc, char** argv) {
     check(!s.importBackground(QUrl::fromLocalFile(temp.filePath("missing.png"))), "a missing file is refused");
     check(!s.importBackground(QUrl("https://example.org/a.png")), "a web address is refused");
     QFile huge(temp.filePath("huge.png"));
-    huge.open(QIODevice::WriteOnly);
+    check(huge.open(QIODevice::WriteOnly), "test oversized file created");
     huge.resize(AppSettings::kMaxFileBytes + 1);
     huge.close();
     check(!s.importBackground(QUrl::fromLocalFile(huge.fileName())) && s.lastError().contains("40 MB"),
