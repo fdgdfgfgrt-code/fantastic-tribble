@@ -20,8 +20,11 @@
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
+#include <memory>
 #include <mutex>
+#include <sstream>
 #include <string>
+#include <thread>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -31,6 +34,8 @@
 static std::atomic<bool> g_exit_requested{false};
 
 #include "rbx_offsets.hpp"
+#include "offset_updater.hpp"
+#include "offsets_fetch.hpp"
 
 struct GroupRule {
     int duration;
@@ -819,6 +824,68 @@ static LONG WINAPI crash_filter(EXCEPTION_POINTERS* ep) {
     return EXCEPTION_CONTINUE_SEARCH;
 }
 
+// ---- Roblox offsets: learned online for a new client version (see offset_updater.hpp) ----
+
+// the download runs on its own thread so a slow network cannot stall the engine loop (F6, END, exit)
+struct NetFetch {
+    std::mutex mtx;
+    bool done = false;
+    std::string body, error;
+};
+static std::shared_ptr<NetFetch> g_net_fetch;  // engine thread only; the worker holds its own reference
+
+static std::string read_text_file(const char* path) {
+    std::ifstream in(path, std::ios::binary);
+    std::stringstream text;
+    text << in.rdbuf();
+    return text.str();
+}
+
+static bool write_text_file(const char* path, const std::string& text) {
+    const std::string temp = std::string(path) + ".tmp";
+    {
+        std::ofstream out(temp, std::ios::binary | std::ios::trunc);
+        if (!out) return false;
+        out << text;
+        out.close();
+        if (!out) return false;
+    }
+    return MoveFileExA(temp.c_str(), path, MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH) != 0;
+}
+
+static OffsetUpdater::Io make_offset_io() {
+    OffsetUpdater::Io io;
+    io.load_settings = [] { return read_text_file("tds_offsets.ini"); };
+    io.load_cache = [] { return read_text_file("tds_offsets_cache.ini"); };
+    io.save_cache = [](const std::string& text) { return write_text_file("tds_offsets_cache.ini", text); };
+    io.log = [](const std::string& line) { logf("%s", line.c_str()); };
+    io.start_fetch = [](const std::string& url) {
+        auto fetch = std::make_shared<NetFetch>();
+        g_net_fetch = fetch;
+        std::thread([fetch, url] {
+            std::string body, error;
+            if (!tds_net::https_get(url, body, error) && error.empty()) error = "the download failed";
+            std::lock_guard<std::mutex> lock(fetch->mtx);
+            fetch->body = std::move(body);
+            fetch->error = std::move(error);
+            fetch->done = true;
+        }).detach();
+    };
+    io.poll_fetch = [](std::string& body, std::string& error) {
+        if (!g_net_fetch) return false;
+        {
+            std::lock_guard<std::mutex> lock(g_net_fetch->mtx);
+            if (!g_net_fetch->done) return false;
+            body = std::move(g_net_fetch->body);
+            error = std::move(g_net_fetch->error);
+        }
+        g_net_fetch.reset();
+        return true;
+    };
+    io.applied = [] { g_image_offset_ok = false; };  // the icon offset is probed again for the new set
+    return io;
+}
+
 int tds_run_engine(bool offline) {
     setvbuf(stdout, nullptr, _IONBF, 0);
     SetUnhandledExceptionFilter(crash_filter);
@@ -899,20 +966,14 @@ int tds_run_engine(bool offline) {
         refresh_game_window(pid);
         logf("tds+ attached: pid=%lu base=0x%llx window=0x%llx", pid,
              (unsigned long long)base, (unsigned long long)(uintptr_t)g_game_wnd);
-        // Offsets differ between Roblox versions: pick the row for the running client and say so
-        // when it is a version this build has no offsets for (then nothing will be found).
+        // Offsets differ between Roblox versions. The updater picks the set of the running client
+        // (built in, or learned earlier) and, for a version it does not know, looks the offsets up online.
         char image_path[MAX_PATH]{};
         DWORD image_len = MAX_PATH;
         const std::string client_version = QueryFullProcessImageNameA(g_proc, 0, image_path, &image_len)
             ? off::roblox_version_from_path(image_path) : std::string();
-        const bool version_known = off::use_version(client_version);
-        g_image_offset_ok = false;
-        if (version_known)
-            logf("Roblox client %s: offsets known", client_version.c_str());
-        else
-            logf("Roblox client %s is a version this build has no offsets for: using the newest set, "
-                 "which is probably wrong. Update tds+ (or re-dump and add the offsets to rbx_offsets.hpp)",
-                 client_version.empty() ? "(version not found in the process path)" : client_version.c_str());
+        OffsetUpdater offset_updater(make_offset_io());
+        offset_updater.attach(client_version, std::chrono::steady_clock::now());
 
         StreamState stream;
         logf("scanning state stream regions...\n");
@@ -980,6 +1041,7 @@ int tds_run_engine(bool offline) {
                 uintptr_t fdm = valid_ptr(ve) ? read<uintptr_t>(ve + off::VE_FAKE_DM) : 0;
                 uintptr_t dm = valid_ptr(fdm) ? read<uintptr_t>(fdm + off::FAKE_REAL_DM) : 0;
                 uintptr_t players = valid_ptr(dm) ? find_child_of_class(dm, "Players") : 0;
+                offset_updater.tick(now, players != 0);
                 uintptr_t lp = players ? read<uintptr_t>(players + off::PLAYERS_LOCAL) : 0;
                 uintptr_t gui = valid_ptr(lp) ? find_child(lp, "PlayerGui") : 0;
                 if (gui && g_player_gui && g_player_gui != gui) chain_states.clear();
@@ -1104,7 +1166,7 @@ int tds_run_engine(bool offline) {
             const bool menu_open = !gui_effectively_visible(g_bar_frame, g_player_gui);
             const bool game_over = match_has_ended(g_banner_label, g_player_gui);
             const std::string phase = game_over ? "match over" : !buttons.empty() ? "in match"
-                : (!version_known && !g_player_gui) ? "unknown roblox version" : "lobby / intermission";
+                : (!offset_updater.known() && !g_player_gui) ? "unknown roblox version" : "lobby / intermission";
             if (phase != last_phase) {
                 logf("phase: %s", phase.c_str());
                 last_phase = phase;

@@ -49,4 +49,6 @@ g++ -O2 -std=c++17 -static src/rbx_dump.cpp  -o rbx_dump.exe  -lpsapi
 Input is sent with `SendInput` + real scancodes (Roblox ignores vk-only synthetic keys).
 Offsets change on every Roblox version bump — re-dump with `rbx_dump.exe` when they do. The Qt app / `tds_plus.cpp`
 picks its offsets by the version of the running client (`tds_plus/rbx_offsets.hpp`: one row per known
-version) and says in the log and the UI when the client is a version it has no row for.
+version) and, for a version it does not know, downloads the public offsets table once over HTTPS, checks
+that it is for exactly that version, and keeps the offsets in `tds_offsets_cache.ini` once they have worked
+(`auto_update = off` in `tds_plus/tds_offsets.ini` turns the download off; see `tds_plus/QT_UI.md`).
