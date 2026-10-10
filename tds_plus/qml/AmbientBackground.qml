@@ -5,6 +5,9 @@ Item {
     id: ambient
     objectName: "ambientBackground"
     property bool animating: true
+    // graphite by default: color = base + tint * light
+    property vector3d baseColor: Qt.vector3d(0, 0, 0)
+    property vector3d tintColor: Qt.vector3d(1, 1, 1.035)
     property real elapsed: 0
     property real pointerX: width * 0.7
     property real pointerY: height * 0.2
@@ -40,6 +43,8 @@ Item {
         property vector2d resolution: Qt.vector2d(width, height)
         property vector2d pointer: Qt.vector2d(ambient.pointerX / Math.max(width, 1), ambient.pointerY / Math.max(height, 1))
         property real pointer_presence: ambient.pointerPresence
+        property vector3d base_color: ambient.baseColor
+        property vector3d tint_color: ambient.tintColor
         fragmentShader: "qrc:/shaders/ambient.frag.qsb"
         layer.enabled: true
         layer.smooth: true

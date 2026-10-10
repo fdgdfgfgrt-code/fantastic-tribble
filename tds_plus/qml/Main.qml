@@ -1,28 +1,31 @@
 // language: QML, file: Main.qml, runtime: Qt Quick 6.10, target: Windows 11 desktop
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Dialogs
 import QtQuick.Layouts
 
 ApplicationWindow {
     id: window
     objectName: "mainWindow"
-    visible: true
+    visible: false  // shown from C++ once the size is restored, unless it starts in the tray
     width: 560
     height: customFrameEnabled ? 516 : 480
     minimumWidth: 380
     minimumHeight: customFrameEnabled ? 376 : 340
     title: "tds+"
-    color: "#09090b"
+    color: p.window
     flags: customFrame ? (Qt.Window | Qt.FramelessWindowHint) : Qt.Window
     font.family: "Geist Mono"
     font.pixelSize: 14
     font.weight: Font.Medium
 
-    readonly property color ink: "#eaeaec"
-    readonly property color muted: "#a0a0a9"
-    readonly property color dim: "#7d7d87"
-    readonly property color accent: "#e6e6e9"
-    readonly property color borderColor: "#29292f"
+    // every color comes from the theme in the settings (qt/themes.hpp)
+    readonly property var p: appSettings.palette
+    readonly property color ink: p.ink
+    readonly property color muted: p.muted
+    readonly property color dim: p.dim
+    readonly property color accent: p.accent
+    readonly property color borderColor: p.border
     readonly property bool compact: width < 740
     readonly property bool stackedRows: width < 540
     readonly property int contentInset: compact ? 16 : 28
@@ -30,18 +33,68 @@ ApplicationWindow {
     readonly property int titleBarHeight: customFrame ? titleBar.height : 0
     readonly property int captionControlsWidth: titleBar.controlsWidth
     readonly property bool motionEnabled: systemMotionEnabled && visible && visibility !== Window.Minimized
-    palette.window: "#18181c"
+    palette.window: p.popup
     palette.windowText: ink
-    palette.button: "#242429"
+    palette.button: p.raised
     palette.buttonText: ink
-    palette.base: "#141418"
+    palette.base: p.input
     palette.text: ink
-    palette.highlight: "#4b4b55"
+    palette.highlight: p.selection
     palette.highlightedText: ink
 
-    AmbientBackground {
+    property bool entered: false
+    onVisibleChanged: if (visible && !entered) { entered = true; entrance.start() }
+    onClosing: (close) => {
+        if (appSettings.closeToTray && !windowControl.quitting && windowControl.hideToTray())
+            close.accepted = false
+    }
+    onVisibilityChanged: (visibility) => {
+        if (visibility === Window.Minimized && appSettings.minimizeToTray) windowControl.hideToTray()
+    }
+
+    Item {
+        id: backdrop
+        objectName: "backdrop"
         anchors.fill: parent
-        animating: window.motionEnabled
+        readonly property bool picture: appSettings.backgroundMode === "picture" && appSettings.hasBackgroundFile
+        AmbientBackground {
+            anchors.fill: parent
+            visible: appSettings.backgroundMode === "waves"
+            animating: window.motionEnabled && visible
+            baseColor: window.p.waveBase
+            tintColor: window.p.waveTint
+        }
+        Image {
+            id: backgroundImage
+            objectName: "backgroundImage"
+            anchors.fill: parent
+            visible: backdrop.picture && !appSettings.backgroundAnimated
+            source: visible ? appSettings.backgroundUrl : ""
+            fillMode: Image.PreserveAspectCrop
+            asynchronous: true
+            cache: false
+            smooth: true
+            mipmap: true
+        }
+        AnimatedImage {
+            id: backgroundAnimation
+            objectName: "backgroundAnimation"
+            anchors.fill: parent
+            visible: backdrop.picture && appSettings.backgroundAnimated
+            source: visible ? appSettings.backgroundUrl : ""
+            fillMode: Image.PreserveAspectCrop
+            cache: false
+            smooth: true
+            playing: visible && window.visible && window.visibility !== Window.Minimized
+        }
+        // keeps text readable on any picture: the theme's window color laid over it
+        Rectangle {
+            objectName: "backgroundShade"
+            anchors.fill: parent
+            visible: backdrop.picture
+            color: window.p.window
+            opacity: appSettings.backgroundDim / 100
+        }
     }
 
     component Hint: ToolTip {
@@ -55,7 +108,7 @@ ApplicationWindow {
             font.family: window.font.family
             font.pixelSize: 11
         }
-        background: Rectangle { color: "#24242a"; border.color: "#3a3a43"; radius: 5 }
+        background: Rectangle { color: window.p.raised; border.color: window.p.borderStrong; radius: 5 }
         enter: Transition { NumberAnimation { property: "opacity"; from: 0; to: 1; duration: window.motionEnabled ? 120 : 0 } }
         exit: Transition { NumberAnimation { property: "opacity"; to: 0; duration: window.motionEnabled ? 80 : 0 } }
     }
@@ -76,7 +129,7 @@ ApplicationWindow {
             Text {
                 text: button.text
                 Layout.fillWidth: true
-                color: button.primary ? "#151518" : button.selected || button.hovered ? window.ink : window.muted
+                color: button.primary ? window.p.onAccent : button.selected || button.hovered ? window.ink : window.muted
                 font.family: window.font.family
                 font.pixelSize: 12
                 font.weight: button.primary || button.selected ? Font.DemiBold : Font.Medium
@@ -88,17 +141,17 @@ ApplicationWindow {
             Text {
                 visible: button.shortcut.length > 0
                 text: button.shortcut
-                color: button.primary ? "#64646e" : window.dim
+                color: button.primary ? window.p.onAccentDim : window.dim
                 font.pixelSize: 10
             }
         }
         background: Rectangle {
             radius: 6
-            color: button.primary ? (button.down ? "#bdbdc6" : button.hovered ? "#fafafa" : window.accent)
-                   : button.selected && !button.flatSelection ? "#2b2b32"
-                   : (button.down ? "#303036" : button.hovered ? "#232329" : "transparent")
-            border.width: button.activeFocus && !button.selected && !button.primary ? 1 : 0
-            border.color: "#696972"
+            color: button.primary ? (button.down ? window.p.accentDown : button.hovered ? window.p.accentHover : window.accent)
+                   : button.selected && !button.flatSelection ? window.p.control
+                   : (button.down ? window.p.controlDown : button.hovered ? window.p.controlHover : "transparent")
+            border.width: button.visualFocus && !button.selected && !button.primary ? 1 : 0  // keyboard focus only
+            border.color: window.p.focus
             opacity: button.enabled ? 1 : 0.5
             Behavior on color { ColorAnimation { duration: window.motionEnabled ? 160 : 0 } }
         }
@@ -113,7 +166,8 @@ ApplicationWindow {
     }
 
     Shortcut { sequence: "Ctrl+F"; onActivated: search.forceActiveFocus() }
-    Shortcut { sequence: "Escape"; enabled: !logPopup.visible && search.text.length > 0; onActivated: search.clear() }
+    Shortcut { sequence: "Escape"; enabled: !logPopup.visible && !settingsPopup.visible && search.text.length > 0; onActivated: search.clear() }
+    Shortcut { sequence: "Ctrl+,"; onActivated: settingsPopup.opened ? settingsPopup.close() : settingsPopup.open() }
 
     ColumnLayout {
         id: surface
@@ -125,7 +179,7 @@ ApplicationWindow {
         opacity: 0
         transform: Translate { y: surface.entranceOffset }
         ParallelAnimation {
-            running: true
+            id: entrance
             NumberAnimation { target: surface; property: "opacity"; to: 1; duration: window.motionEnabled ? 360 : 0; easing.type: Easing.OutCubic }
             NumberAnimation { target: surface; property: "entranceOffset"; to: 0; duration: window.motionEnabled ? 400 : 0; easing.type: Easing.OutCubic }
         }
@@ -141,7 +195,7 @@ ApplicationWindow {
                 font.weight: Font.DemiBold
                 font.letterSpacing: -1.1
             }
-            Rectangle { visible: !window.compact; width: 1; height: 18; color: "#37373e"; Layout.leftMargin: 2 }
+            Rectangle { visible: !window.compact; width: 1; height: 18; color: window.p.separator; Layout.leftMargin: 2 }
             Text { visible: !window.compact; text: "Autocast"; color: window.muted; font.pixelSize: 13 }
             Item { Layout.fillWidth: true }
             Rectangle {
@@ -176,7 +230,7 @@ ApplicationWindow {
             }
         }
 
-        Rectangle { Layout.fillWidth: true; height: 1; color: "#242429" }
+        Rectangle { Layout.fillWidth: true; height: 1; color: window.p.divider }
 
         GridLayout {
             Layout.fillWidth: true
@@ -207,7 +261,7 @@ ApplicationWindow {
                         width: (parent.width - 8) / 2
                         x: 3 + (controlModel.liveOnly ? width + 2 : 0)
                         radius: 5
-                        color: "#2a2a30"
+                        color: window.p.thumb
                         Behavior on x { NumberAnimation { duration: window.motionEnabled ? 230 : 0; easing.type: Easing.OutCubic } }
                     }
                     RowLayout {
@@ -243,21 +297,24 @@ ApplicationWindow {
                 color: window.ink
                 font.pixelSize: 12
                 selectByMouse: true
-                selectionColor: "#4b4b55"
+                selectionColor: window.p.selection
                 selectedTextColor: window.ink
                 onTextChanged: controlModel.query = text
                 background: Rectangle {
                     radius: 6
-                    color: "#75151519"
-                    border.color: search.activeFocus ? "#6c6c76" : window.borderColor
+                    color: window.p.field
+                    border.color: search.activeFocus ? window.p.focus : window.borderColor
                     Behavior on border.color { ColorAnimation { duration: window.motionEnabled ? 140 : 0 } }
                 }
                 Canvas {
                     width: 16; height: 16
                     x: 11; anchors.verticalCenter: parent.verticalCenter
+                    property color stroke: window.muted
+                    onStrokeChanged: requestPaint()
                     onPaint: {
                         const context = getContext("2d")
-                        context.strokeStyle = "#8b8b95"; context.lineWidth = 1.25
+                        context.reset()
+                        context.strokeStyle = stroke; context.lineWidth = 1.25
                         context.beginPath(); context.arc(6, 6, 4, 0, Math.PI * 2); context.stroke()
                         context.beginPath(); context.moveTo(9, 9); context.lineTo(13, 13); context.stroke()
                     }
@@ -284,7 +341,7 @@ ApplicationWindow {
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.minimumHeight: 92
-            color: "#a6111115"
+            color: window.p.surface
             radius: 9
             border.color: window.borderColor
             ColumnLayout {
@@ -318,7 +375,7 @@ ApplicationWindow {
                         policy: ScrollBar.AsNeeded
                         contentItem: Rectangle {
                             implicitWidth: 3; radius: 2
-                            color: parent.pressed ? "#93939e" : "#4a4a54"
+                            color: parent.pressed ? window.p.scrollActive : window.p.scroll
                             opacity: parent.active ? 1 : 0.45
                         }
                     }
@@ -333,14 +390,14 @@ ApplicationWindow {
                         required property bool isLive
                         width: ListView.view.width
                         height: window.stackedRows ? 96 : window.compact ? 60 : 64
-                        color: rowHover.hovered ? "#7325252b" : "transparent"
+                        color: rowHover.hovered ? window.p.rowHover : "transparent"
                         Behavior on color { ColorAnimation { duration: window.motionEnabled ? 180 : 0 } }
                         HoverHandler { id: rowHover }
                         Rectangle {
                             anchors.bottom: parent.bottom
                             anchors.left: parent.left; anchors.right: parent.right
                             anchors.leftMargin: window.compact ? 14 : 20; anchors.rightMargin: window.compact ? 14 : 20
-                            height: 1; color: "#242429"
+                            height: 1; color: window.p.divider
                         }
                         GridLayout {
                             anchors.fill: parent
@@ -428,18 +485,18 @@ ApplicationWindow {
                                         inputMethodHints: Qt.ImhDigitsOnly
                                     }
                                     background: Rectangle {
-                                        radius: 5; color: "#1c1c22"
-                                        border.color: interval.activeFocus ? "#6c6c76" : "#3a3a42"
+                                        radius: 5; color: window.p.input
+                                        border.color: interval.activeFocus ? window.p.focus : window.p.borderStrong
                                     }
-                                    Text { x: 48; anchors.verticalCenter: parent.verticalCenter; text: "s"; color: window.dim; font.pixelSize: 11 }
+                                    Text { x: 48; anchors.verticalCenter: parent.verticalCenter; text: "s"; color: window.muted; font.pixelSize: 11 }
                                     up.indicator: Rectangle {
                                         x: interval.width - width; y: 1; width: 22; height: 15
-                                        color: interval.up.pressed ? "#37373f" : "transparent"
+                                        color: interval.up.pressed ? window.p.controlDown : "transparent"
                                         Text { anchors.centerIn: parent; text: "+"; color: window.muted; font.pixelSize: 11 }
                                     }
                                     down.indicator: Rectangle {
                                         x: interval.width - width; y: interval.height - height - 1; width: 22; height: 15
-                                        color: interval.down.pressed ? "#37373f" : "transparent"
+                                        color: interval.down.pressed ? window.p.controlDown : "transparent"
                                         Text { anchors.centerIn: parent; text: "−"; color: window.muted; font.pixelSize: 11 }
                                     }
                                 }
@@ -460,8 +517,8 @@ ApplicationWindow {
                                     width: (parent.width - 10) / 3
                                     x: 3 + abilityRow.abilityMode * (width + 2)
                                     radius: 5
-                                    color: "#2a2a31"
-                                    border.color: "#3a3a43"
+                                    color: window.p.thumb
+                                    border.color: window.p.borderStrong
                                     Behavior on x { NumberAnimation { duration: window.motionEnabled ? 230 : 0; easing.type: Easing.OutCubic } }
                                 }
                                 RowLayout {
@@ -529,10 +586,18 @@ ApplicationWindow {
             Text {
                 Layout.fillWidth: true
                 text: controlModel.saveStatus.length > 0 ? controlModel.saveStatus : "Changes save automatically"
-                color: controlModel.saveError ? "#d9a3ac" : window.dim
+                color: controlModel.saveError ? window.p.danger : window.dim
                 font.pixelSize: 11
                 elide: Text.ElideRight
                 Behavior on color { ColorAnimation { duration: window.motionEnabled ? 160 : 0 } }
+            }
+            SoftButton {
+                objectName: "settingsButton"
+                implicitHeight: 24
+                leftPadding: 8; rightPadding: 8
+                text: "Settings"
+                hint: "Theme, background, tray · Ctrl+,"
+                onClicked: settingsPopup.open()
             }
             SoftButton {
                 objectName: "logButton"
@@ -562,7 +627,7 @@ ApplicationWindow {
             }
         }
         exit: Transition { NumberAnimation { property: "opacity"; to: 0; duration: window.motionEnabled ? 130 : 0 } }
-        background: Rectangle { color: "#19191e"; border.color: "#3c3c45"; radius: 9 }
+        background: Rectangle { color: window.p.popup; border.color: window.p.popupBorder; radius: 9 }
         ColumnLayout {
             anchors.fill: parent
             RowLayout {
@@ -578,10 +643,395 @@ ApplicationWindow {
                     readOnly: true
                     selectByMouse: true
                     wrapMode: TextEdit.WrapAnywhere
-                    color: "#acacb8"
+                    color: window.muted
                     font.family: window.font.family
                     font.pixelSize: 11
                     background: null
+                }
+            }
+        }
+    }
+
+    component SectionLabel: Text {
+        color: window.dim
+        font.pixelSize: 11
+        font.weight: Font.DemiBold
+        font.letterSpacing: 0.6
+        Layout.topMargin: 10
+    }
+
+    // a switch whose state always follows the setting: clicks ask for a change instead of flipping it
+    component OptionSwitch: Switch {
+        id: option
+        property string detail: ""
+        Layout.fillWidth: true
+        checkable: false
+        hoverEnabled: true
+        leftPadding: 0; rightPadding: 0; topPadding: 6; bottomPadding: 6
+        indicator: Rectangle {
+            x: option.width - width
+            y: (option.height - height) / 2
+            implicitWidth: 36; implicitHeight: 20; radius: 10
+            opacity: option.enabled ? 1 : 0.45
+            color: option.checked ? window.accent : option.hovered ? window.p.controlHover : window.p.control
+            border.color: option.checked ? window.accent : option.visualFocus ? window.p.focus : window.p.borderStrong
+            Behavior on color { ColorAnimation { duration: window.motionEnabled ? 140 : 0 } }
+            Rectangle {
+                width: 14; height: 14; radius: 7; y: 3
+                x: option.checked ? parent.width - width - 3 : 3
+                color: option.checked ? window.p.onAccent : window.muted
+                Behavior on x { NumberAnimation { duration: window.motionEnabled ? 160 : 0; easing.type: Easing.OutCubic } }
+            }
+        }
+        contentItem: ColumnLayout {
+            spacing: 2
+            Text {
+                text: option.text
+                color: window.ink
+                opacity: option.enabled ? 1 : 0.5
+                font.pixelSize: 13
+                elide: Text.ElideRight
+                Layout.fillWidth: true; Layout.rightMargin: 48
+            }
+            Text {
+                visible: option.detail.length > 0
+                text: option.detail
+                color: window.dim
+                font.pixelSize: 11
+                wrapMode: Text.Wrap
+                Layout.fillWidth: true; Layout.rightMargin: 48
+            }
+        }
+        background: Item {}
+    }
+
+    FileDialog {
+        id: backgroundDialog
+        title: "Choose a background picture"
+        nameFilters: ["Pictures (*.png *.jpg *.jpeg *.bmp *.gif)", "All files (*)"]
+        onAccepted: appSettings.importBackground(selectedFile)
+    }
+
+    Popup {
+        id: settingsPopup
+        objectName: "settingsPopup"
+        parent: Overlay.overlay
+        width: Math.min(window.width - 24, 560)
+        height: Math.min(window.height - window.titleBarHeight - 16, 660)
+        x: Math.round((window.width - width) / 2)
+        y: window.titleBarHeight + Math.max(8, Math.round((window.height - window.titleBarHeight - height) / 2))
+        padding: 0
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+        onClosed: appSettings.clearError()
+        Overlay.modal: Rectangle { color: Qt.rgba(0, 0, 0, window.p.dark ? 0.45 : 0.22) }
+        enter: Transition {
+            ParallelAnimation {
+                NumberAnimation { property: "opacity"; from: 0; to: 1; duration: window.motionEnabled ? 180 : 0 }
+                NumberAnimation { property: "scale"; from: 0.98; to: 1; duration: window.motionEnabled ? 230 : 0; easing.type: Easing.OutCubic }
+            }
+        }
+        exit: Transition { NumberAnimation { property: "opacity"; to: 0; duration: window.motionEnabled ? 130 : 0 } }
+        background: Rectangle { color: window.p.popup; border.color: window.p.popupBorder; radius: 10 }
+
+        contentItem: ColumnLayout {
+            spacing: 0
+            RowLayout {
+                Layout.fillWidth: true
+                Layout.leftMargin: 20; Layout.rightMargin: 12
+                Layout.preferredHeight: 52
+                Text { text: "Settings"; color: window.ink; font.pixelSize: 16; font.weight: Font.DemiBold; Layout.fillWidth: true }
+                SoftButton { objectName: "closeSettingsButton"; text: "Done"; shortcut: "Esc"; onClicked: settingsPopup.close() }
+            }
+            Rectangle { Layout.fillWidth: true; height: 1; color: window.p.divider }
+
+            ScrollView {
+                id: settingsScroll
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                clip: true
+                contentWidth: availableWidth
+
+                ColumnLayout {
+                    width: settingsScroll.availableWidth
+                    spacing: 8
+
+                    Item { Layout.preferredHeight: 4 }
+                    SectionLabel { text: "THEME"; Layout.leftMargin: 20 }
+                    Flow {
+                        Layout.fillWidth: true
+                        Layout.leftMargin: 20; Layout.rightMargin: 20
+                        spacing: 10
+                        Repeater {
+                            model: appSettings.themes
+                            delegate: AbstractButton {
+                                id: themeCard
+                                required property var modelData
+                                objectName: "theme_" + modelData.id
+                                readonly property bool current: appSettings.theme === modelData.id
+                                width: 112; height: 88
+                                hoverEnabled: true
+                                Accessible.role: Accessible.RadioButton
+                                Accessible.name: modelData.name + " theme"
+                                Accessible.checked: current
+                                onClicked: appSettings.theme = modelData.id
+                                contentItem: Item {
+                                    Rectangle {
+                                        width: parent.width; height: 60; radius: 8
+                                        color: themeCard.modelData.window
+                                        border.width: themeCard.current ? 2 : 1
+                                        border.color: themeCard.current ? window.accent
+                                                     : themeCard.hovered || themeCard.visualFocus ? window.p.focus : window.p.border
+                                        Behavior on border.color { ColorAnimation { duration: window.motionEnabled ? 140 : 0 } }
+                                        Rectangle {
+                                            x: 10; y: 10; width: parent.width - 20; height: 28; radius: 5
+                                            color: themeCard.modelData.panel
+                                            border.color: themeCard.modelData.border
+                                            Rectangle { x: 8; y: 7; width: 40; height: 4; radius: 2; color: themeCard.modelData.ink }
+                                            Rectangle { x: 8; y: 16; width: 26; height: 4; radius: 2; color: themeCard.modelData.muted }
+                                            Rectangle {
+                                                anchors.right: parent.right; anchors.rightMargin: 7
+                                                anchors.verticalCenter: parent.verticalCenter
+                                                width: 20; height: 12; radius: 3
+                                                color: themeCard.modelData.accent
+                                            }
+                                        }
+                                        Rectangle { x: 10; y: 45; width: 34; height: 4; radius: 2; color: themeCard.modelData.muted; opacity: 0.6 }
+                                    }
+                                    Text {
+                                        y: 66
+                                        text: themeCard.modelData.name
+                                        color: themeCard.current ? window.ink : window.muted
+                                        font.pixelSize: 12
+                                        font.weight: themeCard.current ? Font.DemiBold : Font.Medium
+                                    }
+                                }
+                                background: Item {}
+                            }
+                        }
+                    }
+
+                    SectionLabel { text: "ACCENT"; Layout.leftMargin: 20 }
+                    Flow {
+                        Layout.fillWidth: true
+                        Layout.leftMargin: 16; Layout.rightMargin: 20
+                        spacing: 6
+                        Repeater {
+                            model: appSettings.accents
+                            delegate: AbstractButton {
+                                id: swatch
+                                required property var modelData
+                                objectName: "accent_" + modelData.id
+                                readonly property bool current: appSettings.accent === modelData.id
+                                width: 32; height: 32
+                                hoverEnabled: true
+                                Accessible.role: Accessible.RadioButton
+                                Accessible.name: modelData.name + " accent"
+                                Accessible.checked: current
+                                onClicked: appSettings.accent = modelData.id
+                                contentItem: Item {}
+                                background: Item {
+                                    Rectangle {
+                                        anchors.fill: parent; radius: width / 2
+                                        color: "transparent"
+                                        border.width: 2
+                                        border.color: swatch.current ? window.ink : swatch.visualFocus ? window.p.focus : "transparent"
+                                    }
+                                    Rectangle {
+                                        anchors.centerIn: parent
+                                        width: 22; height: 22; radius: 11
+                                        color: swatch.modelData.color
+                                        border.color: window.p.borderStrong
+                                        scale: swatch.hovered ? 1.08 : 1
+                                        Behavior on scale { NumberAnimation { duration: window.motionEnabled ? 120 : 0 } }
+                                    }
+                                }
+                                Hint { visible: swatch.hovered; text: swatch.modelData.name; x: (swatch.width - width) / 2; y: swatch.height + 4 }
+                            }
+                        }
+                    }
+
+                    SectionLabel { text: "BACKGROUND"; Layout.leftMargin: 20 }
+                    Rectangle {
+                        id: backgroundGroup
+                        Layout.leftMargin: 20; Layout.rightMargin: 20
+                        Layout.fillWidth: true
+                        Layout.maximumWidth: 330
+                        Layout.preferredHeight: 34
+                        radius: 7
+                        color: window.p.input
+                        border.color: window.p.border
+                        readonly property int index: appSettings.backgroundMode === "solid" ? 1 : appSettings.backgroundMode === "picture" ? 2 : 0
+                        Rectangle {
+                            y: 3; height: parent.height - 6
+                            width: (parent.width - 10) / 3
+                            x: 3 + backgroundGroup.index * (width + 2)
+                            radius: 5
+                            color: window.p.thumb
+                            border.color: window.p.borderStrong
+                            Behavior on x { NumberAnimation { duration: window.motionEnabled ? 230 : 0; easing.type: Easing.OutCubic } }
+                        }
+                        RowLayout {
+                            anchors.fill: parent; anchors.margins: 3; spacing: 2
+                            SoftButton {
+                                objectName: "background_waves"
+                                Layout.fillWidth: true; Layout.fillHeight: true
+                                flatSelection: true; selected: backgroundGroup.index === 0
+                                text: "Waves"; hint: "Animated light, tinted by the theme"
+                                onClicked: appSettings.backgroundMode = "waves"
+                            }
+                            SoftButton {
+                                objectName: "background_solid"
+                                Layout.fillWidth: true; Layout.fillHeight: true
+                                flatSelection: true; selected: backgroundGroup.index === 1
+                                text: "Solid"; hint: "Plain theme color, no animation"
+                                onClicked: appSettings.backgroundMode = "solid"
+                            }
+                            SoftButton {
+                                objectName: "background_picture"
+                                Layout.fillWidth: true; Layout.fillHeight: true
+                                flatSelection: true; selected: backgroundGroup.index === 2
+                                text: "Picture"; hint: "Your photo or an animated GIF"
+                                onClicked: appSettings.hasBackgroundFile ? appSettings.backgroundMode = "picture" : backgroundDialog.open()
+                            }
+                        }
+                    }
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.leftMargin: 20; Layout.rightMargin: 20
+                        spacing: 8
+                        Text {
+                            Layout.fillWidth: true
+                            text: appSettings.hasBackgroundFile
+                                  ? appSettings.backgroundName + (appSettings.backgroundAnimated ? "  ·  animated" : "")
+                                  : "PNG, JPG, BMP or GIF up to 40 MB"
+                            color: appSettings.hasBackgroundFile ? window.muted : window.dim
+                            font.pixelSize: 12
+                            elide: Text.ElideMiddle
+                        }
+                        SoftButton {
+                            objectName: "chooseBackgroundButton"
+                            text: appSettings.hasBackgroundFile ? "Change…" : "Choose picture…"
+                            onClicked: backgroundDialog.open()
+                        }
+                        SoftButton {
+                            objectName: "removeBackgroundButton"
+                            visible: appSettings.hasBackgroundFile
+                            text: "Remove"
+                            onClicked: appSettings.clearBackground()
+                        }
+                    }
+                    RowLayout {
+                        visible: appSettings.backgroundMode === "picture"
+                        Layout.fillWidth: true
+                        Layout.leftMargin: 20; Layout.rightMargin: 20
+                        spacing: 12
+                        Text { text: "Darken"; color: window.muted; font.pixelSize: 12 }
+                        Slider {
+                            id: dimSlider
+                            objectName: "backgroundDimSlider"
+                            Layout.fillWidth: true
+                            from: 0; to: 90; stepSize: 5
+                            snapMode: Slider.SnapAlways
+                            value: appSettings.backgroundDim
+                            onMoved: appSettings.backgroundDim = Math.round(value)
+                            Accessible.name: "Darken the background picture"
+                            background: Rectangle {
+                                x: dimSlider.leftPadding
+                                y: dimSlider.topPadding + dimSlider.availableHeight / 2 - height / 2
+                                width: dimSlider.availableWidth; height: 4; radius: 2
+                                color: window.p.control
+                                Rectangle { width: dimSlider.visualPosition * parent.width; height: parent.height; radius: 2; color: window.accent }
+                            }
+                            handle: Rectangle {
+                                x: dimSlider.leftPadding + dimSlider.visualPosition * (dimSlider.availableWidth - width)
+                                y: dimSlider.topPadding + dimSlider.availableHeight / 2 - height / 2
+                                width: 16; height: 16; radius: 8
+                                color: dimSlider.pressed ? window.p.accentDown : window.accent
+                                border.width: dimSlider.visualFocus ? 2 : 0
+                                border.color: window.p.focus
+                            }
+                        }
+                        Text {
+                            text: appSettings.backgroundDim + "%"
+                            color: window.muted
+                            font.pixelSize: 12
+                            Layout.preferredWidth: 34
+                            horizontalAlignment: Text.AlignRight
+                        }
+                    }
+
+                    SectionLabel { text: "WINDOW"; Layout.leftMargin: 20 }
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        Layout.leftMargin: 20; Layout.rightMargin: 20
+                        spacing: 2
+                        OptionSwitch {
+                            objectName: "minimizeToTraySwitch"
+                            text: "Minimize to tray"
+                            detail: "Minimizing hides the window; click the tray icon to bring it back."
+                            enabled: trayIcon.supported
+                            checked: appSettings.minimizeToTray
+                            onClicked: appSettings.minimizeToTray = !appSettings.minimizeToTray
+                        }
+                        OptionSwitch {
+                            objectName: "closeToTraySwitch"
+                            text: "Close to tray"
+                            detail: "Closing keeps tds+ running in the tray. Exit from the tray menu or with End."
+                            enabled: trayIcon.supported
+                            checked: appSettings.closeToTray
+                            onClicked: appSettings.closeToTray = !appSettings.closeToTray
+                        }
+                        OptionSwitch {
+                            objectName: "startInTraySwitch"
+                            text: "Start in tray"
+                            detail: "Open hidden in the tray when tds+ starts."
+                            enabled: trayIcon.supported
+                            checked: appSettings.startInTray
+                            onClicked: appSettings.startInTray = !appSettings.startInTray
+                        }
+                        OptionSwitch {
+                            objectName: "alwaysOnTopSwitch"
+                            text: "Always on top"
+                            detail: "Keep the window above other windows, including Roblox."
+                            checked: appSettings.alwaysOnTop
+                            onClicked: appSettings.alwaysOnTop = !appSettings.alwaysOnTop
+                        }
+                        Text {
+                            visible: !trayIcon.supported
+                            text: "The tray is not available on this system."
+                            color: window.dim
+                            font.pixelSize: 11
+                        }
+                    }
+
+                    Text {
+                        visible: appSettings.lastError.length > 0
+                        Layout.fillWidth: true
+                        Layout.leftMargin: 20; Layout.rightMargin: 20
+                        text: appSettings.lastError
+                        color: window.p.danger
+                        font.pixelSize: 12
+                        wrapMode: Text.Wrap
+                    }
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Layout.leftMargin: 20; Layout.rightMargin: 20
+                        Layout.topMargin: 6; Layout.bottomMargin: 16
+                        Text {
+                            Layout.fillWidth: true
+                            text: "Saved automatically"
+                            color: window.dim
+                            font.pixelSize: 11
+                        }
+                        SoftButton {
+                            objectName: "resetAppearanceButton"
+                            text: "Reset look"
+                            hint: "Graphite theme, waves, default accent"
+                            onClicked: appSettings.resetAppearance()
+                        }
+                    }
                 }
             }
         }
@@ -596,6 +1046,8 @@ ApplicationWindow {
         muted: window.muted
         dim: window.dim
         animated: window.motionEnabled
+        hoverColor: window.p.controlHover
+        pressedColor: window.p.controlDown
         z: 20
     }
 

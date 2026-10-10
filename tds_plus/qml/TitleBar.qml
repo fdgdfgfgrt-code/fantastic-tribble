@@ -12,6 +12,8 @@ Item {
     property color muted: "#a0a0a9"
     property color dim: "#7d7d87"
     property bool animated: true
+    property color hoverColor: "#26262c"
+    property color pressedColor: "#2f2f36"
 
     readonly property int buttonWidth: 46
     readonly property int controlsWidth: buttonWidth * 3
@@ -37,7 +39,7 @@ Item {
             anchors.fill: parent
             color: button.isClose
                    ? (button.pressed ? "#a82a1d" : button.hovered ? "#c42b1c" : "transparent")
-                   : (button.pressed ? "#2f2f36" : button.hovered ? "#26262c" : "transparent")
+                   : (button.pressed ? bar.pressedColor : button.hovered ? bar.hoverColor : "transparent")
             Behavior on color { ColorAnimation { duration: bar.animated ? 120 : 0 } }
         }
 

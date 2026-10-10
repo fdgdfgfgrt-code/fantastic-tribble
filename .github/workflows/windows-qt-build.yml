@@ -107,6 +107,19 @@ jobs:
             if (Test-Path $path) { Copy-Item $path dist/diagnostics }
           }
 
+      - name: Run the UI smoke test offline (themes, background, tray)
+        continue-on-error: true
+        run: |
+          $dir = "$PWD/dist/diagnostics/smoke"
+          New-Item -ItemType Directory -Path $dir -Force | Out-Null
+          Copy-Item tds_plus/tds_abilities.ini, tds_plus/tds_wiki_db.ini $dir
+          $app = Start-Process -FilePath "$PWD/build/tds_plus_ui_test.exe" -ArgumentList '--offline', '--config-dir', "`"$dir`"" -PassThru
+          $null = $app.Handle  # keeps the exit code readable after the process ends
+          if (-not $app.WaitForExit(240000)) { Stop-Process -Id $app.Id -Force; throw 'the UI smoke test did not finish in 4 minutes' }
+          if (Test-Path "$dir/smoke_report.txt") { Get-Content "$dir/smoke_report.txt" | Write-Host } else { Write-Host 'no smoke_report.txt' }
+          Write-Host "exit code: $($app.ExitCode)"
+          if ($app.ExitCode -ne 0) { throw "the UI smoke test failed ($($app.ExitCode))" }
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
