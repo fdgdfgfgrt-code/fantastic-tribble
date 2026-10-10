@@ -10,6 +10,8 @@ layout(std140, binding = 0) uniform Parameters {
     vec2 resolution;
     vec2 pointer;
     float pointer_presence;
+    vec3 base_color;  // the theme's darkest wave color
+    vec3 tint_color;  // added per unit of light; negative on light themes
 };
 
 float hash_value(vec2 point) {
@@ -59,6 +61,5 @@ void main() {
     luminance += edge * fog * 0.022 + glow * pointer_presence * 0.025;
     // Stationary grain avoids flicker while the larger light field moves.
     luminance += (hash_value(floor(uv * resolution * 0.5)) - 0.5) / 255.0;
-    vec3 graphite = vec3(luminance, luminance, luminance * 1.035);
-    frag_color = vec4(graphite, 1.0) * qt_Opacity;
+    frag_color = vec4(base_color + tint_color * luminance, 1.0) * qt_Opacity;
 }

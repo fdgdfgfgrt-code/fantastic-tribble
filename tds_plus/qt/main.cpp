@@ -1,10 +1,14 @@
 // language: C++17, file: main.cpp, runtime: Qt 6.10/MSVC, target: Windows 11 GUI subsystem
 #include <windows.h>
 #include <dwmapi.h>
+#include "app_settings.hpp"
 #include "control_model.hpp"
 #include "frame_filter.hpp"
+#include "tray_icon.hpp"
+#include "window_control.hpp"
 #include <QCommandLineParser>
 #include <QDir>
+#include <QFile>
 #include <QFileInfo>
 #include <QFontDatabase>
 #include <QGuiApplication>
@@ -13,7 +17,9 @@
 #include <QQmlContext>
 #include <QQuickStyle>
 #include <QQuickWindow>
+#include <QSessionManager>
 #include <QSettings>
+#include <QStandardPaths>
 #include <cstdio>
 #include <memory>
 #include <thread>
@@ -68,6 +74,28 @@ int main(int argc, char* argv[]) {
 
     const bool offline = parser.isSet("offline");
     const bool custom_frame = !parser.isSet("native-frame");
+
+#ifdef TDS_UI_SMOKE
+    // the UI test starts from default settings and never touches the user's own
+    const QString settings_file = QDir(config_dir).absoluteFilePath("smoke_ui_settings.ini");
+    QFile::remove(settings_file);
+    QSettings ui_store(settings_file, QSettings::IniFormat);
+    const QString background_dir = QDir(config_dir).absoluteFilePath("smoke_backgrounds");
+    QDir(background_dir).removeRecursively();
+#else
+    QSettings ui_store;
+    const QString background_dir =
+        QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QStringLiteral("/backgrounds");
+#endif
+    AppSettings app_settings(&ui_store, background_dir);
+    TrayIcon tray_icon;
+    WindowControl window_control(&app_settings, &tray_icon, custom_frame);
+    bool start_hidden = false;
+#ifndef TDS_UI_SMOKE
+    // only start hidden when there really is a tray icon to come back from
+    if (app_settings.startInTray()) start_hidden = tray_icon.show();
+#endif
+
     std::thread engine_thread([offline] { tds_run_engine(offline); });
     ControlModel control_model(offline);
     QQmlApplicationEngine qml_engine;
@@ -76,7 +104,17 @@ int main(int argc, char* argv[]) {
     qml_engine.rootContext()->setContextProperty("systemMotionEnabled", motion_enabled != FALSE);
     qml_engine.rootContext()->setContextProperty("controlModel", &control_model);
     qml_engine.rootContext()->setContextProperty("customFrameEnabled", custom_frame);
-    QObject::connect(&control_model, &ControlModel::exitRequested, &app, &QCoreApplication::quit);
+    qml_engine.rootContext()->setContextProperty("appSettings", &app_settings);
+    qml_engine.rootContext()->setContextProperty("trayIcon", &tray_icon);
+    qml_engine.rootContext()->setContextProperty("windowControl", &window_control);
+    // End (the engine stops) is a real exit; going straight to QCoreApplication::quit() would be
+    // cancelled by "close to tray" and leave a window without an engine in the tray
+    QObject::connect(&control_model, &ControlModel::exitRequested, &window_control, &WindowControl::quit);
+#ifndef QT_NO_SESSIONMANAGER
+    // Windows logoff / shutdown: do not let "close to tray" refuse to close (stays set if logoff is cancelled)
+    QObject::connect(&app, &QGuiApplication::commitDataRequest, &window_control,
+                     [&window_control](QSessionManager&) { window_control.beginQuit(); });
+#endif
     qml_engine.load(QUrl("qrc:/qml/Main.qml"));
     if (qml_engine.rootObjects().isEmpty()) {
         tds_request_exit();
@@ -87,14 +125,20 @@ int main(int argc, char* argv[]) {
     std::unique_ptr<FrameFilter> frame_filter;  // must live as long as the event loop
     if (window) {
         const HWND hwnd = reinterpret_cast<HWND>(window->winId());
-        const BOOL dark = TRUE;
-        DwmSetWindowAttribute(hwnd, 20, &dark, sizeof(dark));
+        // dark or light system parts (native frame, menus) follow the theme
+        const auto apply_dark_mode = [hwnd, &app_settings] {
+            const BOOL dark = app_settings.palette().value("dark").toBool() ? TRUE : FALSE;
+            DwmSetWindowAttribute(hwnd, 20, &dark, sizeof(dark));
+        };
+        apply_dark_mode();
+        QObject::connect(&app_settings, &AppSettings::paletteChanged, window, apply_dark_mode);
         if (custom_frame) {
             frame_filter = std::make_unique<FrameFilter>(window);
             app.installNativeEventFilter(frame_filter.get());
             tds_frame::install(hwnd);
             // The frameless window relies on Qt agreeing with Windows about the client size; say so in the log if not.
             QTimer::singleShot(800, window, [window, hwnd] {
+                if (!window->isVisible()) return;
                 RECT client{};
                 if (!GetClientRect(hwnd, &client)) return;
                 const qreal ratio = window->devicePixelRatio();
@@ -104,6 +148,23 @@ int main(int argc, char* argv[]) {
                              window->width(), window->height(), client.right, client.bottom);
             });
         }
+
+        // tray icon: menu state, tooltip and actions
+        const auto sync_tray = [window, &tray_icon, &control_model] {
+            tray_icon.setMenuState(window->isVisible() && window->visibility() != QWindow::Minimized,
+                                   control_model.running(), control_model.ready());
+            tray_icon.setToolTip(QStringLiteral("tds+ · ") + (control_model.running() ? QStringLiteral("Running")
+                                                                                     : QStringLiteral("Paused")) +
+                                 QStringLiteral(" · ") + control_model.phase());
+        };
+        sync_tray();
+        QObject::connect(&control_model, &ControlModel::stateChanged, window, sync_tray);
+        QObject::connect(window, &QWindow::visibilityChanged, window, sync_tray);
+        QObject::connect(&tray_icon, &TrayIcon::activated, &window_control, &WindowControl::activateFromTray);
+        QObject::connect(&tray_icon, &TrayIcon::toggleWindowRequested, &window_control, &WindowControl::toggleFromTray);
+        QObject::connect(&tray_icon, &TrayIcon::toggleRunningRequested, &control_model, &ControlModel::toggle_running);
+        QObject::connect(&tray_icon, &TrayIcon::exitRequested, &window_control, &WindowControl::quit);
+
 #ifndef TDS_UI_SMOKE
         QSettings settings;
         QSize size = settings.value("window/size", window->size()).toSize();
@@ -129,14 +190,19 @@ int main(int argc, char* argv[]) {
         QObject::connect(window, &QWindow::heightChanged, window, capture_size);
         QObject::connect(resize_timer, &QTimer::timeout, window, save_size);
         QObject::connect(&app, &QCoreApplication::aboutToQuit, window, save_size);
-#else
-        QTimer::singleShot(650, &app, [&app, window, &control_model, config_dir] {
-            app.exit(control_model.offline() ? run_smoke_test(window, control_model, config_dir)
-                                            : run_attach_test(window, control_model, config_dir));
+#endif
+        window_control.setWindow(window);
+        if (!start_hidden) window->show();
+#ifdef TDS_UI_SMOKE
+        QTimer::singleShot(650, &app, [&app, window, &control_model, config_dir, &app_settings, &tray_icon, &window_control] {
+            app.exit(control_model.offline()
+                         ? run_smoke_test(window, control_model, config_dir, app_settings, tray_icon, window_control)
+                         : run_attach_test(window, control_model, config_dir));
         });
 #endif
     }
     const int result = app.exec();
+    tray_icon.hide();
     tds_request_exit();
     engine_thread.join();
     return result;

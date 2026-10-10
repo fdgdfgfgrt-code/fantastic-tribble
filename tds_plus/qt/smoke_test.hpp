@@ -1,6 +1,15 @@
 // language: C++17, file: smoke_test.hpp, runtime: Qt Test 6.10, target: isolated desktop UI verification
 #pragma once
+#include "app_settings.hpp"
 #include "control_model.hpp"
+#include "tray_icon.hpp"
+#include "window_control.hpp"
+#include "../tests/test_images.hpp"
+#include <QColor>
+#include <QImage>
+#include <QImageReader>
+#include <QPainter>
+#include <QUrl>
 #include <QFile>
 #include <QDir>
 #include <QInputMethodEvent>
@@ -17,7 +26,8 @@ inline QQuickItem* find_item(QQuickItem* root, const QString& name) {
     return nullptr;
 }
 
-inline int run_smoke_test(QQuickWindow* window, ControlModel& model, const QString& directory) {
+inline int run_smoke_test(QQuickWindow* window, ControlModel& model, const QString& directory, AppSettings& settings,
+                          TrayIcon& tray, WindowControl& window_control) {
     QFile report(directory + "/smoke_report.txt");
     if (!report.open(QIODevice::WriteOnly | QIODevice::Text)) return 10;
     QTextStream output(&report);
@@ -133,11 +143,12 @@ inline int run_smoke_test(QQuickWindow* window, ControlModel& model, const QStri
         QTest::qWait(80);
         check(list->property("contentY").toDouble() > 0, "catalog scroll reaches lower entries");
     }
-    window->resize(380, 340);
+    const QSize smallest = window->minimumSize();
+    window->resize(smallest);
     if (auto* list = find_item(window->contentItem(), "abilityList")) list->setProperty("contentY", 0);
     QTest::qWait(180);
     window->grabWindow();
-    check(window->size() == QSize(380, 340), "native window shrinks to 380 by 340");
+    check(window->size() == smallest && smallest.width() == 380, "native window shrinks to its minimum size");
     click("searchInput");
     type("Commander");
     QTest::qWait(100);
@@ -192,6 +203,98 @@ inline int run_smoke_test(QQuickWindow* window, ControlModel& model, const QStri
     window->resize(560, 480);
     QTest::qWait(200);
     window->grabWindow().save(directory + "/preview_overview.png");
+
+    // ---- settings: themes, accent, background picture and GIF, tray ----
+    auto popup_open = [&](const char* name) {
+        auto* object = window->findChild<QObject*>(name);
+        return object && object->property("opened").toBool();
+    };
+    click("settingsButton");
+    QTest::qWait(300);
+    check(popup_open("settingsPopup"), "the Settings button opens the settings");
+    click("theme_paper");
+    QTest::qWait(150);
+    check(settings.theme() == "paper" && window->color() == QColor("#f3f3f1"), "a theme card switches the whole window");
+    window->grabWindow().save(directory + "/preview_settings_paper.png");
+    click("accent_blue");
+    QTest::qWait(150);
+    check(settings.accent() == "blue", "an accent swatch changes the accent");
+    click("theme_midnight");
+    QTest::qWait(150);
+    window->grabWindow().save(directory + "/preview_settings_midnight.png");
+    click("accent_theme");
+    click("theme_graphite");
+    QTest::qWait(150);
+    check(settings.theme() == "graphite" && window->color() == QColor("#09090b"), "back to the default theme");
+    click("background_solid");
+    QTest::qWait(100);
+    check(settings.backgroundMode() == "solid", "the Solid background turns the waves off");
+    QTest::keyClick(window, Qt::Key_Escape);
+    QTest::qWait(250);
+    check(!popup_open("settingsPopup"), "Escape closes the settings");
+
+    QImage source(2800, 1400, QImage::Format_RGB32);
+    source.fill(QColor(30, 60, 120));
+    QPainter painter(&source);
+    for (int band = 0; band < 14; ++band)
+        painter.fillRect(band * 200, 0, 100, 1400, QColor(200, 90 + band * 8, 40));
+    painter.end();
+    const QString photo = directory + "/smoke_photo.png";
+    source.save(photo);
+    check(settings.importBackground(QUrl::fromLocalFile(photo)) && settings.backgroundMode() == "picture",
+          "a photo becomes the background");
+    check(QImageReader(settings.backgroundPath()).size() == QSize(2560, 1280), "a large photo is stored at 2560 px");
+    QTest::qWait(600);
+    auto* still = find_item(window->contentItem(), "backgroundImage");
+    check(still && still->isVisible() && still->property("status").toInt() == 1, "the photo is shown behind the list");
+    window->grabWindow().save(directory + "/preview_picture.png");
+
+    QFile gif(directory + "/smoke_loop.gif");
+    if (gif.open(QIODevice::WriteOnly)) {
+        gif.write(reinterpret_cast<const char*>(kTwoFrameGif), sizeof(kTwoFrameGif));
+        gif.close();
+    }
+    check(settings.importBackground(QUrl::fromLocalFile(gif.fileName())) && settings.backgroundAnimated(),
+          "an animated GIF becomes the background");
+    QTest::qWait(600);
+    auto* animation = find_item(window->contentItem(), "backgroundAnimation");
+    check(animation && animation->isVisible() && animation->property("frameCount").toInt() == 2 &&
+              animation->property("playing").toBool(),
+          "the GIF plays behind the list");
+    settings.clearBackground();
+    QTest::qWait(150);
+    check(settings.backgroundMode() == "waves" && !find_item(window->contentItem(), "backgroundAnimation")->isVisible(),
+          "removing the picture brings the waves back");
+
+    if (tray.supported() && tray.show()) {
+        settings.setMinimizeToTray(true);
+        window->showMinimized();
+        QTest::qWait(400);
+        check(!window->isVisible() && tray.shown(), "minimize to tray hides the window and keeps the tray icon");
+        window_control.showFromTray();
+        QTest::qWait(400);
+        check(window->isVisible() && window->visibility() != QWindow::Minimized, "the tray brings the window back");
+        settings.setMinimizeToTray(false);
+        settings.setCloseToTray(true);
+        QTest::qWait(100);
+        const bool closed = window->close();
+        QTest::qWait(300);
+        check(!closed && !window->isVisible() && tray.shown() && !window_control.quitting(),
+              "close to tray hides the window instead of exiting");
+        window_control.showFromTray();
+        QTest::qWait(400);
+        check(window->isVisible(), "the tray brings the closed window back");
+        settings.setCloseToTray(false);
+        QTest::qWait(100);
+        check(!tray.shown(), "the tray icon goes away when no tray option is on and the window is shown");
+    } else {
+        output << "SKIP tray checks: the notification area is not available here\n";
+        settings.setMinimizeToTray(true);
+        check(!window_control.hideToTray(), "without a tray the window is never hidden");
+        settings.setMinimizeToTray(false);
+    }
+    settings.resetAppearance();
+
     if (qEnvironmentVariableIsSet("TDS_CAPTURE_MOTION")) {
         window->resize(560, 480);
         if (auto* list = find_item(window->contentItem(), "abilityList")) list->setProperty("contentY", 0);
