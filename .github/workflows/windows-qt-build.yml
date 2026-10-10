@@ -64,6 +64,10 @@ jobs:
         continue-on-error: true
         run: ctest --test-dir build --output-on-failure
 
+      - name: Download the public offsets table with the real downloader
+        continue-on-error: true
+        run: ./build/tds_plus_offsets_live_check.exe
+
       - name: Assemble the folder
         run: |
           $dist = 'dist/tds_plus_qt'
@@ -76,7 +80,7 @@ jobs:
           Copy-Item tds_plus/assets/fonts/OFL.txt "$dist/licenses/Geist-OFL.txt"
           Copy-Item tds_plus/assets/fonts/SOURCE.txt "$dist/licenses/Geist-source.txt"
           # settings the app reads next to the exe; tds_ui_rules.ini is created by the app itself
-          Copy-Item tds_plus/tds_abilities.ini, tds_plus/tds_wiki_db.ini $dist
+          Copy-Item tds_plus/tds_abilities.ini, tds_plus/tds_wiki_db.ini, tds_plus/tds_offsets.ini $dist
           $crt = Get-ChildItem "$env:VCToolsRedistDir/x64" -Directory -Filter 'Microsoft.VC14*.CRT' | Select-Object -First 1
           if ($crt) { Copy-Item "$($crt.FullName)/*.dll" $dist } else { Write-Warning 'VC runtime DLLs not found' }
           Get-ChildItem $dist | Select-Object Name, Length | Format-Table -AutoSize | Out-String | Write-Host
